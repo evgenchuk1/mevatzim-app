@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="מבצעים">
+<meta name="theme-color" content="#C8102E">
+<link rel="manifest" href="manifest.json">
+<title>מבצעים חודשיים | שופרסל</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --red:#C8102E;--red-dark:#A00D24;--red-light:#FFE8EB;
+  --bg:#F7F0F1;--card:#FFF;--border:#DDD;--empty:#F5F5F5;
+  --text:#1A1A1A;--muted:#777;--shadow:0 2px 8px rgba(200,16,46,.1);
+  --r:12px;
+}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:-apple-system,'Heebo','Arial Hebrew',Arial,sans-serif;
+  background:var(--bg);color:var(--text);direction:rtl;
+  display:flex;flex-direction:column;height:100vh;height:100dvh;
+}
+
+/* ── HEADER ── */
+.hdr{background:var(--red);color:#fff;padding:10px 14px 8px;flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.hdr-row{display:flex;align-items:center;gap:8px}
+.logo-box{background:#fff;color:var(--red);font-size:15px;font-weight:900;
+  padding:3px 9px;border-radius:6px;letter-spacing:-.5px;flex-shrink:0}
+.hdr-title{font-size:17px;font-weight:700;flex:1;text-align:center}
+.month-btn{background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.45);
+  color:#fff;border-radius:8px;padding:4px 10px;font-size:12px;font-family:inherit;
+  cursor:pointer;font-weight:600;white-space:nowrap}
+
+/* ── TABS ── */
+.tabs{display:flex;background:var(--red-dark);flex-shrink:0}
+.tab-btn{flex:1;padding:9px 4px 7px;background:none;border:none;
+  color:rgba(255,255,255,.6);font-family:inherit;font-size:11px;font-weight:600;
+  cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;
+  border-bottom:3px solid transparent;transition:all .2s}
+.tab-btn .ti{font-size:19px}
+.tab-btn.active{color:#fff;border-bottom-color:#fff}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.tab-view{display:none;padding:10px}
+.tab-view.active{display:block}
+
+/* ── MAP ── */
+.gmap{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.gcard{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);
+  border:1.5px solid var(--border);overflow:hidden}
+.gcard.wide{grid-column:span 2}
+.gcard-hdr{background:var(--red);color:#fff;padding:5px 10px;
+  display:flex;justify-content:space-between;align-items:center}
+.gcard-hdr .gname{font-size:12px;font-weight:700}
+.gcard-hdr .gid{font-size:9px;opacity:.75}
+.gcard-body{padding:5px}
+
+/* Shelf slots */
+.shelf-stack{display:flex;flex-direction:column;gap:3px}
+.slot{border:1.5px dashed #DDD;border-radius:6px;background:var(--empty);
+  min-height:52px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;position:relative;overflow:hidden;cursor:pointer;
+  transition:border-color .2s,background .2s}
+.slot.filled{border:1.5px solid #E0B5BA;background:#FFF8F9}
+.slot .snum{position:absolute;top:2px;right:4px;font-size:8px;color:#BBB;font-weight:700}
+.slot .sph{font-size:20px;opacity:.25}
+.slot img.simg{max-width:100%;max-height:46px;object-fit:contain}
+.slot .sname{font-size:8px;color:var(--muted);text-align:center;padding:0 3px;
+  line-height:1.2;max-height:20px;overflow:hidden;display:-webkit-box;
+  -webkit-line-clamp:2;-webkit-box-orient:vertical}
+
+/* Stand grid (2 cols × 3 rows) */
+.stand-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+.stand-grid .slot{min-height:60px}
+
+/* ── LIST ── */
+.search-box{background:#fff;border:1.5px solid var(--border);border-radius:10px;
+  padding:8px 12px;font-size:15px;font-family:inherit;width:100%;
+  margin-bottom:8px;direction:rtl}
+.prod-table{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.prow{display:flex;align-items:center;padding:10px 12px;gap:10px;
+  border-bottom:1px solid #F0ECEC}
+.prow:last-child{border-bottom:none}
+.pthumb{width:48px;height:48px;object-fit:contain;flex-shrink:0;
+  border-radius:6px;background:#F5F5F5}
+.pthumb-ph{width:48px;height:48px;background:var(--empty);border-radius:6px;
+  display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.pinfo{flex:1;min-width:0}
+.pname{font-size:13px;font-weight:700;line-height:1.3;margin-bottom:2px}
+.ppos{font-size:11px;color:var(--red);font-weight:700}
+.pbc{font-size:10px;color:var(--muted)}
+.bc-btn{width:38px;height:38px;background:var(--red-light);border:none;border-radius:8px;
+  cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.bc-btn svg{width:22px;height:22px}
+.no-items{text-align:center;padding:40px 20px;color:var(--muted);font-size:15px}
+
+/* ── EDIT ── */
+.esec{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);
+  margin-bottom:8px;overflow:hidden}
+.esec-hdr{background:var(--red-light);padding:10px 14px;font-weight:700;
+  font-size:13px;color:var(--red-dark);display:flex;justify-content:space-between;
+  align-items:center;cursor:pointer;user-select:none}
+.esec-body{padding:6px 12px}
+.erow{display:flex;align-items:center;gap:8px;padding:7px 0;
+  border-bottom:1px solid #F5F0F0}
+.erow:last-child{border-bottom:none}
+.enum{background:var(--red);color:#fff;border-radius:50%;width:24px;height:24px;
+  display:flex;align-items:center;justify-content:center;font-size:11px;
+  font-weight:700;flex-shrink:0}
+.ethumb{width:34px;height:34px;object-fit:contain;background:#F5F5F5;
+  border-radius:4px;flex-shrink:0}
+.einfo{flex:1;min-width:0}
+.ename{font-size:12px;font-weight:600;line-height:1.2}
+.ebc{font-size:10px;color:var(--muted)}
+.eempty{font-size:12px;color:#CCC}
+.ebtn{background:var(--red-light);border:1px solid var(--red);color:var(--red-dark);
+  border-radius:8px;padding:5px 10px;font-size:11px;font-family:inherit;
+  cursor:pointer;font-weight:600;flex-shrink:0}
+.ecbtn{background:#fff;border:1px solid #DDD;color:#888;border-radius:8px;
+  padding:5px 8px;font-size:11px;font-family:inherit;cursor:pointer;flex-shrink:0}
+
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:999;
+  display:flex;align-items:flex-end;justify-content:center;
+  animation:fi .2s}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.modal{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:500px;
+  max-height:92vh;overflow-y:auto;padding:18px 16px 36px;
+  animation:su .25s}
+@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.mhandle{width:40px;height:4px;background:#DDD;border-radius:2px;margin:0 auto 14px}
+.mtitle{font-size:17px;font-weight:800;color:var(--red-dark);
+  margin-bottom:14px;text-align:center}
+.flabel{font-size:13px;font-weight:700;color:var(--text);
+  margin-bottom:4px;display:block}
+.finput{width:100%;border:1.5px solid var(--border);border-radius:10px;
+  padding:10px 12px;font-size:15px;font-family:inherit;direction:rtl;
+  margin-bottom:10px}
+.finput:focus{outline:none;border-color:var(--red)}
+.upload-area{border:2px dashed var(--border);border-radius:10px;padding:18px;
+  text-align:center;cursor:pointer;margin-bottom:10px;background:#FAFAFA}
+.upload-area img{width:100%;max-height:140px;object-fit:contain;border-radius:6px;margin-bottom:6px}
+.upload-hint{font-size:12px;color:var(--muted)}
+.btn1{width:100%;background:var(--red);color:#fff;border:none;border-radius:12px;
+  padding:13px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:7px}
+.btn2{width:100%;background:#fff;color:var(--muted);border:1.5px solid var(--border);
+  border-radius:12px;padding:11px;font-size:14px;font-weight:600;
+  font-family:inherit;cursor:pointer}
+
+/* Barcode modal */
+.bc-modal{text-align:center}
+.bc-prod-img{max-width:140px;max-height:140px;object-fit:contain;
+  margin:0 auto 10px;display:block}
+.bc-name{font-size:14px;color:var(--muted);margin-bottom:14px}
+.bc-wrap{background:#fff;border:1px solid #EEE;border-radius:8px;padding:12px;
+  display:block;width:100%}
+.bc-wrap svg{width:100%;height:auto}
+.bc-num{font-size:20px;font-weight:700;color:var(--text);margin-top:10px;
+  letter-spacing:1px;font-family:monospace}
+
+/* ── FOOTER ── */
+.footer{text-align:center;font-size:10px;color:#AAA;padding:5px;
+  flex-shrink:0;background:#fff;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-row">
+    <div class="logo-box">שופרסל</div>
+    <div class="hdr-title">מבצעים חודשיים</div>
+    <button class="month-btn" id="month-btn" onclick="editMonth()">טוען...</button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab-btn active" id="tab-map" onclick="switchTab('map')">
+    <span class="ti">🗺️</span>מפת מבצעים
+  </button>
+  <button class="tab-btn" id="tab-list" onclick="switchTab('list')">
+    <span class="ti">📋</span>רשימת מוצרים
+  </button>
+  <button class="tab-btn" id="tab-edit" onclick="switchTab('edit')">
+    <span class="ti">✏️</span>עריכה
+  </button>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- MAP -->
+  <div class="tab-view active" id="view-map">
+    <div class="gmap" id="gondola-map"></div>
+  </div>
+
+  <!-- LIST -->
+  <div class="tab-view" id="view-list">
+    <input class="search-box" type="search" placeholder="חיפוש לפי שם או ברקוד..."
+      oninput="filterList(this.value)" id="search-inp">
+    <div class="prod-table" id="prod-list"></div>
+  </div>
+
+  <!-- EDIT -->
+  <div class="tab-view" id="view-edit">
+    <div id="edit-body"></div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">© Evgeniy Tsipis · שופרסל מבצעים חודשיים</div>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" style="display:none" onclick="tryCloseOverlay(event)">
+  <div class="modal" id="modal">
+    <div class="mhandle"></div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- JsBarcode -->
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────
+const SK = 'mevatzim_v2';
+
+const DEFAULTS = {
+  month: 'יוני 2026',
+  gondolas: [
+    { id:'ENT1', name:'עמדת כניסה', type:'stand', cols:2, rows:3, slots:[
+      {pos:1,barcode:'8001841625188',label:'פיירי פלטינום לימון החדש'},
+      {pos:2,barcode:null,label:null},
+      {pos:3,barcode:null,label:null},
+      {pos:4,barcode:'8000500325384',label:'קינדר ג\'וי שלישייה'},
+      {pos:5,barcode:null,label:null},
+      {pos:6,barcode:null,label:null}
+    ]},
+    { id:'E1', name:'ראש גונדולה 1', type:'gondola', shelves:4, slots:[
+      {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
+      {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
+    ]},
+    { id:'E2', name:'ראש גונדולה 2', type:'gondola', shelves:4, slots:[
+      {pos:1,barcode:null,label:null},
+      {pos:2,barcode:'7290019644330',label:'מרשמלו ורוד לבן 150 גרם'},
+      {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
+    ]},
+    { id:'E3', name:'ראש גונדולה 3', type:'gondola', shelves:4, slots:[
+      {pos:1,barcode:null,label:null},
+      {pos:2,barcode:'2453352',label:'נקניקיות אייריש חלק'},
+      {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
+    ]},
+    { id:'E4', name:'ראש גונדולה 4', type:'gondola', shelves:4, slots:[
+      {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
+      {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
+    ]},
+    { id:'CC1', name:'עמדת קופות 1', type:'stand', cols:2, rows:3, slots:[
+      {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
+      {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null},
+      {pos:5,barcode:null,label:null},{pos:6,barcode:null,label:null}
+    ]},
+    { id:'E6', name:'ראש גונדולה 6', type:'gondola', shelves:4, slots:[
+      {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
+      {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
+    ]},
+    { id:'E7', name:'ראש גונדולה 7', type:'gondola', shelves:4, slots:[
+      {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
+      {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
+    ]},
+    { id:'CC2', name:'עמדת קופות שירות עצמי', type:'stand', cols:2, rows:3, slots:[
+      {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
+      {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null},
+      {pos:5,barcode:null,label:null},{pos:6,barcode:null,label:null}
+    ]}
+  ]
+};
+
+let D;
+function load(){
+  try{ const s=localStorage.getItem(SK); if(s) D=JSON.parse(s); else reset(); }
+  catch(e){ reset(); }
+}
+function reset(){ D=JSON.parse(JSON.stringify(DEFAULTS)); save(); }
+function save(){ localStorage.setItem(SK,JSON.stringify(D)); }
+
+// Custom images keyed by barcode
+function getCImg(bc){ return bc ? localStorage.getItem('ci_'+bc) : null; }
+function setCImg(bc,url){ localStorage.setItem('ci_'+bc,url); }
+
+function imgOf(bc){
+  if(!bc) return null;
+  return getCImg(bc) || ('images/'+bc+'.gif');
+}
+
+function mkImg(bc,cls,name){
+  if(!bc) return '<span class="sph">+</span>';
+  const s=imgOf(bc);
+  return `<img class="${cls}" src="${s}" alt="${name||''}"
+    onerror="this.style.display='none';var n=this.nextElementSibling;if(n)n.style.display='flex'">
+    <span class="sph" style="display:none">🛒</span>`;
+}
+
+// ─── TABS ────────────────────────────────────────────────────────────────
+function switchTab(t){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  document.getElementById('view-'+t).classList.add('active');
+  if(t==='map') renderMap();
+  if(t==='list') renderList();
+  if(t==='edit') renderEdit();
+}
+
+// ─── MAP ─────────────────────────────────────────────────────────────────
+function renderMap(){
+  document.getElementById('gondola-map').innerHTML =
+    D.gondolas.map(g=>gcardHTML(g)).join('');
+}
+
+function gcardHTML(g){
+  const filled = g.slots.filter(s=>s.barcode).length;
+  const wide = (g.type==='stand') ? ' wide' : '';
+  let body='';
+
+  if(g.type==='stand'){
+    // Column-major: col1=pos1,2,3  col2=pos4,5,6
+    const rows=g.rows, cols=g.cols;
+    let html='<div class="stand-grid">';
+    // Build row by row for visual grid
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        const pos = c*rows + r + 1;
+        const sl = g.slots.find(s=>s.pos===pos)||{};
+        const f = !!sl.barcode;
+        html+=`<div class="slot${f?' filled':''}" onclick="openEdit('${g.id}',${pos})">
+          <span class="snum">${pos}</span>
+          ${f ? mkImg(sl.barcode,'simg',sl.label) : '<span class="sph">+</span>'}
+          ${f&&sl.label ? `<span class="sname">${sl.label}</span>` : ''}
+        </div>`;
+      }
+    }
+    html+='</div>';
+    body=html;
+  } else {
+    body='<div class="shelf-stack">' +
+      g.slots.map(sl=>{
+        const f=!!sl.barcode;
+        return `<div class="slot${f?' filled':''}" onclick="openEdit('${g.id}',${sl.pos})">
+          <span class="snum">${sl.pos}</span>
+          ${f ? mkImg(sl.barcode,'simg',sl.label) : '<span class="sph">+</span>'}
+          ${f&&sl.label ? `<span class="sname">${sl.label}</span>` : ''}
+        </div>`;
+      }).join('') +
+    '</div>';
+  }
+
+  return `<div class="gcard${wide}">
+    <div class="gcard-hdr">
+      <span class="gname">${g.name}</span>
+      <span class="gid">${g.id} · ${filled}/${g.slots.length}</span>
+    </div>
+    <div class="gcard-body">${body}</div>
+  </div>`;
+}
+
+// ─── LIST ─────────────────────────────────────────────────────────────────
+function renderList(filter){
+  const items=[];
+  D.gondolas.forEach(g=>g.slots.forEach(s=>{
+    if(s.barcode) items.push({...s, gid:g.id, gname:g.name});
+  }));
+
+  const q=(filter||'').trim().toLowerCase();
+  const shown = q
+    ? items.filter(i=>(i.label||'').toLowerCase().includes(q)||i.barcode.includes(q))
+    : items;
+
+  const box=document.getElementById('prod-list');
+  if(!shown.length){ box.innerHTML='<div class="no-items">לא נמצאו מוצרים</div>'; return; }
+
+  box.innerHTML = shown.map(i=>{
+    const img=imgOf(i.barcode);
+    return `<div class="prow">
+      <img class="pthumb" src="${img}" alt="${i.label||''}"
+        onerror="this.style.display='none';this.nextSibling.style.display='flex'">
+      <div class="pthumb-ph" style="display:none">🛒</div>
+      <div class="pinfo">
+        <div class="pname">${i.label||i.barcode}</div>
+        <div class="ppos">${i.gname} · מדף ${i.pos}</div>
+        <div class="pbc">${i.barcode}</div>
+      </div>
+      <button class="bc-btn" onclick="showBarcode('${i.barcode}','${(i.label||'').replace(/'/g,"\\'")}')"
+        title="הצג ברקוד">
+        ${bcIcon()}
+      </button>
+    </div>`;
+  }).join('');
+}
+
+function filterList(v){ renderList(v); }
+
+function bcIcon(){
+  return `<svg viewBox="0 0 24 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="1" y="1" width="2" height="18" fill="#C8102E"/>
+    <rect x="4" y="1" width="1" height="18" fill="#C8102E"/>
+    <rect x="6" y="1" width="2" height="18" fill="#C8102E"/>
+    <rect x="9" y="1" width="1" height="18" fill="#C8102E"/>
+    <rect x="11" y="1" width="3" height="18" fill="#C8102E"/>
+    <rect x="15" y="1" width="1" height="18" fill="#C8102E"/>
+    <rect x="17" y="1" width="2" height="18" fill="#C8102E"/>
+    <rect x="20" y="1" width="1" height="18" fill="#C8102E"/>
+    <rect x="22" y="1" width="2" height="18" fill="#C8102E"/>
+  </svg>`;
+}
+
+// ─── EDIT ──────────────────────────────────────────────────────────────────
+function renderEdit(){
+  document.getElementById('edit-body').innerHTML =
+    D.gondolas.map(g=>{
+      const rows = g.slots.map(s=>{
+        const f=!!s.barcode;
+        const thumb = f ? `<img class="ethumb" src="${imgOf(s.barcode)}"
+          onerror="this.style.display='none'">` : '';
+        return `<div class="erow">
+          <div class="enum">${s.pos}</div>
+          ${thumb}
+          <div class="einfo">
+            ${f
+              ? `<div class="ename">${s.label||s.barcode}</div><div class="ebc">${s.barcode}</div>`
+              : `<div class="eempty">ריק</div>`}
+          </div>
+          <button class="ebtn" onclick="openEdit('${g.id}',${s.pos})">${f?'עריכה':'+ הוסף'}</button>
+          ${f?`<button class="ecbtn" onclick="clearSlot('${g.id}',${s.pos})">✕</button>`:''}
+        </div>`;
+      }).join('');
+      return `<div class="esec">
+        <div class="esec-hdr" onclick="toggleSec(this)">
+          <span>${g.name}</span><span style="font-size:10px;color:#999">${g.id} ▾</span>
+        </div>
+        <div class="esec-body">${rows}</div>
+      </div>`;
+    }).join('');
+}
+
+function toggleSec(el){
+  const b=el.nextElementSibling;
+  b.style.display = b.style.display==='none' ? '' : 'none';
+}
+
+function clearSlot(gid,pos){
+  const sl=slot(gid,pos);
+  sl.barcode=null; sl.label=null;
+  save(); renderEdit(); renderMap();
+}
+
+function slot(gid,pos){
+  return D.gondolas.find(g=>g.id===gid).slots.find(s=>s.pos===pos);
+}
+
+// ─── EDIT MODAL ─────────────────────────────────────────────────────────
+let _gid,_pos,_pendImg=null;
+
+function openEdit(gid,pos){
+  _gid=gid; _pos=pos; _pendImg=null;
+  const g=D.gondolas.find(x=>x.id===gid);
+  const s=slot(gid,pos);
+  const bc=s.barcode||'', lb=s.label||'';
+  const ci=bc?getCImg(bc):null;
+
+  setModal(`
+    <div class="mtitle">עריכת מיקום</div>
+    <div style="background:var(--red-light);border-radius:8px;padding:8px 12px;
+      margin-bottom:12px;font-size:12px;color:var(--red-dark);font-weight:600">
+      📍 ${g.name} · מדף ${pos}
+    </div>
+
+    <label class="flabel">ברקוד מוצר</label>
+    <input class="finput" type="tel" id="eb" value="${bc}"
+      placeholder="הכנס ברקוד..." inputmode="numeric" pattern="[0-9]*">
+
+    <label class="flabel">שם מוצר (עברית)</label>
+    <input class="finput" type="text" id="el" value="${lb}"
+      placeholder="שם המוצר...">
+
+    <label class="flabel">תמונת מוצר</label>
+    <div class="upload-area" id="uparea" onclick="document.getElementById('upfile').click()">
+      ${ci ? `<img src="${ci}">` : '<div style="font-size:30px;margin-bottom:6px">📷</div>'}
+      <div class="upload-hint">${ci?'לחץ להחלפה':'לחץ לבחירת תמונה מהאלבום'}</div>
+    </div>
+    <input type="file" id="upfile" accept="image/*" style="display:none"
+      onchange="handleUp(event)">
+
+    <button class="btn1" onclick="saveSlot()">✔ שמור</button>
+    <button class="btn2" onclick="closeModal()">ביטול</button>
+  `);
+  showOverlay();
+}
+
+function handleUp(e){
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    _pendImg=ev.target.result;
+    document.getElementById('uparea').innerHTML=
+      `<img src="${_pendImg}"><div class="upload-hint">לחץ להחלפה</div>`;
+  };
+  r.readAsDataURL(f);
+}
+
+function saveSlot(){
+  const bc=document.getElementById('eb').value.trim();
+  const lb=document.getElementById('el').value.trim();
+  if(!bc){ alert('נא להזין ברקוד'); return; }
+  const s=slot(_gid,_pos);
+  s.barcode=bc; s.label=lb||bc;
+  if(_pendImg){ setCImg(bc,_pendImg); _pendImg=null; }
+  save(); closeModal(); renderMap(); renderEdit();
+}
+
+// ─── BARCODE MODAL ───────────────────────────────────────────────────────
+function showBarcode(bc, name){
+  const img=imgOf(bc);
+  setModal(`
+    <div class="bc-modal">
+      <div class="mtitle">ברקוד מוצר</div>
+      <img class="bc-prod-img" src="${img}" alt="${name}"
+        onerror="this.style.display='none'">
+      <div class="bc-name">${name}</div>
+      <div class="bc-wrap">
+        <svg id="bc-svg"></svg>
+      </div>
+      <div class="bc-num">${bc}</div>
+      <button class="btn2" style="margin-top:14px" onclick="closeModal()">סגור</button>
+    </div>
+  `);
+  showOverlay();
+  setTimeout(()=>{
+    try{
+      const fmt = bc.length===13?'EAN13':bc.length===8?'EAN8':'CODE128';
+      JsBarcode('#bc-svg', bc, {format:fmt,width:2.2,height:90,displayValue:false,margin:10});
+    } catch(e){
+      try{ JsBarcode('#bc-svg',bc,{format:'CODE128',width:2,height:80,displayValue:false,margin:8}); }
+      catch(e2){ document.getElementById('bc-svg').parentNode.innerHTML='<div style="color:#888;padding:20px">ברקוד לא זמין</div>'; }
+    }
+  },60);
+}
+
+// ─── MONTH ───────────────────────────────────────────────────────────────
+function editMonth(){
+  const v=prompt('הכנס חודש ושנה:',D.month);
+  if(v&&v.trim()){ D.month=v.trim(); save(); document.getElementById('month-btn').textContent=D.month; }
+}
+
+// ─── OVERLAY ─────────────────────────────────────────────────────────────
+function setModal(html){ document.getElementById('modal-body').innerHTML=html; }
+function showOverlay(){ document.getElementById('overlay').style.display='flex'; }
+function closeModal(){ document.getElementById('overlay').style.display='none'; _pendImg=null; }
+function tryCloseOverlay(e){ if(e.target.id==='overlay') closeModal(); }
+
+// ─── INIT ────────────────────────────────────────────────────────────────
+load();
+document.getElementById('month-btn').textContent=D.month;
+renderMap();
+</script>
+</body>
+</html>
