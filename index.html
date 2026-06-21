@@ -48,24 +48,22 @@ body{
 
 /* ── CONTENT ── */
 .content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.tab-view{display:none;padding:10px}
+.tab-view{display:none;padding:0}
 .tab-view.active{display:block}
+#view-map,#view-list,#view-edit{padding:10px}
 
 /* ── STORE MAP TAB ── */
-.store-map-wrap{display:flex;flex-direction:column;gap:5px}
-.store-section-title{text-align:center;font-size:17px;color:var(--muted);font-weight:700;
-  padding:6px 0 3px;border-bottom:2px solid var(--border);margin:4px 0 2px}
-.store-row{display:flex;gap:6px;justify-content:center}
-.store-cell{background:var(--card);border-radius:10px;padding:10px 12px;
-  border:2px solid var(--border);text-align:center;cursor:pointer;
-  font-size:24px;font-weight:800;color:var(--red-dark);
-  transition:all .2s;box-shadow:var(--shadow);min-width:90px}
-.store-cell:active{background:var(--red-light);border-color:var(--red);transform:scale(.97)}
-.store-cell.dept{background:#F0F0F0;color:#555;cursor:default;font-size:17px;font-weight:600;
-  border-color:#CCC}
-.store-cell.wide{flex:1;max-width:340px}
-.store-cell.ent{background:var(--red-light);border-color:var(--red);color:var(--red-dark)}
-.store-cell .sc-sub{font-size:13px;color:var(--muted);font-weight:400;margin-top:3px}
+.store-map-wrap{position:relative;width:100%;display:block}
+.store-map-wrap img.store-img{width:100%;display:block}
+.store-hotspot{position:absolute;transform:translate(-50%,-50%);
+  background:rgba(200,16,46,.15);border:2.5px solid var(--red);
+  border-radius:50%;width:52px;height:52px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .15s;
+  -webkit-tap-highlight-color:rgba(200,16,46,.3)}
+.store-hotspot:active{background:rgba(200,16,46,.45)}
+.store-hotspot span{font-size:13px;font-weight:800;color:var(--red-dark);
+  text-align:center;line-height:1.1}
 
 /* ── MAP ── */
 .gmap{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -90,9 +88,14 @@ body{
   flex:1;min-height:60px}
 .slot .shelf-fill{width:100%;flex:1;min-height:60px;
   background-repeat:repeat-x;background-size:auto 95%;background-position:center}
-.slot .sname{font-size:13px;color:var(--muted);text-align:center;padding:3px 4px 2px;
-  line-height:1.2;max-height:30px;overflow:hidden;display:-webkit-box;
-  -webkit-line-clamp:2;-webkit-box-orient:vertical;flex-shrink:0;direction:rtl}
+.slot .slot-footer{display:flex;align-items:center;gap:6px;padding:3px 4px 2px;flex-shrink:0}
+.slot .sname{font-size:13px;color:var(--muted);line-height:1.2;
+  flex:1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;
+  -webkit-box-orient:vertical;direction:rtl;text-align:right}
+.slot .bc-mini{width:32px;height:22px;background:#2D8A4E;border-radius:4px;
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;z-index:3}
+.slot .bc-mini svg{width:20px;height:14px}
 
 /* Stand grid (2 cols × 3 rows) */
 .stand-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px}
@@ -125,8 +128,12 @@ body{
 .esec{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);
   margin-bottom:8px;overflow:hidden}
 .esec-hdr{background:var(--red-light);padding:10px 14px;font-weight:700;
-  font-size:21px;color:var(--red-dark);display:flex;justify-content:space-between;
-  align-items:center;cursor:pointer;user-select:none}
+  font-size:21px;color:var(--red-dark);display:flex;align-items:center;gap:8px;
+  cursor:pointer;user-select:none}
+.esec-hdr .ename-main{flex:1}
+.esec-hdr .fill-badge{background:var(--red);color:#fff;border-radius:20px;
+  padding:3px 10px;font-size:16px;font-weight:700;white-space:nowrap}
+.esec-hdr .eid-arrow{font-size:16px;color:#999;flex-shrink:0}
 .esec-body{padding:6px 12px}
 .erow{display:flex;align-items:center;gap:8px;padding:7px 0;
   border-bottom:1px solid #F5F0F0}
@@ -168,6 +175,10 @@ body{
   text-align:center;cursor:pointer;margin-bottom:10px;background:#FAFAFA}
 .upload-area img{width:100%;max-height:140px;object-fit:contain;border-radius:6px;margin-bottom:6px}
 .upload-hint{font-size:19px;color:var(--muted)}
+.fetch-status{font-size:16px;padding:6px 10px;border-radius:8px;margin-bottom:8px;text-align:center}
+.fetch-status.loading{background:#FFF3CD;color:#856404}
+.fetch-status.found{background:#D4EDDA;color:#155724}
+.fetch-status.notfound{background:#F8D7DA;color:#721C24}
 .btn1{width:100%;background:var(--red);color:#fff;border:none;border-radius:12px;
   padding:13px;font-size:24px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:7px}
 .btn2{width:100%;background:#fff;color:var(--muted);border:1.5px solid var(--border);
@@ -194,16 +205,17 @@ body{
 /* ── COPYRIGHT POPUP ── */
 .cp-popup{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;
   display:flex;align-items:center;justify-content:center}
-.cp-box{background:#fff;border-radius:18px;padding:26px 22px;max-width:300px;
-  width:90%;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.3)}
-.cp-logo{height:48px;margin:0 auto 14px;display:block}
-.cp-title{font-size:22px;font-weight:800;color:var(--red-dark);margin-bottom:8px}
-.cp-text{font-size:17px;color:var(--muted);line-height:1.6;margin-bottom:18px}
-.cp-close{background:var(--red);color:#fff;border:none;border-radius:10px;
-  padding:10px 28px;font-size:17px;font-family:inherit;cursor:pointer;font-weight:700}
+.cp-box{background:#fff;border-radius:18px;padding:26px 22px;max-width:340px;
+  width:92%;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.3);direction:rtl}
+.cp-title{font-size:26px;font-weight:800;color:var(--red-dark);margin-bottom:14px}
+.cp-text{font-size:17px;color:var(--text);line-height:1.65;margin-bottom:20px;text-align:center}
+.cp-text p{margin-bottom:10px}
+.cp-text p:last-child{margin-bottom:0}
+.cp-close{background:var(--red);color:#fff;border:none;border-radius:12px;
+  padding:12px 0;width:100%;font-size:19px;font-family:inherit;cursor:pointer;font-weight:700}
 
 /* ── FOOTER ── */
-.footer{text-align:center;font-size:16px;color:#AAA;padding:5px;
+.footer{text-align:center;font-size:16px;color:#AAA;padding:6px;
   flex-shrink:0;background:#fff;border-top:1px solid var(--border);
   cursor:pointer;user-select:none}
 .footer:active{color:var(--red)}
@@ -216,7 +228,7 @@ body{
   <div class="hdr-row">
     <div class="logo-box">
       <img src="https://evgenchuk1.github.io/order-schedule/logo.jpg" alt="שופרסל"
-        onerror="this.outerHTML='<div class=\'logo-box\'><span>שופרסל</span></div>'">
+        onerror="this.outerHTML='<span>שופרסל</span>'">
     </div>
     <div class="hdr-title">מבצעים חודשיים</div>
     <button class="month-btn" id="month-btn" onclick="editMonth()">טוען...</button>
@@ -244,7 +256,10 @@ body{
 
   <!-- STORE MAP -->
   <div class="tab-view active" id="view-store">
-    <div class="store-map-wrap" id="store-layout"></div>
+    <div class="store-map-wrap" id="store-layout">
+      <img class="store-img" src="images/store-map.png" alt="מפת החנות" id="store-img">
+      <!-- hotspots injected by JS after image loads -->
+    </div>
   </div>
 
   <!-- MAP -->
@@ -280,13 +295,12 @@ body{
 <!-- COPYRIGHT POPUP -->
 <div class="cp-popup" id="cp-popup" style="display:none" onclick="this.style.display='none'">
   <div class="cp-box" onclick="event.stopPropagation()">
-    <img class="cp-logo" src="https://evgenchuk1.github.io/order-schedule/logo.jpg" alt="שופרסל"
-      onerror="this.style.display='none'">
-    <div class="cp-title">מבצעים חודשיים</div>
+    <div class="cp-title">זכויות יוצרים</div>
     <div class="cp-text">
-      פותח על ידי<br>
-      <strong>יבגני ציפיס</strong><br>
-      © 2026 כל הזכויות שמורות
+      <p>כל הזכויות שמורות ליבגני ציפיס © 2026</p>
+      <p>יישום זה פותח ועוצב על ידי יבגני ציפיס לצורך ניהול לוחות ספירות בסניפי שופרסל 208 — דיל נחל אורה ושופרסל 118.</p>
+      <p>חל איסור על העתקה, הפצה או שימוש מסחרי בכל חלק מהיישום ללא אישור בכתב מהמחבר.</p>
+      <p>כל הסימנים המסחריים הם רכושם של בעליהם בהתאמה.</p>
     </div>
     <button class="cp-close" onclick="document.getElementById('cp-popup').style.display='none'">סגור</button>
   </div>
@@ -347,26 +361,17 @@ const DEFAULTS = {
   ]
 };
 
-// Physical store layout map (top = back of store, bottom = entrance)
-const STORE_LAYOUT = [
-  {type:'section', label:'יציאת קופות'},
-  {type:'row', cells:[{id:'CC2', label:'CC2', cls:'wide ent'}]},
-  {type:'row', cells:[{id:'E7',label:'E7'},{id:'E6',label:'E6'}]},
-  {type:'row', cells:[{id:'CC1',label:'CC1',cls:'wide'}]},
-  {type:'row', cells:[{id:'E4',label:'E4'},{id:'E3',label:'E3'}]},
-  {type:'row', cells:[{id:'E2',label:'E2'},{id:'E1',label:'E1'}]},
-  {type:'section', label:'מחלקות'},
-  {type:'row', cells:[
-    {id:null,label:'קצביה',cls:'dept'},
-    {id:null,label:'מעדניה',cls:'dept'}
-  ]},
-  {type:'row', cells:[
-    {id:null,label:'מאפייה',cls:'dept'},
-    {id:null,label:'ירקות ופירות',cls:'dept'}
-  ]},
-  {type:'row', cells:[{id:null,label:'שירות לקוחות',cls:'dept wide'}]},
-  {type:'section', label:'כניסה לחנות'},
-  {type:'row', cells:[{id:'ENT1',label:'ENT — עמדת כניסה',cls:'wide ent'}]}
+// Hotspot positions (% from top-left of image): [id, label, x%, y%]
+const HOTSPOTS = [
+  ['ENT1', 'Ent',  17, 27],
+  ['E1',   'E1',   46, 24],
+  ['E2',   'E2',   46, 37],
+  ['CC2',  'Cc2',  19, 49],
+  ['E3',   'E3',   46, 50],
+  ['E4',   'E4',   46, 61],
+  ['CC1',  'Cc1',  46, 72],
+  ['E6',   'E6',   46, 81],
+  ['E7',   'E7',   46, 88]
 ];
 
 let D;
@@ -381,7 +386,6 @@ function load(){
 
 function migrate(){
   let changed=false;
-  // CC1: update from stand to gondola
   const cc1=D.gondolas.find(g=>g.id==='CC1');
   if(cc1 && cc1.type==='stand'){
     cc1.type='gondola'; cc1.name='ראש גונדולה 5'; cc1.shelves=4;
@@ -390,7 +394,6 @@ function migrate(){
     delete cc1.cols; delete cc1.rows; delete cc1.ltrShelves;
     changed=true;
   }
-  // ENT1 and CC2: add ltrShelves flag
   ['ENT1','CC2'].forEach(id=>{
     const g=D.gondolas.find(x=>x.id===id);
     if(g && !g.ltrShelves){ g.ltrShelves=true; changed=true; }
@@ -415,39 +418,30 @@ function switchTab(t){
   document.querySelectorAll('.tab-view').forEach(v=>v.classList.remove('active'));
   document.getElementById('tab-'+t).classList.add('active');
   document.getElementById('view-'+t).classList.add('active');
-  if(t==='store') renderStoreMap();
   if(t==='map') renderMap();
   if(t==='list') renderList();
   if(t==='edit') renderEdit();
 }
 
-// ─── STORE MAP ───────────────────────────────────────────────────────────
-function renderStoreMap(){
-  const el=document.getElementById('store-layout');
-  let html='';
-  STORE_LAYOUT.forEach(item=>{
-    if(item.type==='section'){
-      html+=`<div class="store-section-title">${item.label}</div>`;
-    } else {
-      html+='<div class="store-row">';
-      item.cells.forEach(cell=>{
-        const cls=cell.cls||'';
-        if(cell.id){
-          const g=D.gondolas.find(x=>x.id===cell.id);
-          const filled=g?g.slots.filter(s=>s.barcode).length:0;
-          const total=g?g.slots.length:0;
-          html+=`<div class="store-cell ${cls}" onclick="showGondolaDetail('${cell.id}')">
-            <div>${cell.label}</div>
-            <div class="sc-sub">${filled}/${total} מוצרים</div>
-          </div>`;
-        } else {
-          html+=`<div class="store-cell ${cls}">${cell.label}</div>`;
-        }
-      });
-      html+='</div>';
-    }
-  });
-  el.innerHTML=html;
+// ─── STORE MAP (IMAGE + HOTSPOTS) ────────────────────────────────────────
+function initStoreMap(){
+  const img = document.getElementById('store-img');
+  const wrap = document.getElementById('store-layout');
+  function placeHotspots(){
+    // Remove old hotspots
+    wrap.querySelectorAll('.store-hotspot').forEach(h=>h.remove());
+    HOTSPOTS.forEach(([id,label,xPct,yPct])=>{
+      const btn = document.createElement('button');
+      btn.className = 'store-hotspot';
+      btn.style.left = xPct+'%';
+      btn.style.top  = yPct+'%';
+      btn.innerHTML = `<span>${label}</span>`;
+      btn.onclick = ()=>showGondolaDetail(id);
+      wrap.appendChild(btn);
+    });
+  }
+  if(img.complete) placeHotspots();
+  else img.onload = placeHotspots;
 }
 
 function showGondolaDetail(gid){
@@ -471,6 +465,29 @@ function renderMap(){
     D.gondolas.map(g=>gcardHTML(g)).join('');
 }
 
+function slotHTML(g, sl){
+  const f=!!sl.barcode;
+  const pos=sl.pos;
+  if(!f){
+    return `<div class="slot" onclick="openEdit('${g.id}',${pos})">
+      <span class="snum">${pos}</span>
+      <div class="sph">+</div>
+    </div>`;
+  }
+  const imgUrl=imgOf(sl.barcode);
+  const lbl=esc(sl.label||sl.barcode);
+  return `<div class="slot filled" onclick="openEdit('${g.id}',${pos})">
+    <span class="snum">${pos}</span>
+    <div class="shelf-fill" style="background-image:url('${imgUrl}')"></div>
+    <div class="slot-footer">
+      <button class="bc-mini" onclick="openBc(event,'${sl.barcode}','${lbl}')" title="הצג ברקוד">
+        ${bcMiniIcon()}
+      </button>
+      <span class="sname">${lbl}</span>
+    </div>
+  </div>`;
+}
+
 function gcardBodyInner(g){
   if(g.type==='stand'){
     const rows=g.rows, cols=g.cols;
@@ -479,33 +496,16 @@ function gcardBodyInner(g){
     for(let r=0;r<rows;r++){
       for(let c=0;c<cols;c++){
         const pos=c*rows+r+1;
-        const sl=g.slots.find(s=>s.pos===pos)||{};
-        const f=!!sl.barcode;
-        html+=`<div class="slot${f?' filled':''}" onclick="openEdit('${g.id}',${pos})">
-          <span class="snum">${pos}</span>
-          ${f
-            ? `<div class="shelf-fill" style="background-image:url('${imgOf(sl.barcode)}')"></div>
-               <span class="sname">${sl.label||sl.barcode}</span>`
-            : '<div class="sph">+</div>'}
-        </div>`;
+        const sl=g.slots.find(s=>s.pos===pos)||{pos};
+        html+=slotHTML(g,sl);
       }
     }
     html+='</div>';
     return `<div class="gcard-body">${html}</div>`;
   } else {
-    const body='<div class="shelf-stack">'+
-      g.slots.map(sl=>{
-        const f=!!sl.barcode;
-        return `<div class="slot${f?' filled':''}" onclick="openEdit('${g.id}',${sl.pos})">
-          <span class="snum">${sl.pos}</span>
-          ${f
-            ? `<div class="shelf-fill" style="background-image:url('${imgOf(sl.barcode)}')"></div>
-               <span class="sname">${sl.label||sl.barcode}</span>`
-            : '<div class="sph">+</div>'}
-        </div>`;
-      }).join('')+
-    '</div>';
-    return `<div class="gcard-body">${body}</div>`;
+    return `<div class="gcard-body"><div class="shelf-stack">${
+      g.slots.map(sl=>slotHTML(g,sl)).join('')
+    }</div></div>`;
   }
 }
 
@@ -519,6 +519,12 @@ function gcardHTML(g){
     </div>
     ${gcardBodyInner(g)}
   </div>`;
+}
+
+// ─── BARCODE OPEN FROM SLOT ─────────────────────────────────────────────
+function openBc(e, bc, name){
+  e.stopPropagation();
+  showBarcode(bc, name);
 }
 
 // ─── LIST ─────────────────────────────────────────────────────────────────
@@ -536,15 +542,15 @@ function renderList(filter){
   box.innerHTML=shown.map(i=>{
     const img=imgOf(i.barcode);
     return `<div class="prow">
-      <img class="pthumb" src="${img}" alt="${i.label||''}"
+      <img class="pthumb" src="${img}" alt="${esc(i.label||'')}"
         onerror="this.style.display='none';this.nextSibling.style.display='flex'">
       <div class="pthumb-ph" style="display:none">🛒</div>
       <div class="pinfo">
-        <div class="pname">${i.label||i.barcode}</div>
-        <div class="ppos">${i.gname} · מדף ${i.pos}</div>
+        <div class="pname">${esc(i.label||i.barcode)}</div>
+        <div class="ppos">${esc(i.gname)} · מדף ${i.pos}</div>
         <div class="pbc">${i.barcode}</div>
       </div>
-      <button class="bc-btn" onclick="showBarcode('${i.barcode}','${(i.label||'').replace(/'/g,"\\'")}')"
+      <button class="bc-btn" onclick="showBarcode('${i.barcode}','${esc(i.label||'').replace(/'/g,"\\'")}')"
         title="הצג ברקוד">
         ${bcIcon()}
       </button>
@@ -554,8 +560,20 @@ function renderList(filter){
 
 function filterList(v){ renderList(v); }
 
+function bcMiniIcon(){
+  return `<svg viewBox="0 0 20 14" fill="none">
+    <rect x="1" y="0" width="2" height="14" fill="white"/>
+    <rect x="4" y="0" width="1" height="14" fill="white"/>
+    <rect x="6" y="0" width="2" height="14" fill="white"/>
+    <rect x="9" y="0" width="1" height="14" fill="white"/>
+    <rect x="11" y="0" width="3" height="14" fill="white"/>
+    <rect x="15" y="0" width="1" height="14" fill="white"/>
+    <rect x="17" y="0" width="2" height="14" fill="white"/>
+  </svg>`;
+}
+
 function bcIcon(){
-  return `<svg viewBox="0 0 24 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  return `<svg viewBox="0 0 24 20" fill="none">
     <rect x="1" y="1" width="2" height="18" fill="#C8102E"/>
     <rect x="4" y="1" width="1" height="18" fill="#C8102E"/>
     <rect x="6" y="1" width="2" height="18" fill="#C8102E"/>
@@ -572,6 +590,8 @@ function bcIcon(){
 function renderEdit(){
   document.getElementById('edit-body').innerHTML=
     D.gondolas.map(g=>{
+      const filled=g.slots.filter(s=>s.barcode).length;
+      const total=g.slots.length;
       const rows=g.slots.map(s=>{
         const f=!!s.barcode;
         const thumb=f?`<img class="ethumb" src="${imgOf(s.barcode)}"
@@ -581,7 +601,7 @@ function renderEdit(){
           ${thumb}
           <div class="einfo">
             ${f
-              ?`<div class="ename">${s.label||s.barcode}</div><div class="ebc">${s.barcode}</div>`
+              ?`<div class="ename">${esc(s.label||s.barcode)}</div><div class="ebc">${s.barcode}</div>`
               :`<div class="eempty">ריק</div>`}
           </div>
           <button class="ebtn" onclick="openEdit('${g.id}',${s.pos})">${f?'עריכה':'+ הוסף'}</button>
@@ -590,7 +610,9 @@ function renderEdit(){
       }).join('');
       return `<div class="esec">
         <div class="esec-hdr" onclick="toggleSec(this)">
-          <span>${g.name}</span><span style="font-size:16px;color:#999">${g.id} ▾</span>
+          <span class="ename-main">${g.name}</span>
+          <span class="fill-badge">${filled}/${total}</span>
+          <span class="eid-arrow">${g.id} ▾</span>
         </div>
         <div class="esec-body">${rows}</div>
       </div>`;
@@ -605,7 +627,7 @@ function toggleSec(el){
 function clearSlot(gid,pos){
   const sl=slot(gid,pos);
   sl.barcode=null; sl.label=null;
-  save(); renderEdit(); renderMap(); renderStoreMap();
+  save(); renderEdit(); renderMap();
 }
 
 function slot(gid,pos){
@@ -614,6 +636,7 @@ function slot(gid,pos){
 
 // ─── EDIT MODAL ─────────────────────────────────────────────────────────
 let _gid,_pos,_pendImg=null;
+let _fetchTimer=null;
 
 function openEdit(gid,pos){
   _gid=gid; _pos=pos; _pendImg=null;
@@ -621,6 +644,7 @@ function openEdit(gid,pos){
   const s=slot(gid,pos);
   const bc=s.barcode||'', lb=s.label||'';
   const ci=bc?getCImg(bc):null;
+
   setModal(`
     <div class="mtitle">עריכת מיקום</div>
     <div style="background:var(--red-light);border-radius:8px;padding:8px 12px;
@@ -629,7 +653,9 @@ function openEdit(gid,pos){
     </div>
     <label class="flabel">ברקוד מוצר</label>
     <input class="finput" type="tel" id="eb" value="${bc}"
-      placeholder="הכנס ברקוד..." inputmode="numeric" pattern="[0-9]*">
+      placeholder="הכנס ברקוד..." inputmode="numeric" pattern="[0-9]*"
+      oninput="scheduleFetch(this.value)">
+    <div id="fetch-status" style="display:none" class="fetch-status"></div>
     <label class="flabel">שם מוצר (עברית)</label>
     <input class="finput" type="text" id="el" value="${lb}"
       placeholder="שם המוצר...">
@@ -644,6 +670,68 @@ function openEdit(gid,pos){
     <button class="btn2" onclick="closeModal()">ביטול</button>
   `);
   showOverlay();
+
+  // Auto-fetch if barcode already set
+  if(bc) scheduleFetch(bc, true);
+}
+
+function scheduleFetch(bc, immediate){
+  clearTimeout(_fetchTimer);
+  if(!bc || bc.length < 6) return;
+  const delay = immediate ? 100 : 900;
+  _fetchTimer = setTimeout(()=>fetchAndFill(bc), delay);
+}
+
+async function fetchAndFill(bc){
+  const statusEl = document.getElementById('fetch-status');
+  const uparea = document.getElementById('uparea');
+  if(!statusEl) return;
+
+  statusEl.style.display='block';
+  statusEl.className='fetch-status loading';
+  statusEl.textContent='מחפש מוצר...';
+
+  const result = await fetchProductData(bc);
+
+  if(!statusEl) return; // modal closed
+  if(result){
+    statusEl.className='fetch-status found';
+    statusEl.textContent='✓ מוצר נמצא אוטומטית';
+
+    // Fill name if empty
+    const elInput = document.getElementById('el');
+    if(elInput && !elInput.value && result.name) elInput.value = result.name;
+
+    // Show image if found and no manual image yet
+    if(result.image && uparea && !getCImg(bc)){
+      _pendImg = result.image;
+      uparea.innerHTML=`<img src="${result.image}" onerror="this.src=''"><div class="upload-hint">תמונה אוטומטית • לחץ להחלפה</div>`;
+    }
+  } else {
+    statusEl.className='fetch-status notfound';
+    statusEl.textContent='לא נמצא ברשת — ניתן לצרף תמונה ידנית';
+  }
+}
+
+async function fetchProductData(bc){
+  // Try Open Food Facts
+  try{
+    const r = await fetch(
+      `https://world.openfoodfacts.org/api/v0/product/${bc}.json`,
+      {signal: AbortSignal.timeout(6000)}
+    );
+    if(r.ok){
+      const d = await r.json();
+      if(d.status===1 && d.product){
+        const p = d.product;
+        return {
+          name: p.product_name_he || p.product_name || '',
+          image: p.image_front_url || p.image_url || null
+        };
+      }
+    }
+  } catch(e){}
+  return null;
 }
 
 function handleUp(e){
@@ -651,8 +739,8 @@ function handleUp(e){
   const r=new FileReader();
   r.onload=ev=>{
     _pendImg=ev.target.result;
-    document.getElementById('uparea').innerHTML=
-      `<img src="${_pendImg}"><div class="upload-hint">לחץ להחלפה</div>`;
+    const up=document.getElementById('uparea');
+    if(up) up.innerHTML=`<img src="${_pendImg}"><div class="upload-hint">לחץ להחלפה</div>`;
   };
   r.readAsDataURL(f);
 }
@@ -663,19 +751,22 @@ function saveSlot(){
   if(!bc){ alert('נא להזין ברקוד'); return; }
   const s=slot(_gid,_pos);
   s.barcode=bc; s.label=lb||bc;
-  if(_pendImg){ setCImg(bc,_pendImg); _pendImg=null; }
-  save(); closeModal(); renderMap(); renderEdit(); renderStoreMap();
+  if(_pendImg && typeof _pendImg==='string'){
+    setCImg(bc, _pendImg);
+    _pendImg=null;
+  }
+  save(); closeModal(); renderMap(); renderEdit();
 }
 
 // ─── BARCODE MODAL ───────────────────────────────────────────────────────
-function showBarcode(bc,name){
+function showBarcode(bc, name){
   const img=imgOf(bc);
   setModal(`
     <div class="bc-modal">
       <div class="mtitle">ברקוד מוצר</div>
-      <img class="bc-prod-img" src="${img}" alt="${name}"
+      <img class="bc-prod-img" src="${img}" alt="${esc(name)}"
         onerror="this.style.display='none'">
-      <div class="bc-name">${name}</div>
+      <div class="bc-name">${esc(name)}</div>
       <div class="bc-wrap">
         <svg id="bc-svg"></svg>
       </div>
@@ -688,7 +779,7 @@ function showBarcode(bc,name){
     try{
       const fmt=bc.length===13?'EAN13':bc.length===8?'EAN8':'CODE128';
       JsBarcode('#bc-svg',bc,{format:fmt,width:2.2,height:90,displayValue:false,margin:10});
-    } catch(e){
+    }catch(e){
       try{ JsBarcode('#bc-svg',bc,{format:'CODE128',width:2,height:80,displayValue:false,margin:8}); }
       catch(e2){ document.getElementById('bc-svg').parentNode.innerHTML='<div style="color:#888;padding:20px">ברקוד לא זמין</div>'; }
     }
@@ -709,13 +800,18 @@ function showCopyright(){
 // ─── OVERLAY ─────────────────────────────────────────────────────────────
 function setModal(html){ document.getElementById('modal-body').innerHTML=html; }
 function showOverlay(){ document.getElementById('overlay').style.display='flex'; }
-function closeModal(){ document.getElementById('overlay').style.display='none'; _pendImg=null; }
+function closeModal(){ document.getElementById('overlay').style.display='none'; _pendImg=null; clearTimeout(_fetchTimer); }
 function tryCloseOverlay(e){ if(e.target.id==='overlay') closeModal(); }
+
+// ─── UTILITY ─────────────────────────────────────────────────────────────
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 // ─── INIT ────────────────────────────────────────────────────────────────
 load();
 document.getElementById('month-btn').textContent=D.month;
-renderStoreMap();
+initStoreMap();
+renderMap();
+renderEdit();
 </script>
 </body>
 </html>
