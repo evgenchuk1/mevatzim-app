@@ -64,6 +64,7 @@ body{
 .store-hotspot:active{background:rgba(200,16,46,.45)}
 .store-hotspot span{font-size:13px;font-weight:800;color:var(--red-dark);
   text-align:center;line-height:1.1}
+.store-text-cover{position:absolute;top:0;right:0;width:57%;height:3.8%;background:#f0ebe4;z-index:5;pointer-events:none}
 
 /* ── MAP ── */
 .gmap{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -258,6 +259,7 @@ body{
   <div class="tab-view active" id="view-store">
     <div class="store-map-wrap" id="store-layout">
       <img class="store-img" src="images/store-map.png" alt="מפת החנות" id="store-img">
+      <div class="store-text-cover"></div>
       <!-- hotspots injected by JS after image loads -->
     </div>
   </div>
@@ -363,15 +365,15 @@ const DEFAULTS = {
 
 // Hotspot positions (% from top-left of image): [id, label, x%, y%]
 const HOTSPOTS = [
-  ['ENT1', 'Ent',  17, 27],
-  ['E1',   'E1',   46, 24],
-  ['E2',   'E2',   46, 37],
-  ['CC2',  'Cc2',  19, 49],
-  ['E3',   'E3',   46, 50],
-  ['E4',   'E4',   46, 61],
-  ['CC1',  'Cc1',  46, 72],
-  ['E6',   'E6',   46, 81],
-  ['E7',   'E7',   46, 88]
+  ['ENT1', 'Ent',  21, 25],
+  ['E1',   'E1',   46, 22],
+  ['E2',   'E2',   45, 36],
+  ['CC2',  'Cc2',  27, 47],
+  ['E3',   'E3',   45, 47],
+  ['E4',   'E4',   45, 60],
+  ['CC1',  'Cc1',  45, 71],
+  ['E6',   'E6',   45, 80],
+  ['E7',   'E7',   45, 88]
 ];
 
 let D;
