@@ -56,14 +56,12 @@ body{
 .store-map-wrap{position:relative;width:100%;display:block}
 .store-map-wrap img.store-img{width:100%;display:block}
 .store-hotspot{position:absolute;transform:translate(-50%,-50%);
-  background:rgba(200,16,46,.06);border:2px solid rgba(200,16,46,.5);
-  border-radius:50%;width:42px;height:42px;
+  background:transparent;border:none;
+  border-radius:50%;width:50px;height:50px;
   display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:all .15s;
-  -webkit-tap-highlight-color:rgba(200,16,46,.3)}
-.store-hotspot:active{background:rgba(200,16,46,.4);border-color:var(--red)}
-.store-hotspot span{font-size:11px;font-weight:700;color:rgba(150,10,28,.85);
-  text-align:center;line-height:1.1}
+  cursor:pointer;-webkit-tap-highlight-color:transparent}
+.store-hotspot:active{background:rgba(200,16,46,.18)}
+.store-hotspot span{display:none}
 .store-text-cover{position:absolute;top:0;right:0;width:57%;height:3.8%;background:#f0ebe4;z-index:5;pointer-events:none}
 #coord-display{display:none;position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.8);color:#fff;padding:5px 14px;border-radius:10px;font-size:14px;font-weight:700;z-index:20;pointer-events:none;white-space:nowrap}
 
@@ -369,13 +367,13 @@ const DEFAULTS = {
 const HOTSPOTS = [
   ['ENT1', 'Ent',  24, 19],
   ['E1',   'E1',   46, 21],
-  ['E2',   'E2',   49, 29],
-  ['E3',   'E3',   48, 41],
-  ['E4',   'E4',   49, 49],
+  ['E2',   'E2',   49, 31],
+  ['E3',   'E3',   48, 43],
+  ['E4',   'E4',   49, 51],
   ['CC2',  'Cc2',  23, 49],
   ['CC1',  'Cc1',  44, 61],
-  ['E6',   'E6',   43, 71],
-  ['E7',   'E7',   44, 80]
+  ['E6',   'E6',   47, 68],
+  ['E7',   'E7',   44, 76]
 ];
 
 let D;
