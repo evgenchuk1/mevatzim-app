@@ -56,15 +56,16 @@ body{
 .store-map-wrap{position:relative;width:100%;display:block}
 .store-map-wrap img.store-img{width:100%;display:block}
 .store-hotspot{position:absolute;transform:translate(-50%,-50%);
-  background:rgba(200,16,46,.15);border:2.5px solid var(--red);
-  border-radius:50%;width:52px;height:52px;
+  background:rgba(200,16,46,.06);border:2px solid rgba(200,16,46,.5);
+  border-radius:50%;width:42px;height:42px;
   display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:background .15s;
+  cursor:pointer;transition:all .15s;
   -webkit-tap-highlight-color:rgba(200,16,46,.3)}
-.store-hotspot:active{background:rgba(200,16,46,.45)}
-.store-hotspot span{font-size:13px;font-weight:800;color:var(--red-dark);
+.store-hotspot:active{background:rgba(200,16,46,.4);border-color:var(--red)}
+.store-hotspot span{font-size:11px;font-weight:700;color:rgba(150,10,28,.85);
   text-align:center;line-height:1.1}
 .store-text-cover{position:absolute;top:0;right:0;width:57%;height:3.8%;background:#f0ebe4;z-index:5;pointer-events:none}
+#coord-display{display:none;position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.8);color:#fff;padding:5px 14px;border-radius:10px;font-size:14px;font-weight:700;z-index:20;pointer-events:none;white-space:nowrap}
 
 /* ── MAP ── */
 .gmap{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -260,6 +261,7 @@ body{
     <div class="store-map-wrap" id="store-layout">
       <img class="store-img" src="images/store-map.png" alt="מפת החנות" id="store-img">
       <div class="store-text-cover"></div>
+      <div id="coord-display"></div>
       <!-- hotspots injected by JS after image loads -->
     </div>
   </div>
@@ -429,8 +431,18 @@ function switchTab(t){
 function initStoreMap(){
   const img = document.getElementById('store-img');
   const wrap = document.getElementById('store-layout');
+  const cd = document.getElementById('coord-display');
+  wrap.addEventListener('click', function(e){
+    if(e.target.closest('.store-hotspot')) return;
+    const r = wrap.getBoundingClientRect();
+    const x = Math.round((e.clientX - r.left) / r.width * 100);
+    const y = Math.round((e.clientY - r.top) / r.height * 100);
+    cd.textContent = 'X:'+x+'%  Y:'+y+'%';
+    cd.style.display = 'block';
+    clearTimeout(cd._t);
+    cd._t = setTimeout(()=>{ cd.style.display='none'; }, 3000);
+  });
   function placeHotspots(){
-    // Remove old hotspots
     wrap.querySelectorAll('.store-hotspot').forEach(h=>h.remove());
     HOTSPOTS.forEach(([id,label,xPct,yPct])=>{
       const btn = document.createElement('button');
