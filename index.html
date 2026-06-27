@@ -232,6 +232,20 @@ body{
 .picker-bc{font-size:16px;color:var(--muted)}
 .picker-empty{text-align:center;padding:24px 16px;color:var(--muted);font-size:20px;line-height:1.6}
 
+/* ── PHOTO POPUP ── */
+.photo-popup{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1001;
+  display:flex;align-items:flex-end;justify-content:center;
+  animation:fi .2s}
+.photo-box{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:500px;
+  padding:14px 16px 30px;animation:su .25s}
+.photo-box-img{width:100%;max-height:52vh;object-fit:contain;display:block;
+  border-radius:10px;background:#F5F5F5}
+.photo-box-name{font-size:20px;font-weight:700;color:var(--text);margin-top:10px;
+  text-align:center;direction:rtl}
+.photo-box-close{margin-top:12px;width:100%;background:#F0F0F0;border:none;
+  border-radius:12px;padding:12px;font-size:21px;font-family:inherit;
+  cursor:pointer;color:#555;font-weight:600}
+
 /* ── COPYRIGHT POPUP ── */
 .cp-popup{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;
   display:flex;align-items:center;justify-content:center}
@@ -341,6 +355,15 @@ body{
       <p>כל הסימנים המסחריים הם רכושם של בעליהם בהתאמה.</p>
     </div>
     <button class="cp-close" onclick="document.getElementById('cp-popup').style.display='none'">סגור</button>
+  </div>
+</div>
+
+<!-- PHOTO POPUP -->
+<div id="photo-popup" style="display:none" class="photo-popup" onclick="closePhoto()">
+  <div class="photo-box" onclick="event.stopPropagation()">
+    <img id="photo-popup-img" class="photo-box-img" src="" alt="">
+    <div id="photo-popup-name" class="photo-box-name"></div>
+    <button class="photo-box-close" onclick="closePhoto()">סגור</button>
   </div>
 </div>
 
@@ -602,7 +625,8 @@ function renderList(filter){
       posHtml = `<div class="ppos-unassigned">לא שובץ</div>`;
     }
     return `<div class="prow${assigned?' assigned':''}">
-      <img class="pthumb" src="${img}" alt="${esc(p.name||'')}"
+      <img class="pthumb" src="${img}" alt="${esc(p.name||'')}" style="cursor:pointer"
+        onclick="showPhoto('${img}','${esc(p.name||p.barcode).replace(/'/g,"\\'")}')"
         onerror="this.style.display='none';this.nextSibling.style.display='flex'">
       <div class="pthumb-ph" style="display:none">🛒</div>
       <div class="pinfo">
@@ -756,7 +780,8 @@ function renderEdit(){
       const total=g.slots.length;
       const rows=g.slots.map(s=>{
         const f=!!s.barcode;
-        const thumb=f?`<img class="ethumb" src="${imgOf(s.barcode)}"
+        const thumb=f?`<img class="ethumb" src="${imgOf(s.barcode)}" style="cursor:pointer"
+          onclick="showPhoto('${imgOf(s.barcode)}','${esc(s.label||s.barcode).replace(/'/g,"\\'")}')"
           onerror="this.style.display='none'">`:'';
         const addBtn=f
           ?`<button class="ebtn" onclick="openEdit('${g.id}',${s.pos})">עריכה</button>`
@@ -961,6 +986,16 @@ function showBarcode(bc, name){
 function editMonth(){
   const v=prompt('הכנס חודש ושנה:',D.month);
   if(v&&v.trim()){ D.month=v.trim(); save(); document.getElementById('month-btn').textContent=D.month; }
+}
+
+// ─── PHOTO POPUP ─────────────────────────────────────────────────────────
+function showPhoto(src, name){
+  document.getElementById('photo-popup-img').src=src;
+  document.getElementById('photo-popup-name').textContent=name||'';
+  document.getElementById('photo-popup').style.display='flex';
+}
+function closePhoto(){
+  document.getElementById('photo-popup').style.display='none';
 }
 
 // ─── COPYRIGHT ───────────────────────────────────────────────────────────
