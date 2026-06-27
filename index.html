@@ -105,25 +105,38 @@ body{
 .stand-grid .slot{min-height:100px}
 
 /* ── LIST ── */
+.list-toolbar{display:flex;gap:8px;margin-bottom:8px;align-items:stretch}
+.list-toolbar .search-box{margin-bottom:0;flex:1}
 .search-box{background:#fff;border:1.5px solid var(--border);border-radius:10px;
   padding:8px 12px;font-size:24px;font-family:inherit;width:100%;
-  margin-bottom:8px;direction:rtl}
+  direction:rtl}
+.import-btn{background:var(--red);color:#fff;border:none;border-radius:10px;
+  padding:8px 14px;font-size:19px;font-family:inherit;cursor:pointer;
+  white-space:nowrap;font-weight:600;flex-shrink:0}
+.import-status{padding:8px 12px;border-radius:10px;font-size:18px;
+  text-align:center;margin-bottom:8px}
+.import-status.loading{background:#FFF3CD;color:#856404}
+.import-status.ok{background:#D4EDDA;color:#155724}
+.import-status.err{background:#F8D7DA;color:#721C24}
 .prod-table{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
 .prow{display:flex;align-items:center;padding:10px 12px;gap:10px;
-  border-bottom:1px solid #F0ECEC}
+  border-bottom:1px solid #F0ECEC;background:#fff;transition:background .2s}
 .prow:last-child{border-bottom:none}
+.prow.assigned{background:#F5EBEC}
 .pthumb{width:64px;height:64px;object-fit:contain;flex-shrink:0;
   border-radius:6px;background:#F5F5F5}
 .pthumb-ph{width:64px;height:64px;background:var(--empty);border-radius:6px;
   display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0}
 .pinfo{flex:1;min-width:0}
 .pname{font-size:21px;font-weight:700;line-height:1.3;margin-bottom:2px}
-.ppos{font-size:18px;color:var(--red);font-weight:700}
+.ppos-assigned{font-size:17px;color:var(--red);font-weight:700;margin-bottom:1px}
+.ppos-unassigned{font-size:17px;color:#BBB;margin-bottom:1px}
 .pbc{font-size:16px;color:var(--muted)}
 .bc-btn{width:50px;height:50px;background:var(--red-light);border:none;border-radius:8px;
   cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .bc-btn svg{width:32px;height:32px}
 .no-items{text-align:center;padding:40px 20px;color:var(--muted);font-size:24px}
+.fetch-prog{text-align:center;padding:8px;font-size:16px;color:var(--muted);background:#FAFAFA;border-radius:8px;margin-bottom:8px}
 
 /* ── EDIT ── */
 .esec{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);
@@ -203,6 +216,22 @@ body{
 .gdtl-name{font-size:24px;font-weight:700}
 .gdtl-id{font-size:18px;opacity:.85}
 
+/* ── PICKER MODAL ── */
+.picker-loc{background:var(--red-light);border-radius:8px;padding:8px 12px;
+  margin-bottom:12px;font-size:19px;color:var(--red-dark);font-weight:600}
+.picker-list{display:flex;flex-direction:column;gap:6px}
+.picker-item{display:flex;align-items:center;gap:10px;padding:8px;
+  background:#FAFAFA;border-radius:8px;border:1.5px solid #EEE;cursor:pointer}
+.picker-item:active{background:var(--red-light);border-color:var(--red)}
+.picker-thumb{width:50px;height:50px;object-fit:contain;background:#F5F5F5;
+  border-radius:6px;flex-shrink:0}
+.picker-thumb-ph{width:50px;height:50px;background:var(--empty);border-radius:6px;
+  display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.picker-info{flex:1;min-width:0}
+.picker-name{font-size:19px;font-weight:700;line-height:1.2}
+.picker-bc{font-size:16px;color:var(--muted)}
+.picker-empty{text-align:center;padding:24px 16px;color:var(--muted);font-size:20px;line-height:1.6}
+
 /* ── COPYRIGHT POPUP ── */
 .cp-popup{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;
   display:flex;align-items:center;justify-content:center}
@@ -261,7 +290,6 @@ body{
       <img class="store-img" src="images/store-map.png" alt="מפת החנות" id="store-img">
       <div class="store-text-cover"></div>
       <div id="coord-display"></div>
-      <!-- hotspots injected by JS after image loads -->
     </div>
   </div>
 
@@ -272,8 +300,15 @@ body{
 
   <!-- LIST -->
   <div class="tab-view" id="view-list">
-    <input class="search-box" type="search" placeholder="חיפוש לפי שם או ברקוד..."
-      oninput="filterList(this.value)" id="search-inp">
+    <div class="list-toolbar">
+      <input class="search-box" type="search" placeholder="חיפוש לפי שם או ברקוד..."
+        oninput="filterList(this.value)" id="search-inp">
+      <button class="import-btn" onclick="triggerImport()">📥 ייבוא</button>
+    </div>
+    <input type="file" id="import-file" accept=".xlsx,.xls" style="display:none"
+      onchange="handleImportFile(event)">
+    <div id="import-status" style="display:none" class="import-status"></div>
+    <div id="fetch-prog" style="display:none" class="fetch-prog"></div>
     <div class="prod-table" id="prod-list"></div>
   </div>
 
@@ -302,21 +337,25 @@ body{
     <div class="cp-text">
       <p>כל הזכויות שמורות ליבגני ציפיס © 2026</p>
       <p>יישום זה פותח ועוצב על ידי יבגני ציפיס לצורך ניהול לוחות ספירות בסניפי שופרסל 208 — דיל נחל אורה ושופרסל 118.</p>
-      <p>חל איסור על העתקה, הפצה או שימוש מסחרי בכל חלק מהיישום ללא אישור בכתב מהמחבר.</p>
+      <p>חל איסור על העתקה, הפצה או שימוח מסחרי בכל חלק מהיישום ללא אישור בכתב מהמחבר.</p>
       <p>כל הסימנים המסחריים הם רכושם של בעליהם בהתאמה.</p>
     </div>
     <button class="cp-close" onclick="document.getElementById('cp-popup').style.display='none'">סגור</button>
   </div>
 </div>
 
+<!-- SheetJS for Excel parsing -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <!-- JsBarcode -->
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+
 <script>
 // ─── DATA ────────────────────────────────────────────────────────────────
 const SK = 'mevatzim_v2';
 
 const DEFAULTS = {
   month: 'יוני 2026',
+  products: [],
   gondolas: [
     { id:'ENT1', name:'עמדת כניסה', type:'stand', cols:2, rows:3, ltrShelves:true, slots:[
       {pos:1,barcode:'8001841625188',label:'פיירי פלטינום לימון החדש'},
@@ -364,7 +403,6 @@ const DEFAULTS = {
   ]
 };
 
-// Hotspot positions (% from top-left of image): [id, label, x%, y%]
 const HOTSPOTS = [
   ['ENT1', 'Ent',  24, 19],
   ['E1',   'E1',   46, 21],
@@ -401,6 +439,7 @@ function migrate(){
     const g=D.gondolas.find(x=>x.id===id);
     if(g && !g.ltrShelves){ g.ltrShelves=true; changed=true; }
   });
+  if(!D.products){ D.products=[]; changed=true; }
   if(changed) save();
 }
 
@@ -426,7 +465,7 @@ function switchTab(t){
   if(t==='edit') renderEdit();
 }
 
-// ─── STORE MAP (IMAGE + HOTSPOTS) ────────────────────────────────────────
+// ─── STORE MAP ────────────────────────────────────────────────────────────
 function initStoreMap(){
   const img = document.getElementById('store-img');
   const wrap = document.getElementById('store-layout');
@@ -482,7 +521,7 @@ function slotHTML(g, sl){
   const f=!!sl.barcode;
   const pos=sl.pos;
   if(!f){
-    return `<div class="slot" onclick="openEdit('${g.id}',${pos})">
+    return `<div class="slot" onclick="openSlotAction('${g.id}',${pos})">
       <span class="snum">${pos}</span>
       <div class="sph">+</div>
     </div>`;
@@ -542,28 +581,36 @@ function openBc(e, bc, name){
 
 // ─── LIST ─────────────────────────────────────────────────────────────────
 function renderList(filter){
-  const items=[];
-  D.gondolas.forEach(g=>g.slots.forEach(s=>{
-    if(s.barcode) items.push({...s,gid:g.id,gname:g.name});
-  }));
+  const box = document.getElementById('prod-list');
+  if(!D.products || D.products.length === 0){
+    box.innerHTML='<div class="no-items">יש לייבא רשימת מוצרים<br><span style="font-size:20px;color:#BBB">לחץ 📥 ייבוא</span></div>';
+    return;
+  }
   const q=(filter||'').trim().toLowerCase();
-  const shown=q
-    ? items.filter(i=>(i.label||'').toLowerCase().includes(q)||i.barcode.includes(q))
-    : items;
-  const box=document.getElementById('prod-list');
+  const shown = q
+    ? D.products.filter(p=>(p.name||'').toLowerCase().includes(q)||(p.barcode||'').includes(q))
+    : D.products;
   if(!shown.length){ box.innerHTML='<div class="no-items">לא נמצאו מוצרים</div>'; return; }
-  box.innerHTML=shown.map(i=>{
-    const img=imgOf(i.barcode);
-    return `<div class="prow">
-      <img class="pthumb" src="${img}" alt="${esc(i.label||'')}"
+  box.innerHTML=shown.map(p=>{
+    const assigned = !!(p.assignedGid);
+    const img = getCImg(p.barcode) || ('images/'+p.barcode+'.gif');
+    let posHtml = '';
+    if(assigned){
+      const g = D.gondolas.find(x=>x.id===p.assignedGid);
+      posHtml = `<div class="ppos-assigned">📍 ${g?g.name:p.assignedGid} · מדף ${p.assignedPos}</div>`;
+    } else {
+      posHtml = `<div class="ppos-unassigned">לא שובץ</div>`;
+    }
+    return `<div class="prow${assigned?' assigned':''}">
+      <img class="pthumb" src="${img}" alt="${esc(p.name||'')}"
         onerror="this.style.display='none';this.nextSibling.style.display='flex'">
       <div class="pthumb-ph" style="display:none">🛒</div>
       <div class="pinfo">
-        <div class="pname">${esc(i.label||i.barcode)}</div>
-        <div class="ppos">${esc(i.gname)} · מדף ${i.pos}</div>
-        <div class="pbc">${i.barcode}</div>
+        <div class="pname">${esc(p.name||p.barcode)}</div>
+        ${posHtml}
+        <div class="pbc">${p.barcode}</div>
       </div>
-      <button class="bc-btn" onclick="showBarcode('${i.barcode}','${esc(i.label||'').replace(/'/g,"\\'")}')"
+      <button class="bc-btn" onclick="showBarcode('${p.barcode}','${esc(p.name||'').replace(/'/g,"\\'")}')"
         title="הצג ברקוד">
         ${bcIcon()}
       </button>
@@ -573,30 +620,132 @@ function renderList(filter){
 
 function filterList(v){ renderList(v); }
 
-function bcMiniIcon(){
-  return `<svg viewBox="0 0 20 14" fill="none">
-    <rect x="1" y="0" width="2" height="14" fill="white"/>
-    <rect x="4" y="0" width="1" height="14" fill="white"/>
-    <rect x="6" y="0" width="2" height="14" fill="white"/>
-    <rect x="9" y="0" width="1" height="14" fill="white"/>
-    <rect x="11" y="0" width="3" height="14" fill="white"/>
-    <rect x="15" y="0" width="1" height="14" fill="white"/>
-    <rect x="17" y="0" width="2" height="14" fill="white"/>
-  </svg>`;
+// ─── IMPORT EXCEL ─────────────────────────────────────────────────────────
+function triggerImport(){
+  document.getElementById('import-file').click();
 }
 
-function bcIcon(){
-  return `<svg viewBox="0 0 24 20" fill="none">
-    <rect x="1" y="1" width="2" height="18" fill="#C8102E"/>
-    <rect x="4" y="1" width="1" height="18" fill="#C8102E"/>
-    <rect x="6" y="1" width="2" height="18" fill="#C8102E"/>
-    <rect x="9" y="1" width="1" height="18" fill="#C8102E"/>
-    <rect x="11" y="1" width="3" height="18" fill="#C8102E"/>
-    <rect x="15" y="1" width="1" height="18" fill="#C8102E"/>
-    <rect x="17" y="1" width="2" height="18" fill="#C8102E"/>
-    <rect x="20" y="1" width="1" height="18" fill="#C8102E"/>
-    <rect x="22" y="1" width="2" height="18" fill="#C8102E"/>
-  </svg>`;
+async function handleImportFile(e){
+  const file = e.target.files[0]; if(!file) return;
+  e.target.value='';
+  const status = document.getElementById('import-status');
+  status.style.display='block';
+  status.className='import-status loading';
+  status.textContent='מעבד קובץ...';
+  try{
+    const ab = await file.arrayBuffer();
+    const wb = XLSX.read(ab, {type:'array'});
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+    const newProds=[];
+    for(let i=1;i<rows.length;i++){
+      const row=rows[i];
+      const barcode=String(row[1]||'').trim().replace(/[^0-9]/g,'');
+      const name=String(row[2]||'').trim();
+      if(!barcode) continue;
+      const existing=D.products.find(p=>p.barcode===barcode);
+      newProds.push({
+        no: Number(row[0])||i,
+        barcode,
+        name: name||barcode,
+        assignedGid: existing?existing.assignedGid:null,
+        assignedPos: existing?existing.assignedPos:null
+      });
+    }
+    D.products=newProds;
+    save();
+    status.className='import-status ok';
+    status.textContent=`✓ יובאו ${newProds.length} מוצרים בהצלחה`;
+    renderList(document.getElementById('search-inp').value);
+    renderEdit();
+    autoFetchImages();
+  } catch(err){
+    console.error(err);
+    status.className='import-status err';
+    status.textContent='שגיאה בקריאת הקובץ';
+  }
+}
+
+let _fetchAbort=false;
+async function autoFetchImages(){
+  _fetchAbort=false;
+  const prog=document.getElementById('fetch-prog');
+  const toFetch=D.products.filter(p=>p.barcode && !getCImg(p.barcode));
+  if(!toFetch.length){ if(prog) prog.style.display='none'; return; }
+  if(prog){ prog.style.display='block'; }
+  let done=0;
+  for(const p of toFetch){
+    if(_fetchAbort) break;
+    if(prog) prog.textContent=`טוען תמונות... ${done}/${toFetch.length}`;
+    if(!getCImg(p.barcode)){
+      const result=await fetchProductData(p.barcode);
+      if(result && result.image){
+        setCImg(p.barcode,result.image);
+        if(result.name && (!p.name || p.name===p.barcode)) p.name=result.name;
+        save();
+        const listView=document.getElementById('view-list');
+        if(listView && listView.classList.contains('active'))
+          renderList(document.getElementById('search-inp').value);
+      }
+    }
+    done++;
+    await new Promise(r=>setTimeout(r,350));
+  }
+  if(prog) prog.style.display='none';
+}
+
+// ─── SLOT ACTION (empty slot click) ─────────────────────────────────────
+function openSlotAction(gid, pos){
+  if(D.products && D.products.length>0){
+    openSlotPicker(gid, pos);
+  } else {
+    openEdit(gid, pos);
+  }
+}
+
+// ─── SLOT PICKER ─────────────────────────────────────────────────────────
+function openSlotPicker(gid, pos){
+  const g=D.gondolas.find(x=>x.id===gid);
+  const unassigned=D.products.filter(p=>!p.assignedGid);
+  let listHtml='';
+  if(unassigned.length===0){
+    listHtml=`<div class="picker-empty">כל המוצרים כבר שובצו<br><span style="font-size:18px">ניתן לפנות מקום או להשתמש בהזנה ידנית</span></div>`;
+  } else {
+    listHtml=`<div class="picker-list">${unassigned.map(p=>{
+      const img=getCImg(p.barcode)||('images/'+p.barcode+'.gif');
+      return `<div class="picker-item" onclick="assignProduct('${p.barcode}','${esc(p.name||p.barcode).replace(/'/g,"\\'")}','${gid}',${pos})">
+        <img class="picker-thumb" src="${img}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">
+        <div class="picker-thumb-ph" style="display:none">🛒</div>
+        <div class="picker-info">
+          <div class="picker-name">${esc(p.name||p.barcode)}</div>
+          <div class="picker-bc">${p.barcode}</div>
+        </div>
+      </div>`;
+    }).join('')}</div>`;
+  }
+  setModal(`
+    <div class="mtitle">בחר מוצר</div>
+    <div class="picker-loc">📍 ${g.name} · מדף ${pos}</div>
+    ${listHtml}
+    <button class="btn2" style="margin-top:12px" onclick="openEdit('${gid}',${pos})">✏️ הזנה ידנית</button>
+    <button class="btn2" style="margin-top:6px" onclick="closeModal()">ביטול</button>
+  `);
+  showOverlay();
+}
+
+function assignProduct(bc, name, gid, pos){
+  const s=slot(gid,pos);
+  // Unassign old product if different barcode was there
+  if(s.barcode && s.barcode!==bc){
+    const old=D.products.find(p=>p.barcode===s.barcode);
+    if(old){ old.assignedGid=null; old.assignedPos=null; }
+  }
+  s.barcode=bc; s.label=name;
+  const p=D.products.find(x=>x.barcode===bc);
+  if(p){ p.assignedGid=gid; p.assignedPos=pos; }
+  save(); closeModal(); renderMap(); renderEdit();
+  const lv=document.getElementById('view-list');
+  if(lv && lv.classList.contains('active')) renderList(document.getElementById('search-inp').value);
 }
 
 // ─── EDIT ──────────────────────────────────────────────────────────────────
@@ -609,6 +758,9 @@ function renderEdit(){
         const f=!!s.barcode;
         const thumb=f?`<img class="ethumb" src="${imgOf(s.barcode)}"
           onerror="this.style.display='none'">`:'';
+        const addBtn=f
+          ?`<button class="ebtn" onclick="openEdit('${g.id}',${s.pos})">עריכה</button>`
+          :`<button class="ebtn" onclick="openSlotAction('${g.id}',${s.pos})">+ הוסף</button>`;
         return `<div class="erow">
           <div class="enum">${s.pos}</div>
           ${thumb}
@@ -617,7 +769,7 @@ function renderEdit(){
               ?`<div class="ename">${esc(s.label||s.barcode)}</div><div class="ebc">${s.barcode}</div>`
               :`<div class="eempty">ריק</div>`}
           </div>
-          <button class="ebtn" onclick="openEdit('${g.id}',${s.pos})">${f?'עריכה':'+ הוסף'}</button>
+          ${addBtn}
           ${f?`<button class="ecbtn" onclick="clearSlot('${g.id}',${s.pos})">✕</button>`:''}
         </div>`;
       }).join('');
@@ -639,8 +791,14 @@ function toggleSec(el){
 
 function clearSlot(gid,pos){
   const sl=slot(gid,pos);
+  if(sl.barcode){
+    const p=D.products.find(x=>x.barcode===sl.barcode);
+    if(p){ p.assignedGid=null; p.assignedPos=null; }
+  }
   sl.barcode=null; sl.label=null;
   save(); renderEdit(); renderMap();
+  const lv=document.getElementById('view-list');
+  if(lv && lv.classList.contains('active')) renderList(document.getElementById('search-inp').value);
 }
 
 function slot(gid,pos){
@@ -683,8 +841,6 @@ function openEdit(gid,pos){
     <button class="btn2" onclick="closeModal()">ביטול</button>
   `);
   showOverlay();
-
-  // Auto-fetch if barcode already set
   if(bc) scheduleFetch(bc, true);
 }
 
@@ -699,23 +855,16 @@ async function fetchAndFill(bc){
   const statusEl = document.getElementById('fetch-status');
   const uparea = document.getElementById('uparea');
   if(!statusEl) return;
-
   statusEl.style.display='block';
   statusEl.className='fetch-status loading';
   statusEl.textContent='מחפש מוצר...';
-
   const result = await fetchProductData(bc);
-
-  if(!statusEl) return; // modal closed
+  if(!statusEl) return;
   if(result){
     statusEl.className='fetch-status found';
     statusEl.textContent='✓ מוצר נמצא אוטומטית';
-
-    // Fill name if empty
     const elInput = document.getElementById('el');
     if(elInput && !elInput.value && result.name) elInput.value = result.name;
-
-    // Show image if found and no manual image yet
     if(result.image && uparea && !getCImg(bc)){
       _pendImg = result.image;
       uparea.innerHTML=`<img src="${result.image}" onerror="this.src=''"><div class="upload-hint">תמונה אוטומטית • לחץ להחלפה</div>`;
@@ -727,7 +876,6 @@ async function fetchAndFill(bc){
 }
 
 async function fetchProductData(bc){
-  // Try Open Food Facts
   try{
     const r = await fetch(
       `https://world.openfoodfacts.org/api/v0/product/${bc}.json`,
@@ -763,12 +911,22 @@ function saveSlot(){
   const lb=document.getElementById('el').value.trim();
   if(!bc){ alert('נא להזין ברקוד'); return; }
   const s=slot(_gid,_pos);
+  // Unassign old barcode from products if changing
+  if(s.barcode && s.barcode!==bc){
+    const old=D.products.find(p=>p.barcode===s.barcode);
+    if(old){ old.assignedGid=null; old.assignedPos=null; }
+  }
   s.barcode=bc; s.label=lb||bc;
   if(_pendImg && typeof _pendImg==='string'){
     setCImg(bc, _pendImg);
     _pendImg=null;
   }
+  // Sync product assignment if barcode is in products list
+  const p=D.products.find(x=>x.barcode===bc);
+  if(p){ p.assignedGid=_gid; p.assignedPos=_pos; if(lb) p.name=lb; }
   save(); closeModal(); renderMap(); renderEdit();
+  const lv=document.getElementById('view-list');
+  if(lv && lv.classList.contains('active')) renderList(document.getElementById('search-inp').value);
 }
 
 // ─── BARCODE MODAL ───────────────────────────────────────────────────────
@@ -819,12 +977,39 @@ function tryCloseOverlay(e){ if(e.target.id==='overlay') closeModal(); }
 // ─── UTILITY ─────────────────────────────────────────────────────────────
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+function bcMiniIcon(){
+  return `<svg viewBox="0 0 20 14" fill="none">
+    <rect x="1" y="0" width="2" height="14" fill="white"/>
+    <rect x="4" y="0" width="1" height="14" fill="white"/>
+    <rect x="6" y="0" width="2" height="14" fill="white"/>
+    <rect x="9" y="0" width="1" height="14" fill="white"/>
+    <rect x="11" y="0" width="3" height="14" fill="white"/>
+    <rect x="15" y="0" width="1" height="14" fill="white"/>
+    <rect x="17" y="0" width="2" height="14" fill="white"/>
+  </svg>`;
+}
+
+function bcIcon(){
+  return `<svg viewBox="0 0 24 20" fill="none">
+    <rect x="1" y="1" width="2" height="18" fill="#C8102E"/>
+    <rect x="4" y="1" width="1" height="18" fill="#C8102E"/>
+    <rect x="6" y="1" width="2" height="18" fill="#C8102E"/>
+    <rect x="9" y="1" width="1" height="18" fill="#C8102E"/>
+    <rect x="11" y="1" width="3" height="18" fill="#C8102E"/>
+    <rect x="15" y="1" width="1" height="18" fill="#C8102E"/>
+    <rect x="17" y="1" width="2" height="18" fill="#C8102E"/>
+    <rect x="20" y="1" width="1" height="18" fill="#C8102E"/>
+    <rect x="22" y="1" width="2" height="18" fill="#C8102E"/>
+  </svg>`;
+}
+
 // ─── INIT ────────────────────────────────────────────────────────────────
 load();
 document.getElementById('month-btn').textContent=D.month;
 initStoreMap();
 renderMap();
 renderEdit();
+if(D.products && D.products.length>0) autoFetchImages();
 </script>
 </body>
 </html>
