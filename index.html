@@ -104,6 +104,13 @@ body{
 .stand-grid.ltr .slot{direction:rtl}
 .stand-grid .slot{min-height:100px}
 
+/* ── MAP TOOLBAR ── */
+.map-toolbar{display:flex;justify-content:flex-end;padding:8px 10px 4px}
+.mail-btn{background:var(--red);color:#fff;border:none;border-radius:10px;
+  padding:9px 20px;font-size:20px;font-family:inherit;cursor:pointer;
+  font-weight:700;display:flex;align-items:center;gap:7px}
+.mail-btn:active{background:var(--red-dark)}
+
 /* ── LIST ── */
 .list-toolbar{display:flex;gap:8px;margin-bottom:8px;align-items:stretch}
 .list-toolbar .search-box{margin-bottom:0;flex:1}
@@ -309,6 +316,9 @@ body{
 
   <!-- MAP -->
   <div class="tab-view" id="view-map">
+    <div class="map-toolbar">
+      <button class="mail-btn" onclick="openEmailDialog()">✉️ מייל</button>
+    </div>
     <div class="gmap" id="gondola-map"></div>
   </div>
 
@@ -364,6 +374,21 @@ body{
     <img id="photo-popup-img" class="photo-box-img" src="" alt="">
     <div id="photo-popup-name" class="photo-box-name"></div>
     <button class="photo-box-close" onclick="closePhoto()">סגור</button>
+  </div>
+</div>
+
+<!-- EMAIL DIALOG -->
+<div id="email-dialog" style="display:none" class="cp-popup" onclick="closeEmailDialog()">
+  <div class="cp-box" onclick="event.stopPropagation()" style="max-width:360px">
+    <div class="cp-title">שליחת מייל</div>
+    <div style="font-size:17px;color:var(--muted);margin-bottom:14px;text-align:center">
+      תכניס כתובת דוא"ל
+    </div>
+    <input id="email-input" type="email" class="finput"
+      placeholder="example@gmail.com" inputmode="email"
+      style="direction:ltr;text-align:left;margin-bottom:14px">
+    <button class="btn1" onclick="doSendEmail()" style="margin-bottom:8px">✉️ שלח</button>
+    <button class="btn2" onclick="closeEmailDialog()">ביטול</button>
   </div>
 </div>
 
@@ -986,6 +1011,88 @@ function showBarcode(bc, name){
 function editMonth(){
   const v=prompt('הכנס חודש ושנה:',D.month);
   if(v&&v.trim()){ D.month=v.trim(); save(); document.getElementById('month-btn').textContent=D.month; }
+}
+
+// ─── EMAIL ───────────────────────────────────────────────────────────────
+function openEmailDialog(){
+  document.getElementById('email-input').value='';
+  document.getElementById('email-dialog').style.display='flex';
+  setTimeout(()=>document.getElementById('email-input').focus(),200);
+}
+function closeEmailDialog(){
+  document.getElementById('email-dialog').style.display='none';
+}
+
+function doSendEmail(){
+  const email = document.getElementById('email-input').value.trim();
+  if(!email || !email.includes('@')){ alert('נא להזין כתובת דוא"ל תקינה'); return; }
+  closeEmailDialog();
+  generateAndDownloadDoc();
+  const subject = encodeURIComponent('מבצעים חודשיים — ' + D.month);
+  const body = encodeURIComponent(buildEmailText());
+  window.location.href = `mailto:${encodeURIComponent(email)}?subject=${subject}&body=${body}`;
+}
+
+function buildEmailText(){
+  let t = `מבצעים חודשיים — ${D.month}\n${'─'.repeat(36)}\n\n`;
+  D.gondolas.forEach(g=>{
+    const filled = g.slots.filter(s=>s.barcode);
+    if(!filled.length) return;
+    t += `${g.name} (${g.id})\n`;
+    filled.forEach(s=>{ t += `  • מדף ${s.pos}: ${s.label||s.barcode}\n`; });
+    t += '\n';
+  });
+  return t;
+}
+
+function generateAndDownloadDoc(){
+  const month = D.month;
+  let rows = '';
+  D.gondolas.forEach(g=>{
+    const filled = g.slots.filter(s=>s.barcode);
+    if(!filled.length) return;
+    rows += `<tr><td colspan="3" style="background:#C8102E;color:#fff;font-size:17px;
+      font-weight:700;padding:8px 12px;border-radius:6px">${g.name} &nbsp;
+      <span style="opacity:.8;font-size:14px">${g.id}</span></td></tr>`;
+    filled.forEach(s=>{
+      const img = getCImg(s.barcode)||('images/'+s.barcode+'.gif');
+      rows += `<tr style="border-bottom:1px solid #EEE">
+        <td style="width:44px;padding:6px 8px;vertical-align:middle">
+          <img src="${img}" width="40" height="40"
+            style="object-fit:contain;border-radius:4px;background:#F5F5F5"
+            onerror="this.style.display='none'">
+        </td>
+        <td style="padding:6px 8px;font-size:15px;font-weight:600;
+          vertical-align:middle;color:#1A1A1A">${esc(s.label||s.barcode)}</td>
+        <td style="padding:6px 8px;font-size:13px;color:#888;
+          vertical-align:middle;direction:ltr;text-align:left">${s.barcode}</td>
+      </tr>`;
+    });
+    rows += `<tr><td colspan="3" style="height:10px"></td></tr>`;
+  });
+
+  const html = `<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8">
+<style>
+  body{font-family:Arial,'Arial Hebrew',sans-serif;direction:rtl;
+    background:#F7F0F1;margin:0;padding:20px;color:#1A1A1A}
+  h1{background:#C8102E;color:#fff;padding:14px 20px;border-radius:10px;
+    font-size:26px;margin-bottom:20px;text-align:center}
+  table{width:100%;border-collapse:collapse;background:#fff;
+    border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(200,16,46,.1)}
+</style></head><body>
+<h1>מבצעים חודשיים — ${month}</h1>
+<table>${rows}</table>
+</body></html>`;
+
+  const blob = new Blob([html], {type:'application/msword'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `מבצעים_${month.replace(/\s/g,'_')}.doc`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url), 3000);
 }
 
 // ─── PHOTO POPUP ─────────────────────────────────────────────────────────
