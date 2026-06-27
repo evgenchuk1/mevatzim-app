@@ -1023,14 +1023,32 @@ function closeEmailDialog(){
   document.getElementById('email-dialog').style.display='none';
 }
 
-function doSendEmail(){
+async function doSendEmail(){
   const email = document.getElementById('email-input').value.trim();
   if(!email || !email.includes('@')){ alert('נא להזין כתובת דוא"ל תקינה'); return; }
   closeEmailDialog();
-  generateAndDownloadDoc();
+
+  const { blob, filename } = buildDocBlob();
   const subject = encodeURIComponent('מבצעים חודשיים — ' + D.month);
-  const body = encodeURIComponent(buildEmailText());
-  window.location.href = `mailto:${encodeURIComponent(email)}?subject=${subject}&body=${body}`;
+  const body    = encodeURIComponent(buildEmailText());
+  const mailHref = `mailto:${encodeURIComponent(email)}?subject=${subject}&body=${body}`;
+
+  const file = new File([blob], filename, {type:'application/msword'});
+  if(navigator.canShare && navigator.canShare({files:[file]})){
+    try{
+      await navigator.share({files:[file], title:'מבצעים חודשיים — ' + D.month});
+    } catch(e){ /* user cancelled share */ }
+    window.location.href = mailHref;
+  } else {
+    // fallback: direct download
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url), 3000);
+    window.location.href = mailHref;
+  }
 }
 
 function buildEmailText(){
@@ -1045,14 +1063,14 @@ function buildEmailText(){
   return t;
 }
 
-function generateAndDownloadDoc(){
+function buildDocBlob(){
   const month = D.month;
   let rows = '';
   D.gondolas.forEach(g=>{
     const filled = g.slots.filter(s=>s.barcode);
     if(!filled.length) return;
     rows += `<tr><td colspan="3" style="background:#C8102E;color:#fff;font-size:17px;
-      font-weight:700;padding:8px 12px;border-radius:6px">${g.name} &nbsp;
+      font-weight:700;padding:8px 12px">${g.name} &nbsp;
       <span style="opacity:.8;font-size:14px">${g.id}</span></td></tr>`;
     filled.forEach(s=>{
       const img = getCImg(s.barcode)||('images/'+s.barcode+'.gif');
@@ -1077,22 +1095,15 @@ function generateAndDownloadDoc(){
     background:#F7F0F1;margin:0;padding:20px;color:#1A1A1A}
   h1{background:#C8102E;color:#fff;padding:14px 20px;border-radius:10px;
     font-size:26px;margin-bottom:20px;text-align:center}
-  table{width:100%;border-collapse:collapse;background:#fff;
-    border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(200,16,46,.1)}
+  table{width:100%;border-collapse:collapse;background:#fff;overflow:hidden}
 </style></head><body>
 <h1>מבצעים חודשיים — ${month}</h1>
 <table>${rows}</table>
 </body></html>`;
 
   const blob = new Blob([html], {type:'application/msword'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `מבצעים_${month.replace(/\s/g,'_')}.doc`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(()=>URL.revokeObjectURL(url), 3000);
+  const filename = `מבצעים_${month.replace(/\s/g,'_')}.doc`;
+  return { blob, filename };
 }
 
 // ─── PHOTO POPUP ─────────────────────────────────────────────────────────
