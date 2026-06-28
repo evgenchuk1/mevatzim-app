@@ -1103,16 +1103,109 @@ function buildDocBlob(){
     </table>`;
   }
 
-  // Pair gondolas into 2-column rows
+  // Wide table for stands (ENT1, CC2) — 2 sub-columns of slots
+  function gondolaTableWide(g){
+    const half = Math.ceil(g.slots.length / 2);
+    const col1 = g.slots.slice(0, half);
+    const col2 = g.slots.slice(half);
+    function slotCell(s){
+      if(!s) return '<td colspan="3" style="padding:2px"></td>';
+      const filled = !!s.barcode;
+      const img = filled ? (getCImg(s.barcode)||('images/'+s.barcode+'.gif')) : '';
+      const imgCell = filled
+        ? `<img src="${img}" width="28" height="28"
+             style="object-fit:contain;background:#F5F5F5;display:block;border-radius:3px"
+             onerror="this.style.display='none'">`
+        : `<div style="width:28px;height:28px;background:#EEEEEE;border-radius:3px;
+             text-align:center;line-height:28px;color:#CCC;font-size:14px">—</div>`;
+      const name = filled
+        ? `<b style="font-size:10px;color:#1A1A1A">${esc(s.label||s.barcode)}</b>`
+        : `<i style="font-size:10px;color:#BBBBBB">ריק</i>`;
+      const bc = filled
+        ? `<span style="font-size:9px;color:#AAA;direction:ltr">${s.barcode}</span>`
+        : '';
+      return `<td style="width:20px;padding:3px 4px;text-align:center;vertical-align:middle;
+          font-size:10px;font-weight:700;color:#C8102E">${s.pos}</td>
+        <td style="width:34px;padding:2px 3px;vertical-align:middle">${imgCell}</td>
+        <td style="padding:2px 8px 2px 4px;vertical-align:middle;line-height:1.2;
+          border-left:1px solid #F0ECEC">${name}<br>${bc}</td>`;
+    }
+    const rowsHtml = col1.map((_,i)=>{
+      const s1=col1[i], s2=col2[i]||null;
+      const bg1 = s1&&s1.barcode ? '#fff':'#FAFAFA';
+      const bg2 = s2&&s2.barcode ? '#fff':'#FAFAFA';
+      return `<tr style="border-bottom:1px solid #F2EEEE">
+        <td style="background:${bg1}" colspan="1"></td>
+        ${slotCell(s1)}
+        <td style="width:6px;background:#F7F0F1"></td>
+        <td style="background:${bg2}" colspan="1"></td>
+        ${slotCell(s2)}
+      </tr>`.replace('<td style="background:'+bg1+'" colspan="1"></td>','')
+            .replace('<td style="background:'+bg2+'" colspan="1"></td>','');
+    }).join('');
+
+    // Simpler approach: build rows directly
+    const rows2 = col1.map((_,i)=>{
+      const s1=col1[i], s2=col2[i];
+      const bg1=s1&&s1.barcode?'#fff':'#FAFAFA';
+      const bg2=s2&&s2.barcode?'#fff':'#FAFAFA';
+      return `<tr style="border-bottom:1px solid #F2EEEE">
+        <td style="background:${bg1};width:18px;padding:3px 4px;text-align:center;
+          vertical-align:middle;font-size:10px;font-weight:700;color:#C8102E">${s1?s1.pos:''}</td>
+        <td style="background:${bg1};width:34px;padding:2px 3px;vertical-align:middle">
+          ${s1&&s1.barcode?`<img src="${getCImg(s1.barcode)||'images/'+s1.barcode+'.gif'}" width="28" height="28" style="object-fit:contain;background:#F5F5F5;display:block;border-radius:3px" onerror="this.style.display='none'">`:`<div style="width:28px;height:28px;background:#EEE;border-radius:3px;text-align:center;line-height:28px;color:#CCC;font-size:14px">—</div>`}
+        </td>
+        <td style="background:${bg1};padding:2px 6px 2px 4px;vertical-align:middle;
+          line-height:1.2;border-left:2px solid #F7F0F1">
+          ${s1&&s1.barcode?`<b style="font-size:10px;color:#1A1A1A">${esc(s1.label||s1.barcode)}</b><br><span style="font-size:9px;color:#AAA;direction:ltr">${s1.barcode}</span>`:`<i style="font-size:10px;color:#BBB">ריק</i>`}
+        </td>
+        <td style="background:${bg2};width:18px;padding:3px 4px;text-align:center;
+          vertical-align:middle;font-size:10px;font-weight:700;color:#C8102E">${s2?s2.pos:''}</td>
+        <td style="background:${bg2};width:34px;padding:2px 3px;vertical-align:middle">
+          ${s2&&s2.barcode?`<img src="${getCImg(s2.barcode)||'images/'+s2.barcode+'.gif'}" width="28" height="28" style="object-fit:contain;background:#F5F5F5;display:block;border-radius:3px" onerror="this.style.display='none'">`:`<div style="width:28px;height:28px;background:#EEE;border-radius:3px;text-align:center;line-height:28px;color:#CCC;font-size:14px">—</div>`}
+        </td>
+        <td style="background:${bg2};padding:2px 4px;vertical-align:middle;line-height:1.2">
+          ${s2&&s2.barcode?`<b style="font-size:10px;color:#1A1A1A">${esc(s2.label||s2.barcode)}</b><br><span style="font-size:9px;color:#AAA;direction:ltr">${s2.barcode}</span>`:`<i style="font-size:10px;color:#BBB">ריק</i>`}
+        </td>
+      </tr>`;
+    }).join('');
+
+    const cnt = g.slots.filter(s=>s.barcode).length;
+    return `<table dir="rtl" style="width:100%;border-collapse:collapse;
+        border:1px solid #E0B5BA;font-family:Arial,'Arial Hebrew',sans-serif">
+      <tr>
+        <td colspan="6" style="background:#C8102E;color:#fff;padding:5px 8px;
+          font-size:11px;font-weight:700;line-height:1.3">
+          ${g.name}
+          <span style="opacity:.75;font-size:9px"> ${g.id} · ${cnt}/${g.slots.length}</span>
+        </td>
+      </tr>
+      ${rows2}
+    </table>`;
+  }
+
+  // Build grid: ENT1/CC2 → full width; others → 2 per row
   const gs = D.gondolas;
+  const WIDE = new Set(['ENT1','CC2']);
   let gridRows = '';
-  for(let i=0; i<gs.length; i+=2){
-    const left  = gondolaTable(gs[i]);
-    const right = i+1 < gs.length ? gondolaTable(gs[i+1]) : '';
-    gridRows += `<tr>
-      <td style="width:50%;vertical-align:top;padding:0 3px 6px 0">${left}</td>
-      <td style="width:50%;vertical-align:top;padding:0 0 6px 3px">${right}</td>
-    </tr>`;
+  let i = 0;
+  while(i < gs.length){
+    const g = gs[i];
+    if(WIDE.has(g.id)){
+      gridRows += `<tr>
+        <td colspan="2" style="vertical-align:top;padding:0 0 6px 0">${gondolaTableWide(g)}</td>
+      </tr>`;
+      i++;
+    } else {
+      const left  = gondolaTable(g);
+      const next  = gs[i+1] && !WIDE.has(gs[i+1].id) ? gs[i+1] : null;
+      const right = next ? gondolaTable(next) : '';
+      gridRows += `<tr>
+        <td style="width:50%;vertical-align:top;padding:0 3px 6px 0">${left}</td>
+        <td style="width:50%;vertical-align:top;padding:0 0 6px 3px">${right}</td>
+      </tr>`;
+      i += next ? 2 : 1;
+    }
   }
 
   const html = `<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8">
