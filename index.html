@@ -120,6 +120,20 @@ body{
 .import-btn{background:var(--red);color:#fff;border:none;border-radius:10px;
   padding:8px 14px;font-size:19px;font-family:inherit;cursor:pointer;
   white-space:nowrap;font-weight:600;flex-shrink:0}
+.cat-filter{display:flex;gap:6px;margin-bottom:8px}
+.cat-chip{flex:1;background:#fff;border:1.5px solid var(--border);border-radius:20px;
+  padding:7px 4px;font-size:15px;font-family:inherit;cursor:pointer;color:var(--muted);
+  font-weight:700}
+.cat-chip.active{background:var(--red);color:#fff;border-color:var(--red)}
+.cat-badge{display:inline-block;font-size:14px;font-weight:700;border-radius:8px;
+  padding:1px 8px;margin-inline-start:6px}
+.cat-badge.entrance{background:#E3F2FD;color:#1565C0}
+.cat-badge.monthly{background:#FFF3CD;color:#856404}
+.cat-badge.credit{background:#E8F5E9;color:#2E7D32}
+.auto-btn{width:100%;background:var(--red);color:#fff;border:none;border-radius:12px;
+  padding:12px;font-size:21px;font-weight:700;font-family:inherit;cursor:pointer;
+  margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px}
+.auto-btn:active{background:var(--red-dark)}
 .import-status{padding:8px 12px;border-radius:10px;font-size:18px;
   text-align:center;margin-bottom:8px}
 .import-status.loading{background:#FFF3CD;color:#856404}
@@ -327,7 +341,13 @@ body{
     <div class="list-toolbar">
       <input class="search-box" type="search" placeholder="חיפוש לפי שם או ברקוד..."
         oninput="filterList(this.value)" id="search-inp">
-      <button class="import-btn" onclick="triggerImport()">📥 ייבוא</button>
+      <button class="import-btn" onclick="openImportPicker()">📥 ייבוא</button>
+    </div>
+    <div class="cat-filter" id="cat-filter">
+      <button class="cat-chip active" data-cat="" onclick="setCatFilter('')">הכל</button>
+      <button class="cat-chip" data-cat="entrance" onclick="setCatFilter('entrance')">כניסה</button>
+      <button class="cat-chip" data-cat="monthly" onclick="setCatFilter('monthly')">חודשי</button>
+      <button class="cat-chip" data-cat="credit" onclick="setCatFilter('credit')">אשראי</button>
     </div>
     <input type="file" id="import-file" accept=".xlsx,.xls" style="display:none"
       onchange="handleImportFile(event)">
@@ -413,6 +433,10 @@ const DEFAULTS = {
       {pos:5,barcode:null,label:null},
       {pos:6,barcode:null,label:null}
     ]},
+    { id:'ST1', name:'עמדת St1', type:'gondola', shelves:4, slots:[
+      {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
+      {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
+    ]},
     { id:'E1', name:'ראש גונדולה 1', type:'gondola', shelves:4, slots:[
       {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
       {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
@@ -431,9 +455,14 @@ const DEFAULTS = {
       {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
       {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
     ]},
-    { id:'CC1', name:'ראש גונדולה 5', type:'gondola', shelves:4, slots:[
+    { id:'ST2', name:'עמדת St2', type:'gondola', shelves:4, slots:[
       {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
       {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
+    ]},
+    { id:'CC1', name:'ראש גונדולה 5', type:'gondola', shelves:5, slots:[
+      {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
+      {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null},
+      {pos:5,barcode:null,label:null}
     ]},
     { id:'E6', name:'ראש גונדולה 6', type:'gondola', shelves:4, slots:[
       {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
@@ -443,25 +472,57 @@ const DEFAULTS = {
       {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
       {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
     ]},
-    { id:'CC2', name:'עמדת קופות שירות עצמי', type:'stand', cols:2, rows:3, ltrShelves:true, slots:[
+    { id:'CC2', name:'עמדת קופות שירות עצמי', type:'stand', cols:3, rows:4, ltrShelves:true, slots:[
       {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
       {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null},
-      {pos:5,barcode:null,label:null},{pos:6,barcode:null,label:null}
+      {pos:5,barcode:null,label:null},{pos:6,barcode:null,label:null},
+      {pos:7,barcode:null,label:null},{pos:8,barcode:null,label:null},
+      {pos:9,barcode:null,label:null},{pos:10,barcode:null,label:null},
+      {pos:11,barcode:null,label:null},{pos:12,barcode:null,label:null}
     ]}
   ]
 };
 
 const HOTSPOTS = [
   ['ENT1', 'Ent',  24, 19],
+  ['ST1',  'St1',  16, 19],
   ['E1',   'E1',   46, 21],
   ['E2',   'E2',   49, 31],
   ['E3',   'E3',   48, 43],
   ['E4',   'E4',   49, 51],
   ['CC2',  'Cc2',  23, 49],
+  ['ST2',  'St2',  23, 43],
   ['CC1',  'Cc1',  44, 61],
   ['E6',   'E6',   47, 68],
   ['E7',   'E7',   44, 76]
 ];
+
+// ─── DISCOUNT CATEGORIES ───────────────────────────────────────────────────
+// Every gondola/stand slot belongs to exactly one monthly-discount category.
+// Products imported for a category may only be placed in that category's zones.
+const CATEGORIES = {
+  entrance: { label:'כניסה', zones:[
+    {gid:'ENT1'},{gid:'ST1'},{gid:'E1'},{gid:'E2'},{gid:'E3'},{gid:'E4'},{gid:'ST2'}
+  ]},
+  monthly: { label:'חודשי', zones:[
+    {gid:'E6'},{gid:'E7'},{gid:'CC2',posRange:[9,12]}
+  ]},
+  credit: { label:'אשראי', zones:[
+    {gid:'CC1'},{gid:'CC2',posRange:[1,8]}
+  ]}
+};
+const CATEGORY_LABELS = { entrance:'כניסה', monthly:'חודשי', credit:'אשראי' };
+
+function zoneCategory(gid,pos){
+  for(const cat in CATEGORIES){
+    for(const z of CATEGORIES[cat].zones){
+      if(z.gid!==gid) continue;
+      if(z.posRange){ if(pos>=z.posRange[0] && pos<=z.posRange[1]) return cat; }
+      else return cat;
+    }
+  }
+  return null;
+}
 
 let D;
 
@@ -488,6 +549,47 @@ function migrate(){
     if(g && !g.ltrShelves){ g.ltrShelves=true; changed=true; }
   });
   if(!D.products){ D.products=[]; changed=true; }
+
+  if(!D.gondolas.find(g=>g.id==='ST1')){
+    const idx=D.gondolas.findIndex(g=>g.id==='ENT1');
+    D.gondolas.splice(idx+1,0,{ id:'ST1', name:'עמדת St1', type:'gondola', shelves:4, slots:[
+      {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
+      {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
+    ]});
+    changed=true;
+  }
+  if(!D.gondolas.find(g=>g.id==='ST2')){
+    const idx=D.gondolas.findIndex(g=>g.id==='E4');
+    const insertAt = idx>=0 ? idx+1 : D.gondolas.length;
+    D.gondolas.splice(insertAt,0,{ id:'ST2', name:'עמדת St2', type:'gondola', shelves:4, slots:[
+      {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
+      {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
+    ]});
+    changed=true;
+  }
+  const cc1b=D.gondolas.find(g=>g.id==='CC1');
+  if(cc1b && cc1b.shelves===4){
+    cc1b.shelves=5;
+    cc1b.slots.push({pos:5,barcode:null,label:null});
+    changed=true;
+  }
+  const cc2=D.gondolas.find(g=>g.id==='CC2');
+  if(cc2 && cc2.cols===2){
+    // Old CC2 numbering (2x3) doesn't map onto the new 3x4 layout, so clear it.
+    D.products.forEach(p=>{ if(p.assignedGid==='CC2'){ p.assignedGid=null; p.assignedPos=null; } });
+    cc2.cols=3; cc2.rows=4;
+    cc2.slots=[1,2,3,4,5,6,7,8,9,10,11,12].map(pos=>({pos,barcode:null,label:null}));
+    changed=true;
+  }
+  if(D.products.some(p=>p.category===undefined)){
+    D.products.forEach(p=>{
+      if(p.category===undefined){
+        p.category = p.assignedGid ? zoneCategory(p.assignedGid,p.assignedPos) : null;
+      }
+    });
+    changed=true;
+  }
+
   if(changed) save();
 }
 
@@ -592,7 +694,7 @@ function gcardBodyInner(g){
   if(g.type==='stand'){
     const rows=g.rows, cols=g.cols;
     const ltr=g.ltrShelves;
-    let html=`<div class="stand-grid${ltr?' ltr':''}">`;
+    let html=`<div class="stand-grid${ltr?' ltr':''}" style="grid-template-columns:repeat(${cols},1fr)">`;
     for(let r=0;r<rows;r++){
       for(let c=0;c<cols;c++){
         const pos=c*rows+r+1;
@@ -628,20 +730,27 @@ function openBc(e, bc, name){
 }
 
 // ─── LIST ─────────────────────────────────────────────────────────────────
+let _catFilter='';
+function setCatFilter(cat){
+  _catFilter=cat;
+  document.querySelectorAll('.cat-chip').forEach(b=>b.classList.toggle('active', b.dataset.cat===cat));
+  renderList(document.getElementById('search-inp').value);
+}
+
 function renderList(filter){
   const box = document.getElementById('prod-list');
   if(!D.products || D.products.length === 0){
     box.innerHTML='<div class="no-items">יש לייבא רשימת מוצרים<br><span style="font-size:20px;color:#BBB">לחץ 📥 ייבוא</span></div>';
     return;
   }
+  let shown = _catFilter ? D.products.filter(p=>p.category===_catFilter) : D.products;
   const q=(filter||'').trim().toLowerCase();
-  const shown = q
-    ? D.products.filter(p=>(p.name||'').toLowerCase().includes(q)||(p.barcode||'').includes(q))
-    : D.products;
+  if(q) shown = shown.filter(p=>(p.name||'').toLowerCase().includes(q)||(p.barcode||'').includes(q));
   if(!shown.length){ box.innerHTML='<div class="no-items">לא נמצאו מוצרים</div>'; return; }
   box.innerHTML=shown.map(p=>{
     const assigned = !!(p.assignedGid);
     const img = getCImg(p.barcode) || ('images/'+p.barcode+'.gif');
+    const catBadge = p.category ? `<span class="cat-badge ${p.category}">${CATEGORY_LABELS[p.category]}</span>` : '';
     let posHtml = '';
     if(assigned){
       const g = D.gondolas.find(x=>x.id===p.assignedGid);
@@ -655,7 +764,7 @@ function renderList(filter){
         onerror="this.style.display='none';this.nextSibling.style.display='flex'">
       <div class="pthumb-ph" style="display:none">🛒</div>
       <div class="pinfo">
-        <div class="pname">${esc(p.name||p.barcode)}</div>
+        <div class="pname">${esc(p.name||p.barcode)}${catBadge}</div>
         ${posHtml}
         <div class="pbc">${p.barcode}</div>
       </div>
@@ -670,13 +779,33 @@ function renderList(filter){
 function filterList(v){ renderList(v); }
 
 // ─── IMPORT EXCEL ─────────────────────────────────────────────────────────
-function triggerImport(){
+let _importCat=null;
+
+function openImportPicker(){
+  setModal(`
+    <div class="mtitle">ייבוא קובץ Excel</div>
+    <div style="font-size:18px;color:var(--muted);margin-bottom:14px;text-align:center">
+      בחר לאיזו קטגוריית מבצע שייך הקובץ
+    </div>
+    <button class="btn1" onclick="triggerImport('entrance')">🚪 כניסה</button>
+    <button class="btn1" onclick="triggerImport('monthly')">📅 חודשי</button>
+    <button class="btn1" onclick="triggerImport('credit')">💳 כרטיס אשראי</button>
+    <button class="btn2" style="margin-top:6px" onclick="closeModal()">ביטול</button>
+  `);
+  showOverlay();
+}
+
+function triggerImport(cat){
+  _importCat=cat;
+  closeModal();
   document.getElementById('import-file').click();
 }
 
 async function handleImportFile(e){
   const file = e.target.files[0]; if(!file) return;
   e.target.value='';
+  const cat=_importCat;
+  if(!cat) return;
   const status = document.getElementById('import-status');
   status.style.display='block';
   status.className='import-status loading';
@@ -692,19 +821,21 @@ async function handleImportFile(e){
       const barcode=String(row[1]||'').trim().replace(/[^0-9]/g,'');
       const name=String(row[2]||'').trim();
       if(!barcode) continue;
-      const existing=D.products.find(p=>p.barcode===barcode);
+      const existing=D.products.find(p=>p.barcode===barcode && p.category===cat);
       newProds.push({
         no: Number(row[0])||i,
         barcode,
         name: name||barcode,
+        category: cat,
         assignedGid: existing?existing.assignedGid:null,
         assignedPos: existing?existing.assignedPos:null
       });
     }
-    D.products=newProds;
+    // only replace this category's products — the other two categories keep their data
+    D.products = D.products.filter(p=>p.category!==cat).concat(newProds);
     save();
     status.className='import-status ok';
-    status.textContent=`✓ יובאו ${newProds.length} מוצרים בהצלחה`;
+    status.textContent=`✓ יובאו ${newProds.length} מוצרים לקטגוריית ${CATEGORY_LABELS[cat]}`;
     renderList(document.getElementById('search-inp').value);
     renderEdit();
     autoFetchImages();
@@ -755,10 +886,12 @@ function openSlotAction(gid, pos){
 // ─── SLOT PICKER ─────────────────────────────────────────────────────────
 function openSlotPicker(gid, pos){
   const g=D.gondolas.find(x=>x.id===gid);
-  const unassigned=D.products.filter(p=>!p.assignedGid);
+  const zoneCat=zoneCategory(gid,pos);
+  // legacy products imported before categories existed (category===null) may go anywhere
+  const unassigned=D.products.filter(p=>!p.assignedGid && (!zoneCat || !p.category || p.category===zoneCat));
   let listHtml='';
   if(unassigned.length===0){
-    listHtml=`<div class="picker-empty">כל המוצרים כבר שובצו<br><span style="font-size:18px">ניתן לפנות מקום או להשתמש בהזנה ידנית</span></div>`;
+    listHtml=`<div class="picker-empty">אין מוצרים פנויים לשיבוץ במיקום זה${zoneCat?` (קטגוריית ${CATEGORY_LABELS[zoneCat]})`:''}<br><span style="font-size:18px">ניתן לפנות מקום או להשתמש בהזנה ידנית</span></div>`;
   } else {
     listHtml=`<div class="picker-list">${unassigned.map(p=>{
       const img=getCImg(p.barcode)||('images/'+p.barcode+'.gif');
@@ -774,7 +907,7 @@ function openSlotPicker(gid, pos){
   }
   setModal(`
     <div class="mtitle">בחר מוצר</div>
-    <div class="picker-loc">📍 ${g.name} · מדף ${pos}</div>
+    <div class="picker-loc">📍 ${g.name} · מדף ${pos}${zoneCat?` · קטגוריה: ${CATEGORY_LABELS[zoneCat]}`:''}</div>
     ${listHtml}
     <button class="btn2" style="margin-top:12px" onclick="openEdit('${gid}',${pos})">✏️ הזנה ידנית</button>
     <button class="btn2" style="margin-top:6px" onclick="closeModal()">ביטול</button>
@@ -783,6 +916,12 @@ function openSlotPicker(gid, pos){
 }
 
 function assignProduct(bc, name, gid, pos){
+  const zoneCat=zoneCategory(gid,pos);
+  const prod0=D.products.find(x=>x.barcode===bc);
+  if(prod0 && prod0.category && zoneCat && prod0.category!==zoneCat){
+    alert(`המוצר שייך לקטגוריית "${CATEGORY_LABELS[prod0.category]}" ולא ניתן לשבץ אותו במיקום של קטגוריית "${CATEGORY_LABELS[zoneCat]}"`);
+    return;
+  }
   const s=slot(gid,pos);
   // Unassign old product if different barcode was there
   if(s.barcode && s.barcode!==bc){
@@ -797,9 +936,89 @@ function assignProduct(bc, name, gid, pos){
   if(lv && lv.classList.contains('active')) renderList(document.getElementById('search-inp').value);
 }
 
+// ─── AUTO ASSIGNMENT ───────────────────────────────────────────────────────
+// Heuristic placement: physically bulky items go on the bottom shelf of each
+// zone; everything else is sorted alphabetically (Hebrew) so that similarly
+// named products (and therefore similar consumer groups, e.g. "סוכר"/"קמח")
+// land in adjacent slots. This is an approximation of true category-based
+// grouping — fine-tune manually afterwards in the עריכה tab if needed.
+const BULKY_KEYWORDS = [
+  'נייר טואלט','מגבון','מגבות נייר','טישו','שקיות אשפה','אבקת כביסה',
+  'מרכך כביסה','נוזל כלים','ניקוי רצפות','דישון','חיתולים','רב פעמי',
+  '4 ליטר','5 ליטר',"4 ל'","5 ל'",'6 יחידות','12 יחידות','מארז'
+];
+
+function isBulky(name){
+  const n=name||'';
+  return BULKY_KEYWORDS.some(k=>n.includes(k));
+}
+
+function isBottomSlot(g,pos){
+  if(g.type==='gondola') return pos===g.shelves;
+  if(g.type==='stand') return pos % g.rows === 0;
+  return false;
+}
+
+function categorySlots(cat){
+  const out=[];
+  CATEGORIES[cat].zones.forEach(z=>{
+    const g=D.gondolas.find(x=>x.id===z.gid);
+    if(!g) return;
+    g.slots.forEach(s=>{
+      if(z.posRange && (s.pos<z.posRange[0] || s.pos>z.posRange[1])) return;
+      out.push({ gid:g.id, pos:s.pos, bottom:isBottomSlot(g,s.pos) });
+    });
+  });
+  return out;
+}
+
+function autoAssignCategory(cat){
+  const emptySlots = categorySlots(cat).filter(s=>!slot(s.gid,s.pos).barcode);
+  const products = D.products.filter(p=>p.category===cat && !p.assignedGid);
+  if(!products.length || !emptySlots.length) return 0;
+
+  products.sort((a,b)=>(a.name||'').localeCompare(b.name||'','he'));
+  const bulky = products.filter(p=>isBulky(p.name));
+  const regular = products.filter(p=>!isBulky(p.name));
+
+  const bottomSlots = emptySlots.filter(s=>s.bottom);
+  const topSlots = emptySlots.filter(s=>!s.bottom);
+
+  function place(slotObj, prod){
+    const sl=slot(slotObj.gid,slotObj.pos);
+    sl.barcode=prod.barcode; sl.label=prod.name||prod.barcode;
+    prod.assignedGid=slotObj.gid; prod.assignedPos=slotObj.pos;
+  }
+
+  let placed=0, bi=0;
+  bottomSlots.forEach(s=>{
+    let prod=null;
+    if(bi<bulky.length){ prod=bulky[bi]; bi++; }
+    else if(regular.length){ prod=regular.shift(); }
+    if(prod){ place(s,prod); placed++; }
+  });
+  const remaining=[...bulky.slice(bi), ...regular];
+  topSlots.forEach(s=>{
+    if(!remaining.length) return;
+    place(s, remaining.shift());
+    placed++;
+  });
+  return placed;
+}
+
+function autoAssignAll(){
+  let total=0;
+  Object.keys(CATEGORIES).forEach(cat=>{ total+=autoAssignCategory(cat)||0; });
+  save(); renderMap(); renderEdit();
+  const lv=document.getElementById('view-list');
+  if(lv && lv.classList.contains('active')) renderList(document.getElementById('search-inp').value);
+  alert(total ? `✓ שובצו ${total} מוצרים אוטומטית` : 'אין מוצרים חדשים לשיבוץ');
+}
+
 // ─── EDIT ──────────────────────────────────────────────────────────────────
 function renderEdit(){
-  document.getElementById('edit-body').innerHTML=
+  const autoBtn = `<button class="auto-btn" onclick="autoAssignAll()">🤖 שיבוץ אוטומטי</button>`;
+  document.getElementById('edit-body').innerHTML= autoBtn +
     D.gondolas.map(g=>{
       const filled=g.slots.filter(s=>s.barcode).length;
       const total=g.slots.length;
@@ -960,6 +1179,12 @@ function saveSlot(){
   const bc=document.getElementById('eb').value.trim();
   const lb=document.getElementById('el').value.trim();
   if(!bc){ alert('נא להזין ברקוד'); return; }
+  const zoneCat=zoneCategory(_gid,_pos);
+  const existingProd=D.products.find(p=>p.barcode===bc);
+  if(existingProd && existingProd.category && zoneCat && existingProd.category!==zoneCat){
+    alert(`המוצר שייך לקטגוריית "${CATEGORY_LABELS[existingProd.category]}" ולא ניתן לשבץ אותו במיקום של קטגוריית "${CATEGORY_LABELS[zoneCat]}"`);
+    return;
+  }
   const s=slot(_gid,_pos);
   // Unassign old barcode from products if changing
   if(s.barcode && s.barcode!==bc){
