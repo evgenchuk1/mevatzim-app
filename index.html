@@ -90,7 +90,7 @@ body{
 .slot .shelf-fill{width:100%;flex:1;min-height:60px;
   background-repeat:repeat-x;background-size:auto 95%;background-position:center}
 .slot .slot-footer{display:flex;align-items:center;gap:6px;padding:3px 4px 2px;flex-shrink:0}
-.slot .sname{font-size:13px;color:var(--muted);line-height:1.2;
+.slot .sname{font-size:18px;color:var(--muted);line-height:1.2;
   flex:1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;
   -webkit-box-orient:vertical;direction:rtl;text-align:right}
 .slot .bc-mini{width:32px;height:22px;background:#2D8A4E;border-radius:4px;
@@ -279,6 +279,13 @@ body{
 .cp-close{background:var(--red);color:#fff;border:none;border-radius:12px;
   padding:12px 0;width:100%;font-size:19px;font-family:inherit;cursor:pointer;font-weight:700}
 
+/* ── EMAIL PICKER ── */
+.email-pick-item{width:100%;background:#FAFAFA;border:1.5px solid var(--border);
+  border-radius:12px;padding:13px;font-size:20px;font-family:inherit;
+  cursor:pointer;font-weight:700;color:var(--red-dark);margin-bottom:8px;
+  direction:ltr;text-align:center;display:block}
+.email-pick-item:active{background:var(--red-light);border-color:var(--red)}
+
 /* ── FOOTER ── */
 .footer{text-align:center;font-size:16px;color:#AAA;padding:6px;
   flex-shrink:0;background:#fff;border-top:1px solid var(--border);
@@ -402,12 +409,9 @@ body{
   <div class="cp-box" onclick="event.stopPropagation()" style="max-width:360px">
     <div class="cp-title">שליחת מייל</div>
     <div style="font-size:17px;color:var(--muted);margin-bottom:14px;text-align:center">
-      תכניס כתובת דוא"ל
+      בחר כתובת דוא"ל לשליחה
     </div>
-    <input id="email-input" type="email" class="finput"
-      placeholder="example@gmail.com" inputmode="email"
-      style="direction:ltr;text-align:left;margin-bottom:14px">
-    <button class="btn1" onclick="doSendEmail()" style="margin-bottom:8px">✉️ שלח</button>
+    <div id="email-pick-list"></div>
     <button class="btn2" onclick="closeEmailDialog()">ביטול</button>
   </div>
 </div>
@@ -426,10 +430,10 @@ const DEFAULTS = {
   products: [],
   gondolas: [
     { id:'ENT1', name:'עמדת כניסה', type:'stand', cols:2, rows:3, ltrShelves:true, slots:[
-      {pos:1,barcode:'8001841625188',label:'פיירי פלטינום לימון החדש'},
+      {pos:1,barcode:null,label:null},
       {pos:2,barcode:null,label:null},
       {pos:3,barcode:null,label:null},
-      {pos:4,barcode:'8000500325384',label:'קינדר ג\'וי שלישייה'},
+      {pos:4,barcode:null,label:null},
       {pos:5,barcode:null,label:null},
       {pos:6,barcode:null,label:null}
     ]},
@@ -443,12 +447,12 @@ const DEFAULTS = {
     ]},
     { id:'E2', name:'ראש גונדולה 2', type:'gondola', shelves:4, slots:[
       {pos:1,barcode:null,label:null},
-      {pos:2,barcode:'7290019644330',label:'מרשמלו ורוד לבן 150 גרם'},
+      {pos:2,barcode:null,label:null},
       {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
     ]},
     { id:'E3', name:'ראש גונדולה 3', type:'gondola', shelves:4, slots:[
       {pos:1,barcode:null,label:null},
-      {pos:2,barcode:'2453352',label:'נקניקיות אייריש חלק'},
+      {pos:2,barcode:null,label:null},
       {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
     ]},
     { id:'E4', name:'ראש גונדולה 4', type:'gondola', shelves:4, slots:[
@@ -814,7 +818,7 @@ async function handleImportFile(e){
     const ab = await file.arrayBuffer();
     const wb = XLSX.read(ab, {type:'array'});
     const ws = wb.Sheets[wb.SheetNames[0]];
-    const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+    const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:'', raw:false});
     const newProds=[];
     for(let i=1;i<rows.length;i++){
       const row=rows[i];
@@ -1239,18 +1243,19 @@ function editMonth(){
 }
 
 // ─── EMAIL ───────────────────────────────────────────────────────────────
+const PRESET_EMAILS = ['Etsipis@013.net','snif208m@shufersal.co.il','evgenchuk1@gmail.com'];
+
 function openEmailDialog(){
-  document.getElementById('email-input').value='';
+  document.getElementById('email-pick-list').innerHTML = PRESET_EMAILS.map(addr=>
+    `<button class="email-pick-item" onclick="doSendEmail('${addr}')">${addr}</button>`
+  ).join('');
   document.getElementById('email-dialog').style.display='flex';
-  setTimeout(()=>document.getElementById('email-input').focus(),200);
 }
 function closeEmailDialog(){
   document.getElementById('email-dialog').style.display='none';
 }
 
-async function doSendEmail(){
-  const email = document.getElementById('email-input').value.trim();
-  if(!email || !email.includes('@')){ alert('נא להזין כתובת דוא"ל תקינה'); return; }
+async function doSendEmail(email){
   closeEmailDialog();
 
   const { blob, filename } = buildDocBlob();
@@ -1302,10 +1307,10 @@ function buildDocBlob(){
         : `<div style="width:28px;height:28px;background:#EEEEEE;border-radius:3px;
              text-align:center;line-height:28px;color:#CCC;font-size:14px">—</div>`;
       const name = filled
-        ? `<b style="font-size:10px;color:#1A1A1A">${esc(s.label||s.barcode)}</b>`
-        : `<i style="font-size:10px;color:#BBBBBB">ריק</i>`;
+        ? `<b style="font-size:12px;color:#1A1A1A">${esc(s.label||s.barcode)}</b>`
+        : `<i style="font-size:12px;color:#BBBBBB">ריק</i>`;
       const bc = filled
-        ? `<span style="font-size:9px;color:#AAA;direction:ltr">${s.barcode}</span>`
+        ? `<span style="font-size:12px;color:#AAA;direction:ltr">${s.barcode}</span>`
         : '';
       return `<tr style="border-bottom:1px solid #F2EEEE;background:${filled?'#fff':'#FAFAFA'}">
         <td style="width:18px;padding:3px 4px;text-align:center;vertical-align:middle;
@@ -1319,7 +1324,7 @@ function buildDocBlob(){
         border:1px solid #E0B5BA;font-family:Arial,'Arial Hebrew',sans-serif">
       <tr>
         <td colspan="3" style="background:#C8102E;color:#fff;padding:5px 8px;
-          font-size:11px;font-weight:700;line-height:1.3">
+          font-size:14px;font-weight:700;line-height:1.3">
           ${g.name}
           <span style="opacity:.75;font-size:9px"> ${g.id} · ${cnt}/${g.slots.length}</span>
         </td>
@@ -1382,7 +1387,7 @@ function buildDocBlob(){
         </td>
         <td style="background:${bg1};padding:2px 6px 2px 4px;vertical-align:middle;
           line-height:1.2;border-left:2px solid #F7F0F1">
-          ${s1&&s1.barcode?`<b style="font-size:10px;color:#1A1A1A">${esc(s1.label||s1.barcode)}</b><br><span style="font-size:9px;color:#AAA;direction:ltr">${s1.barcode}</span>`:`<i style="font-size:10px;color:#BBB">ריק</i>`}
+          ${s1&&s1.barcode?`<b style="font-size:12px;color:#1A1A1A">${esc(s1.label||s1.barcode)}</b><br><span style="font-size:12px;color:#AAA;direction:ltr">${s1.barcode}</span>`:`<i style="font-size:12px;color:#BBB">ריק</i>`}
         </td>
         <td style="background:${bg2};width:18px;padding:3px 4px;text-align:center;
           vertical-align:middle;font-size:10px;font-weight:700;color:#C8102E">${s2?s2.pos:''}</td>
@@ -1390,7 +1395,7 @@ function buildDocBlob(){
           ${s2&&s2.barcode?`<img src="${getCImg(s2.barcode)||'images/'+s2.barcode+'.gif'}" width="28" height="28" style="object-fit:contain;background:#F5F5F5;display:block;border-radius:3px" onerror="this.style.display='none'">`:`<div style="width:28px;height:28px;background:#EEE;border-radius:3px;text-align:center;line-height:28px;color:#CCC;font-size:14px">—</div>`}
         </td>
         <td style="background:${bg2};padding:2px 4px;vertical-align:middle;line-height:1.2">
-          ${s2&&s2.barcode?`<b style="font-size:10px;color:#1A1A1A">${esc(s2.label||s2.barcode)}</b><br><span style="font-size:9px;color:#AAA;direction:ltr">${s2.barcode}</span>`:`<i style="font-size:10px;color:#BBB">ריק</i>`}
+          ${s2&&s2.barcode?`<b style="font-size:12px;color:#1A1A1A">${esc(s2.label||s2.barcode)}</b><br><span style="font-size:12px;color:#AAA;direction:ltr">${s2.barcode}</span>`:`<i style="font-size:12px;color:#BBB">ריק</i>`}
         </td>
       </tr>`;
     }).join('');
@@ -1400,7 +1405,7 @@ function buildDocBlob(){
         border:1px solid #E0B5BA;font-family:Arial,'Arial Hebrew',sans-serif">
       <tr>
         <td colspan="6" style="background:#C8102E;color:#fff;padding:5px 8px;
-          font-size:11px;font-weight:700;line-height:1.3">
+          font-size:14px;font-weight:700;line-height:1.3">
           ${g.name}
           <span style="opacity:.75;font-size:9px"> ${g.id} · ${cnt}/${g.slots.length}</span>
         </td>
