@@ -87,10 +87,10 @@ body{
 .slot .snum{position:absolute;top:2px;right:4px;font-size:13px;color:#BBB;font-weight:700;z-index:2}
 .slot .sph{font-size:32px;opacity:.25;display:flex;align-items:center;justify-content:center;
   flex:1;min-height:60px}
-.slot .shelf-fill{width:100%;flex:1;min-height:60px;
+.slot .shelf-fill{width:100%;flex:1;min-height:60px;cursor:pointer;
   background-repeat:repeat-x;background-size:auto 95%;background-position:center}
 .slot .slot-footer{display:flex;align-items:center;gap:6px;padding:3px 4px 2px;flex-shrink:0}
-.slot .sname{font-size:18px;color:var(--muted);line-height:1.2;
+.slot .sname{font-size:22px;font-weight:700;color:var(--muted);line-height:1.2;
   flex:1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;
   -webkit-box-orient:vertical;direction:rtl;text-align:right}
 .slot .bc-mini{width:32px;height:22px;background:#2D8A4E;border-radius:4px;
@@ -594,6 +594,24 @@ function migrate(){
     changed=true;
   }
 
+  // One-time purge of the 4 sample products baked into old installs' localStorage
+  // (DEFAULTS no longer seeds them, but existing saved data still has them).
+  const LEGACY_DEMO=[
+    {gid:'ENT1',pos:1,barcode:'8001841625188'},
+    {gid:'ENT1',pos:4,barcode:'8000500325384'},
+    {gid:'E2',pos:2,barcode:'7290019644330'},
+    {gid:'E3',pos:2,barcode:'2453352'}
+  ];
+  LEGACY_DEMO.forEach(d=>{
+    const s=slot(d.gid,d.pos);
+    if(s && s.barcode===d.barcode){
+      s.barcode=null; s.label=null;
+      const p=D.products.find(x=>x.barcode===d.barcode);
+      if(p){ p.assignedGid=null; p.assignedPos=null; }
+      changed=true;
+    }
+  });
+
   if(changed) save();
 }
 
@@ -684,7 +702,7 @@ function slotHTML(g, sl){
   const lbl=esc(sl.label||sl.barcode);
   return `<div class="slot filled" onclick="openEdit('${g.id}',${pos})">
     <span class="snum">${pos}</span>
-    <div class="shelf-fill" style="background-image:url('${imgUrl}')"></div>
+    <div class="shelf-fill" style="background-image:url('${imgUrl}')" onclick="showPhotoFromSlot(event,'${imgUrl}','${lbl}')"></div>
     <div class="slot-footer">
       <button class="bc-mini" onclick="openBc(event,'${sl.barcode}','${lbl}')" title="הצג ברקוד">
         ${bcMiniIcon()}
@@ -731,6 +749,12 @@ function gcardHTML(g){
 function openBc(e, bc, name){
   e.stopPropagation();
   showBarcode(bc, name);
+}
+
+// ─── PHOTO OPEN FROM SLOT ────────────────────────────────────────────────
+function showPhotoFromSlot(e, src, name){
+  e.stopPropagation();
+  showPhoto(src, name);
 }
 
 // ─── LIST ─────────────────────────────────────────────────────────────────
