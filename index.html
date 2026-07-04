@@ -1173,23 +1173,35 @@ async function fetchAndFill(bc){
   }
 }
 
+// Open Food Facts only covers actual food. Open Beauty Facts / Open Products Facts
+// are sibling databases (same org, same open API, same CORS policy) covering
+// cosmetics/hygiene and general household goods respectively — trying all three
+// automatically catches far more supermarket items (deodorant, shampoo, etc.)
+// without needing any manual step.
+const OFF_HOSTS = [
+  'world.openfoodfacts.org',
+  'world.openbeautyfacts.org',
+  'world.openproductsfacts.org'
+];
+
 async function fetchProductData(bc){
-  try{
-    const r = await fetch(
-      `https://world.openfoodfacts.org/api/v0/product/${bc}.json`,
-      {signal: AbortSignal.timeout(6000)}
-    );
-    if(r.ok){
-      const d = await r.json();
-      if(d.status===1 && d.product){
-        const p = d.product;
-        return {
-          name: p.product_name_he || p.product_name || '',
-          image: p.image_front_url || p.image_url || null
-        };
+  for(const host of OFF_HOSTS){
+    try{
+      const r = await fetch(
+        `https://${host}/api/v0/product/${bc}.json`,
+        {signal: AbortSignal.timeout(6000)}
+      );
+      if(r.ok){
+        const d = await r.json();
+        if(d.status===1 && d.product){
+          const p = d.product;
+          const image = p.image_front_url || p.image_url || null;
+          const name = p.product_name_he || p.product_name || '';
+          if(image || name) return { name, image };
+        }
       }
-    }
-  } catch(e){}
+    } catch(e){}
+  }
   return null;
 }
 
