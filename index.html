@@ -169,6 +169,10 @@ body{
 .esec-hdr .fill-badge{background:var(--red);color:#fff;border-radius:20px;
   padding:3px 10px;font-size:16px;font-weight:700;white-space:nowrap}
 .esec-hdr .eid-arrow{font-size:16px;color:#999;flex-shrink:0}
+.esec-hdr .eclear-btn{background:#fff;border:1.5px solid var(--red);color:var(--red);
+  border-radius:8px;padding:4px 10px;font-size:15px;font-family:inherit;
+  cursor:pointer;font-weight:700;white-space:nowrap;flex-shrink:0}
+.esec-hdr .eclear-btn:active{background:var(--red);color:#fff}
 .esec-body{padding:6px 12px}
 .erow{display:flex;align-items:center;gap:8px;padding:7px 0;
   border-bottom:1px solid #F5F0F0}
@@ -1075,6 +1079,7 @@ function renderEdit(){
         <div class="esec-hdr" onclick="toggleSec(this)">
           <span class="ename-main">${g.name}</span>
           <span class="fill-badge">${filled}/${total}</span>
+          <button class="eclear-btn" onclick="event.stopPropagation();clearGondola('${g.id}')">🗑️ נקה</button>
           <span class="eid-arrow">${g.id} ▾</span>
         </div>
         <div class="esec-body">${rows}</div>
@@ -1085,6 +1090,24 @@ function renderEdit(){
 function toggleSec(el){
   const b=el.nextElementSibling;
   b.style.display=b.style.display==='none'?'':'none';
+}
+
+function clearGondola(gid){
+  const g=D.gondolas.find(x=>x.id===gid);
+  if(!g) return;
+  const filled=g.slots.filter(s=>s.barcode).length;
+  if(!filled) return;
+  if(!confirm(`לרוקן את כל ${filled} המוצרים ב"${g.name}"?`)) return;
+  g.slots.forEach(s=>{
+    if(s.barcode){
+      const p=D.products.find(x=>x.barcode===s.barcode);
+      if(p){ p.assignedGid=null; p.assignedPos=null; }
+      s.barcode=null; s.label=null;
+    }
+  });
+  save(); renderEdit(); renderMap();
+  const lv=document.getElementById('view-list');
+  if(lv && lv.classList.contains('active')) renderList(document.getElementById('search-inp').value);
 }
 
 function clearSlot(gid,pos){
@@ -1356,16 +1379,25 @@ function buildEmailText(){
 function buildDocBlob(){
   const month = D.month;
 
+  // Word renders <img> from wherever the file is opened, with no "images/"
+  // folder alongside it — a relative src (used live on GitHub Pages) is a
+  // broken link there, which Word shows as a red X. Every doc image must be
+  // an absolute URL so it resolves regardless of where the .doc is opened.
+  const DOC_ORIGIN = 'https://evgenchuk1.github.io/mevatzim-app/';
+  function docImgSrc(bc){
+    return getCImg(bc) || (DOC_ORIGIN + 'images/' + bc + '.gif');
+  }
+
   function gondolaTable(g){
     const rows = g.slots.map(s=>{
       const filled = !!s.barcode;
-      const img = filled ? (getCImg(s.barcode)||('images/'+s.barcode+'.gif')) : '';
+      const img = filled ? docImgSrc(s.barcode) : '';
       const imgCell = filled
-        ? `<img src="${img}" width="28" height="28"
+        ? `<img src="${img}" width="42" height="42"
              style="object-fit:contain;background:#F5F5F5;display:block;border-radius:3px"
              onerror="this.style.display='none'">`
-        : `<div style="width:28px;height:28px;background:#EEEEEE;border-radius:3px;
-             text-align:center;line-height:28px;color:#CCC;font-size:14px">—</div>`;
+        : `<div style="width:42px;height:42px;background:#EEEEEE;border-radius:3px;
+             text-align:center;line-height:42px;color:#CCC;font-size:14px">—</div>`;
       const name = filled
         ? `<b style="font-size:12pt;color:#1A1A1A">${esc(s.label||s.barcode)}</b>`
         : `<i style="font-size:12pt;color:#BBBBBB">ריק</i>`;
@@ -1375,7 +1407,7 @@ function buildDocBlob(){
       return `<tr style="border-bottom:1px solid #F2EEEE;background:${filled?'#fff':'#FAFAFA'}">
         <td style="width:18px;padding:3px 4px;text-align:center;vertical-align:middle;
           font-size:10px;font-weight:700;color:#C8102E">${s.pos}</td>
-        <td style="width:34px;padding:2px 3px;vertical-align:middle">${imgCell}</td>
+        <td style="width:48px;padding:2px 3px;vertical-align:middle">${imgCell}</td>
         <td style="padding:2px 4px;vertical-align:middle;line-height:1.2;overflow:hidden;word-break:break-all">${name}<br>${bc}</td>
       </tr>`;
     }).join('');
@@ -1394,85 +1426,67 @@ function buildDocBlob(){
     </table>`;
   }
 
-  // Wide table for stands (ENT1, CC2) — 2 sub-columns of slots
+  // Wide table for stands (ENT1, CC2) — one sub-column per g.cols, laid out
+  // in the same col-major numbering as the app's own grid (pos = col*rows+r+1)
+  // so position 1 lands top-left here too, matching the on-screen מבצעים tab.
   function gondolaTableWide(g){
-    const half = Math.ceil(g.slots.length / 2);
-    const col1 = g.slots.slice(0, half);
-    const col2 = g.slots.slice(half);
-    function slotCell(s){
-      if(!s) return '<td colspan="3" style="padding:2px"></td>';
+    const cols = g.cols, rows = g.rows;
+    const columns = [];
+    for(let c=0; c<cols; c++){
+      const colSlots = [];
+      for(let r=0; r<rows; r++){
+        const pos = c*rows + r + 1;
+        colSlots.push(g.slots.find(s=>s.pos===pos) || null);
+      }
+      columns.push(colSlots);
+    }
+    // This table is dir="rtl": the first td-group in DOM order renders on the
+    // visual RIGHT. Reversing here puts column 0 (positions 1..rows) — the
+    // app's own leftmost column — physically on the left in Word too.
+    const domColumns = columns.slice().reverse();
+
+    function slotCellHtml(s){
+      if(!s) return `<td colspan="3" style="padding:2px"></td>`;
       const filled = !!s.barcode;
-      const img = filled ? (getCImg(s.barcode)||('images/'+s.barcode+'.gif')) : '';
+      const img = filled ? docImgSrc(s.barcode) : '';
       const imgCell = filled
-        ? `<img src="${img}" width="28" height="28"
+        ? `<img src="${img}" width="42" height="42"
              style="object-fit:contain;background:#F5F5F5;display:block;border-radius:3px"
              onerror="this.style.display='none'">`
-        : `<div style="width:28px;height:28px;background:#EEEEEE;border-radius:3px;
-             text-align:center;line-height:28px;color:#CCC;font-size:14px">—</div>`;
+        : `<div style="width:42px;height:42px;background:#EEEEEE;border-radius:3px;
+             text-align:center;line-height:42px;color:#CCC;font-size:14px">—</div>`;
       const name = filled
-        ? `<b style="font-size:10px;color:#1A1A1A">${esc(s.label||s.barcode)}</b>`
-        : `<i style="font-size:10px;color:#BBBBBB">ריק</i>`;
-      const bc = filled
-        ? `<span style="font-size:9px;color:#AAA;direction:ltr">${s.barcode}</span>`
+        ? `<b style="font-size:12pt;color:#1A1A1A">${esc(s.label||s.barcode)}</b>`
+        : `<i style="font-size:12pt;color:#BBBBBB">ריק</i>`;
+      const bcHtml = filled
+        ? `<span style="font-size:12pt;color:#AAA;direction:ltr">${s.barcode}</span>`
         : '';
-      return `<td style="width:20px;padding:3px 4px;text-align:center;vertical-align:middle;
-          font-size:10px;font-weight:700;color:#C8102E">${s.pos}</td>
-        <td style="width:34px;padding:2px 3px;vertical-align:middle">${imgCell}</td>
-        <td style="padding:2px 8px 2px 4px;vertical-align:middle;line-height:1.2;
-          border-left:1px solid #F0ECEC">${name}<br>${bc}</td>`;
+      const bg = filled ? '#fff' : '#FAFAFA';
+      return `<td style="background:${bg};width:18px;padding:3px 4px;text-align:center;
+          vertical-align:middle;font-size:10px;font-weight:700;color:#C8102E">${s.pos}</td>
+        <td style="background:${bg};width:48px;padding:2px 3px;vertical-align:middle">${imgCell}</td>
+        <td style="background:${bg};padding:2px 6px 2px 4px;vertical-align:middle;line-height:1.2;
+          border-left:2px solid #F7F0F1;overflow:hidden;word-break:break-all">${name}<br>${bcHtml}</td>`;
     }
-    const rowsHtml = col1.map((_,i)=>{
-      const s1=col1[i], s2=col2[i]||null;
-      const bg1 = s1&&s1.barcode ? '#fff':'#FAFAFA';
-      const bg2 = s2&&s2.barcode ? '#fff':'#FAFAFA';
-      return `<tr style="border-bottom:1px solid #F2EEEE">
-        <td style="background:${bg1}" colspan="1"></td>
-        ${slotCell(s1)}
-        <td style="width:6px;background:#F7F0F1"></td>
-        <td style="background:${bg2}" colspan="1"></td>
-        ${slotCell(s2)}
-      </tr>`.replace('<td style="background:'+bg1+'" colspan="1"></td>','')
-            .replace('<td style="background:'+bg2+'" colspan="1"></td>','');
-    }).join('');
 
-    // Simpler approach: build rows directly
-    const rows2 = col1.map((_,i)=>{
-      const s1=col1[i], s2=col2[i];
-      const bg1=s1&&s1.barcode?'#fff':'#FAFAFA';
-      const bg2=s2&&s2.barcode?'#fff':'#FAFAFA';
-      return `<tr style="border-bottom:1px solid #F2EEEE">
-        <td style="background:${bg1};width:18px;padding:3px 4px;text-align:center;
-          vertical-align:middle;font-size:10px;font-weight:700;color:#C8102E">${s1?s1.pos:''}</td>
-        <td style="background:${bg1};width:34px;padding:2px 3px;vertical-align:middle">
-          ${s1&&s1.barcode?`<img src="${getCImg(s1.barcode)||'images/'+s1.barcode+'.gif'}" width="28" height="28" style="object-fit:contain;background:#F5F5F5;display:block;border-radius:3px" onerror="this.style.display='none'">`:`<div style="width:28px;height:28px;background:#EEE;border-radius:3px;text-align:center;line-height:28px;color:#CCC;font-size:14px">—</div>`}
-        </td>
-        <td style="background:${bg1};padding:2px 6px 2px 4px;vertical-align:middle;
-          line-height:1.2;border-left:2px solid #F7F0F1;overflow:hidden;word-break:break-all">
-          ${s1&&s1.barcode?`<b style="font-size:12pt;color:#1A1A1A">${esc(s1.label||s1.barcode)}</b><br><span style="font-size:12pt;color:#AAA;direction:ltr">${s1.barcode}</span>`:`<i style="font-size:12pt;color:#BBB">ריק</i>`}
-        </td>
-        <td style="background:${bg2};width:18px;padding:3px 4px;text-align:center;
-          vertical-align:middle;font-size:10px;font-weight:700;color:#C8102E">${s2?s2.pos:''}</td>
-        <td style="background:${bg2};width:34px;padding:2px 3px;vertical-align:middle">
-          ${s2&&s2.barcode?`<img src="${getCImg(s2.barcode)||'images/'+s2.barcode+'.gif'}" width="28" height="28" style="object-fit:contain;background:#F5F5F5;display:block;border-radius:3px" onerror="this.style.display='none'">`:`<div style="width:28px;height:28px;background:#EEE;border-radius:3px;text-align:center;line-height:28px;color:#CCC;font-size:14px">—</div>`}
-        </td>
-        <td style="background:${bg2};padding:2px 4px;vertical-align:middle;line-height:1.2;overflow:hidden;word-break:break-all">
-          ${s2&&s2.barcode?`<b style="font-size:12pt;color:#1A1A1A">${esc(s2.label||s2.barcode)}</b><br><span style="font-size:12pt;color:#AAA;direction:ltr">${s2.barcode}</span>`:`<i style="font-size:12pt;color:#BBB">ריק</i>`}
-        </td>
-      </tr>`;
-    }).join('');
+    const rowsHtml = [];
+    for(let r=0; r<rows; r++){
+      const tds = domColumns.map(colSlots => slotCellHtml(colSlots[r])).join('');
+      rowsHtml.push(`<tr style="border-bottom:1px solid #F2EEEE">${tds}</tr>`);
+    }
 
     const cnt = g.slots.filter(s=>s.barcode).length;
     return `<table dir="rtl" style="width:100%;table-layout:fixed;border-collapse:collapse;
         border:1px solid #E0B5BA;font-family:Arial,'Arial Hebrew',sans-serif;
         page-break-inside:avoid;break-inside:avoid">
       <tr>
-        <td colspan="6" style="background:#C8102E;color:#fff;padding:5px 8px;
+        <td colspan="${cols*3}" style="background:#C8102E;color:#fff;padding:5px 8px;
           font-size:14pt;font-weight:700;line-height:1.3;overflow:hidden">
           ${g.name}
           <span style="opacity:.75;font-size:9px"> ${g.id} · ${cnt}/${g.slots.length}</span>
         </td>
       </tr>
-      ${rows2}
+      ${rowsHtml.join('')}
     </table>`;
   }
 
