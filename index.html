@@ -1184,6 +1184,27 @@ const OFF_HOSTS = [
   'world.openproductsfacts.org'
 ];
 
+// Shufersal Online has photos for most Israeli-market products that the Open
+// __ Facts databases above never carry (local/private-label items). Its site
+// has no CORS headers of its own, so a tiny Cloudflare Worker fetches the
+// Shufersal search page server-side and relays just {name,image} with CORS
+// open — see C:\Users\etsip\shufersal-image-proxy (deployed 2026-07-04).
+const SHUFERSAL_PROXY = 'https://shufersal-image-proxy.evgenchuk1.workers.dev/';
+
+async function fetchFromShufersal(bc){
+  try{
+    const r = await fetch(
+      `${SHUFERSAL_PROXY}?barcode=${encodeURIComponent(bc)}`,
+      {signal: AbortSignal.timeout(8000)}
+    );
+    if(r.ok){
+      const d = await r.json();
+      if(d && (d.image || d.name)) return { name: d.name||'', image: d.image||null };
+    }
+  } catch(e){}
+  return null;
+}
+
 async function fetchProductData(bc){
   for(const host of OFF_HOSTS){
     try{
@@ -1202,6 +1223,8 @@ async function fetchProductData(bc){
       }
     } catch(e){}
   }
+  const shufersal = await fetchFromShufersal(bc);
+  if(shufersal) return shufersal;
   return null;
 }
 
