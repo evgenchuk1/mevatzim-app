@@ -846,7 +846,8 @@ async function handleImportFile(e){
     const newProds=[];
     for(let i=1;i<rows.length;i++){
       const row=rows[i];
-      const barcode=String(row[1]||'').trim().replace(/[^0-9]/g,'');
+      const bcCell=String(row[1]||'').trim();
+      const barcode=(bcCell.split(/\s+/)[0]||'').replace(/[^0-9]/g,'').slice(0,14);
       const name=String(row[2]||'').trim();
       if(!barcode) continue;
       const existing=D.products.find(p=>p.barcode===barcode && p.category===cat);
@@ -1340,15 +1341,16 @@ function buildDocBlob(){
         <td style="width:18px;padding:3px 4px;text-align:center;vertical-align:middle;
           font-size:10px;font-weight:700;color:#C8102E">${s.pos}</td>
         <td style="width:34px;padding:2px 3px;vertical-align:middle">${imgCell}</td>
-        <td style="padding:2px 4px;vertical-align:middle;line-height:1.2">${name}<br>${bc}</td>
+        <td style="padding:2px 4px;vertical-align:middle;line-height:1.2;overflow:hidden;word-break:break-all">${name}<br>${bc}</td>
       </tr>`;
     }).join('');
     const cnt = g.slots.filter(s=>s.barcode).length;
-    return `<table dir="rtl" style="width:100%;border-collapse:collapse;
-        border:1px solid #E0B5BA;font-family:Arial,'Arial Hebrew',sans-serif">
+    return `<table dir="rtl" style="width:100%;table-layout:fixed;border-collapse:collapse;
+        border:1px solid #E0B5BA;font-family:Arial,'Arial Hebrew',sans-serif;
+        page-break-inside:avoid;break-inside:avoid">
       <tr>
         <td colspan="3" style="background:#C8102E;color:#fff;padding:5px 8px;
-          font-size:14pt;font-weight:700;line-height:1.3">
+          font-size:14pt;font-weight:700;line-height:1.3;overflow:hidden">
           ${g.name}
           <span style="opacity:.75;font-size:9px"> ${g.id} · ${cnt}/${g.slots.length}</span>
         </td>
@@ -1410,7 +1412,7 @@ function buildDocBlob(){
           ${s1&&s1.barcode?`<img src="${getCImg(s1.barcode)||'images/'+s1.barcode+'.gif'}" width="28" height="28" style="object-fit:contain;background:#F5F5F5;display:block;border-radius:3px" onerror="this.style.display='none'">`:`<div style="width:28px;height:28px;background:#EEE;border-radius:3px;text-align:center;line-height:28px;color:#CCC;font-size:14px">—</div>`}
         </td>
         <td style="background:${bg1};padding:2px 6px 2px 4px;vertical-align:middle;
-          line-height:1.2;border-left:2px solid #F7F0F1">
+          line-height:1.2;border-left:2px solid #F7F0F1;overflow:hidden;word-break:break-all">
           ${s1&&s1.barcode?`<b style="font-size:12pt;color:#1A1A1A">${esc(s1.label||s1.barcode)}</b><br><span style="font-size:12pt;color:#AAA;direction:ltr">${s1.barcode}</span>`:`<i style="font-size:12pt;color:#BBB">ריק</i>`}
         </td>
         <td style="background:${bg2};width:18px;padding:3px 4px;text-align:center;
@@ -1418,18 +1420,19 @@ function buildDocBlob(){
         <td style="background:${bg2};width:34px;padding:2px 3px;vertical-align:middle">
           ${s2&&s2.barcode?`<img src="${getCImg(s2.barcode)||'images/'+s2.barcode+'.gif'}" width="28" height="28" style="object-fit:contain;background:#F5F5F5;display:block;border-radius:3px" onerror="this.style.display='none'">`:`<div style="width:28px;height:28px;background:#EEE;border-radius:3px;text-align:center;line-height:28px;color:#CCC;font-size:14px">—</div>`}
         </td>
-        <td style="background:${bg2};padding:2px 4px;vertical-align:middle;line-height:1.2">
+        <td style="background:${bg2};padding:2px 4px;vertical-align:middle;line-height:1.2;overflow:hidden;word-break:break-all">
           ${s2&&s2.barcode?`<b style="font-size:12pt;color:#1A1A1A">${esc(s2.label||s2.barcode)}</b><br><span style="font-size:12pt;color:#AAA;direction:ltr">${s2.barcode}</span>`:`<i style="font-size:12pt;color:#BBB">ריק</i>`}
         </td>
       </tr>`;
     }).join('');
 
     const cnt = g.slots.filter(s=>s.barcode).length;
-    return `<table dir="rtl" style="width:100%;border-collapse:collapse;
-        border:1px solid #E0B5BA;font-family:Arial,'Arial Hebrew',sans-serif">
+    return `<table dir="rtl" style="width:100%;table-layout:fixed;border-collapse:collapse;
+        border:1px solid #E0B5BA;font-family:Arial,'Arial Hebrew',sans-serif;
+        page-break-inside:avoid;break-inside:avoid">
       <tr>
         <td colspan="6" style="background:#C8102E;color:#fff;padding:5px 8px;
-          font-size:14pt;font-weight:700;line-height:1.3">
+          font-size:14pt;font-weight:700;line-height:1.3;overflow:hidden">
           ${g.name}
           <span style="opacity:.75;font-size:9px"> ${g.id} · ${cnt}/${g.slots.length}</span>
         </td>
@@ -1446,8 +1449,8 @@ function buildDocBlob(){
   while(i < gs.length){
     const g = gs[i];
     if(WIDE.has(g.id)){
-      gridRows += `<tr>
-        <td colspan="2" style="vertical-align:top;padding:0 0 6px 0">${gondolaTableWide(g)}</td>
+      gridRows += `<tr style="page-break-inside:avoid">
+        <td colspan="2" style="width:100%;vertical-align:top;padding:0 0 6px 0;page-break-inside:avoid">${gondolaTableWide(g)}</td>
       </tr>`;
       i++;
     } else {
@@ -1455,9 +1458,9 @@ function buildDocBlob(){
       const next  = gs[i+1] && !WIDE.has(gs[i+1].id) ? gs[i+1] : null;
       const right = next ? gondolaTable(next) : '';
       const pageBreak = g.id==='E7' ? 'page-break-before:always;' : '';
-      gridRows += `<tr style="${pageBreak}">
-        <td style="width:50%;vertical-align:top;padding:0 3px 6px 0">${left}</td>
-        <td style="width:50%;vertical-align:top;padding:0 0 6px 3px">${right}</td>
+      gridRows += `<tr style="${pageBreak}page-break-inside:avoid">
+        <td style="width:50%;vertical-align:top;padding:0 3px 6px 0;page-break-inside:avoid">${left}</td>
+        <td style="width:50%;vertical-align:top;padding:0 0 6px 3px;page-break-inside:avoid">${right}</td>
       </tr>`;
       i += next ? 2 : 1;
     }
