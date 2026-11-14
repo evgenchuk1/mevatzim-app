@@ -32,7 +32,7 @@ button{font-family:inherit}
 .body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px calc(24px + var(--safe-bot))}
 
 /* ───── header ───── */
-.hdr{flex-shrink:0;display:flex;align-items:center;gap:7px;padding:calc(var(--safe-top) + 8px) 12px 9px;color:#fff;
+.hdr{flex-shrink:0;display:flex;align-items:center;gap:7px;padding:calc(var(--safe-top) + 20px) 12px 9px;color:#fff;
   background:linear-gradient(160deg,var(--navy3) 0%,var(--navy) 55%,var(--deep) 100%);
   box-shadow:0 4px 12px rgba(20,35,56,.35);border-bottom:3px solid var(--gold);position:relative;z-index:5}
 .brand{display:flex;align-items:center;gap:8px;flex-shrink:0;cursor:pointer}
@@ -62,31 +62,29 @@ button{font-family:inherit}
 .row-btns{display:flex;gap:8px;margin-top:12px}.row-btns>*{flex:1}
 
 /* ───── branch entry ───── */
-#s-branch .body{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding-top:30px}
-.entry-logo{width:120px;height:120px;border-radius:28px;box-shadow:0 10px 26px rgba(20,35,56,.35)}
-.entry-t{text-align:center;font-size:30px;font-weight:900;color:var(--navy);line-height:1.05}
+#s-branch .body{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding-top:30px}
+.entry-logo{width:240px;height:240px;max-width:62vw;max-height:62vw;border-radius:54px;box-shadow:0 10px 26px rgba(20,35,56,.35)}
+.entry-t{text-align:center;font-size:45px;font-weight:900;color:var(--navy);line-height:1.05}
 .entry-t small{display:block;font-size:14px;color:var(--gold3);font-weight:700;margin-top:4px}
-.bigbr{width:min(78vw,320px);height:118px;border-radius:26px;border:none;cursor:pointer;color:var(--gold2);display:flex;flex-direction:column;align-items:center;justify-content:center;
+.bigbr{width:min(39vw,160px);height:59px;border-radius:16px;border:none;cursor:pointer;color:var(--gold2);display:flex;flex-direction:column;align-items:center;justify-content:center;
   background:linear-gradient(165deg,var(--navy3) 0%,var(--navy) 55%,var(--deep) 100%);border-top:2px solid var(--gold);
-  box-shadow:0 7px 0 #0E1A2A,0 12px 22px rgba(16,28,46,.35),inset 0 1px 0 rgba(255,255,255,.2)}
-.bigbr:active{transform:translateY(5px);box-shadow:0 2px 0 #0E1A2A}
-.bigbr b{font-size:56px;font-weight:900;line-height:1;letter-spacing:2px}
-.bigbr span{font-size:14px;font-weight:700;color:#fff;opacity:.85}
+  box-shadow:0 4px 0 #0E1A2A,0 8px 14px rgba(16,28,46,.35),inset 0 1px 0 rgba(255,255,255,.2)}
+.bigbr:active{transform:translateY(3px);box-shadow:0 1px 0 #0E1A2A}
+.bigbr b{font-size:28px;font-weight:900;line-height:1;letter-spacing:1px}
+.bigbr span{font-size:10.5px;font-weight:700;color:#fff;opacity:.85}
 .foot{text-align:center;font-size:12px;color:var(--muted);padding:8px 10px calc(8px + var(--safe-bot))}
 .cp-link{cursor:pointer;text-decoration:underline;text-decoration-color:var(--gold)}
 
 /* ───── hub (הכוונה) ───── */
-#s-hub .stage{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 45%,#0a6fc4,#0659a9 60%,#04427f);padding-bottom:calc(56px + var(--safe-bot))}
+#s-hub .stage{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#0062bb;padding-bottom:calc(56px + var(--safe-bot))}
 #s-hub .hubbox{position:relative;width:100%;max-height:100%;aspect-ratio:1/1}
-#s-hub .hubbox img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent),linear-gradient(180deg,transparent,#000 5%,#000 95%,transparent);-webkit-mask-composite:source-in;
-  mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent),linear-gradient(180deg,transparent,#000 5%,#000 95%,transparent);mask-composite:intersect}
+#s-hub .hubbox img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;-webkit-mask-image:linear-gradient(180deg,#000 90%,transparent);mask-image:linear-gradient(180deg,#000 90%,transparent)}
 .hz{position:absolute;left:0;right:0;cursor:pointer}
 .hz-top{top:0;height:58%}.hz-bot{bottom:0;height:42%}
 .hz .cap{position:absolute;background:rgba(20,35,56,.72);color:#fff;border:1.5px solid var(--gold);border-radius:999px;padding:6px 14px;font-size:17px;font-weight:900;
   -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);box-shadow:0 4px 10px rgba(0,0,0,.3);pointer-events:none}
 .hz .cap .en{font-size:11px;color:var(--gold2);display:block;text-align:center}
-.hz-top .cap{top:10px;right:10px}.hz-bot .cap{top:50%;left:50%;transform:translate(-50%,-50%)}
+.hz-top .cap{top:50%;left:50%;transform:translate(-50%,-50%)}.hz-bot .cap{top:50%;left:50%;transform:translate(-50%,-50%)}
 .hz:active{background:rgba(255,255,255,.12)}
 .hub-bar{position:absolute;left:10px;right:10px;bottom:calc(10px + var(--safe-bot));display:flex;gap:8px;justify-content:space-between;z-index:3}
 .hub-bar button{border:1.5px solid var(--gold);background:rgba(255,253,248,.94);color:var(--navy);border-radius:999px;padding:7px 13px;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 3px 8px rgba(0,0,0,.25)}
@@ -287,7 +285,7 @@ button{font-family:inherit}
   </div>
   <div class="body">
     <img class="entry-logo" src="icon-512.png" alt="">
-    <div class="entry-t">פריסה+<small>פריסת מבצעים במקומות המיוחדים · <span dir="ltr">Promo display planner</span></small></div>
+    <div class="entry-t">פריסה+<small>תכנון פריסת מבצעים חודשית · <span dir="ltr">Promo display planner</span></small></div>
     <button class="bigbr" data-branch="118"><b>118</b><span>סניף 118 · <span dir="ltr">Branch 118</span></span></button>
     <button class="bigbr" data-branch="208"><b>208</b><span>סניף 208 · <span dir="ltr">Branch 208</span></span></button>
   </div>
@@ -519,7 +517,7 @@ const LAYOUT={
 const HOT208=[['ENT1',24,19],['ST1',34,19],['E1',46,21],['E2',49,31],['E3',48,43],['E4',49,51],['CC2',23,49],['ST2',28,59],['CC1',44,61],['E6',47,68],['E7',44,76]];
 /* אזורי הלחיצה בתמונת התצוגות (% מהתמונה) */
 // [group,x,y,w,h, badgeX,badgeY] — אחוזים מהתמונה
-const DISP_HOT=[['H',6.5,15,35,39,38,16],['SB',60.5,6.5,32,45,90,9],['W',61,53,33,31,92,76],['P',42,69,25,24,49,70],['S',28,61,14,31,38,62],['B',11.5,47,16,42,24,48]];
+const DISP_HOT=[['H',6.5,15,35,39,38,16],['SB',60.5,6.5,32,45,90,9],['W',61,53,33,31,92,76],['P',42,69,25,24,49,70],['S',28,61,14,31,38,62],['B',11.5,47,16,42,12,57]];
 const HEB_MONTHS=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
 function defMonth(){const d=new Date();d.setDate(d.getDate()+20);return HEB_MONTHS[d.getMonth()]+' '+d.getFullYear()}
 function monthKey(label){const m=String(label||'').match(/(\S+)\s+(\d{4})/);if(!m)return 'x';const i=HEB_MONTHS.indexOf(m[1]);return m[2]+'-'+String(i+1).padStart(2,'0')}
@@ -654,7 +652,7 @@ function renderDisp(){$('#miniMap').className='mini-map'+(BR==208?' b208':'');$(
   $('#dispBox').querySelectorAll('.dh,.dbadge').forEach(e=>e.remove());
   DISP_HOT.forEach(([k,x,y,w,h,bx,by])=>{const n=spots().filter(s=>s.g===k);const f=n.filter(s=>fillState(s.id)>0).length;
     const el=document.createElement('div');el.className='dh';el.dataset.group=k;el.style.cssText=`left:${x}%;top:${y}%;width:${w}%;height:${h}%`;
-    $('#dispBox').appendChild(el);if(n.length){const b=document.createElement('span');b.className='dbadge';b.style.cssText=`left:${bx}%;top:${by}%`;b.textContent=`${f}/${n.length}`;$('#dispBox').appendChild(b)}});requestAnimationFrame(fitDisp)}
+    $('#dispBox').appendChild(el);const tot=k==='B'&&BR==118?30:n.length;if(tot){const b=document.createElement('span');b.className='dbadge';b.style.cssText=`left:${bx}%;top:${by}%`;b.textContent=k==='B'&&BR==118?'30':`${f}/${n.length}`;$('#dispBox').appendChild(b)}});requestAnimationFrame(fitDisp)}
 
 /* מפה */
 let SVG118='';
