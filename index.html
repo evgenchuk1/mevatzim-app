@@ -32,21 +32,22 @@ button{font-family:inherit}
 .body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px calc(24px + var(--safe-bot))}
 
 /* ───── header ───── */
-.hdr{flex-shrink:0;display:flex;align-items:center;gap:10px;padding:calc(var(--safe-top) + 8px) 12px 9px;color:#fff;
+.hdr{flex-shrink:0;display:flex;align-items:center;gap:7px;padding:calc(var(--safe-top) + 8px) 12px 9px;color:#fff;
   background:linear-gradient(160deg,var(--navy3) 0%,var(--navy) 55%,var(--deep) 100%);
   box-shadow:0 4px 12px rgba(20,35,56,.35);border-bottom:3px solid var(--gold);position:relative;z-index:5}
 .brand{display:flex;align-items:center;gap:8px;flex-shrink:0;cursor:pointer}
 .brand img{width:38px;height:38px;border-radius:50%;background:#fff;object-fit:cover;border:2px solid var(--gold);box-shadow:0 0 0 2px rgba(207,171,111,.25),0 3px 8px rgba(0,0,0,.35)}
 .brand .nm{font-size:24px;font-weight:900;color:var(--gold2);line-height:1}
 .brand .nm small{display:block;font-size:12px;font-weight:700;color:var(--gold2);opacity:.8;letter-spacing:.3px;direction:ltr;text-align:right;margin-top:2px}
-.htitle{flex:1;min-width:0;text-align:center;font-size:20.5px;font-weight:900;line-height:1.15;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.htitle{flex:1;min-width:0;align-self:flex-start;margin-top:1px;text-align:center;font-size:20.5px;font-weight:900;line-height:1.2;overflow:hidden;white-space:nowrap;text-overflow:clip}
 .htitle small{display:block;font-size:10.5px;font-weight:600;color:var(--gold2);direction:ltr}
-.back,.bchip,.mapbtn{flex-shrink:0;width:70px;height:30px;display:flex;align-items:center;justify-content:center;gap:3px;border-radius:999px;font-size:14px;font-weight:900;cursor:pointer;white-space:nowrap;padding:0;line-height:1}
+.back,.mapbtn{flex-shrink:0;width:58px;height:32px;display:flex;align-items:center;justify-content:center;gap:3px;border-radius:999px;font-size:13px;font-weight:900;cursor:pointer;white-space:nowrap;padding:0;line-height:1}
 .back{border:1.5px solid var(--gold);background:rgba(255,255,255,.08);color:var(--gold2)}
 .back:active{background:rgba(255,255,255,.15)}
-.bcol{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:5px}
-.bchip,.mapbtn{border:1.5px solid #F3E3BE;background:linear-gradient(180deg,var(--gold2),var(--gold));color:var(--deep);box-shadow:0 2px 0 var(--gold3)}
+.mapbtn{border:1.5px solid #F3E3BE;background:linear-gradient(180deg,var(--gold2),var(--gold));color:var(--deep);box-shadow:0 2px 0 var(--gold3)}
 .mapbtn:active{transform:translateY(2px);box-shadow:none}
+.brand .nm small .bchip{display:inline-block;background:var(--gold2);color:var(--deep);border-radius:4px;padding:0 5px;font-size:11.5px;font-weight:900;line-height:15px;margin-left:6px;direction:ltr}
+.brand .nm small .bchip:empty{display:none}
 .sync{position:absolute;left:8px;bottom:-14px;font-size:10px;font-weight:700;color:var(--gold3);background:var(--card);border:1px solid var(--cream2);border-radius:999px;padding:0 7px;line-height:16px}
 .sync.err{color:var(--bad)}
 
@@ -103,7 +104,7 @@ button{font-family:inherit}
 .disp-box img{width:100%;height:100%;display:block}
 .dh{position:absolute;cursor:pointer;border-radius:16px}
 .dh:active{background:rgba(232,211,166,.28);outline:2px solid var(--gold2)}
-.dh .n{position:absolute;top:2px;right:2px;background:var(--gold);color:var(--deep);font-size:11px;font-weight:900;border-radius:999px;padding:0 6px;line-height:17px;box-shadow:0 2px 4px rgba(0,0,0,.35)}
+.dbadge{direction:ltr;position:absolute;transform:translate(-50%,-50%);pointer-events:none;z-index:2;background:var(--gold);color:var(--deep);font-size:11px;font-weight:900;border-radius:999px;padding:0 6px;line-height:17px;box-shadow:0 2px 4px rgba(0,0,0,.35)}
 
 /* ───── map ───── */
 #s-map .body{padding:8px 8px calc(16px + var(--safe-bot));position:relative}
@@ -122,8 +123,15 @@ button{font-family:inherit}
 .hs i{position:absolute;top:6%;right:6%;width:22%;height:22%;border-radius:50%;border:1.5px solid #fff;background:#9aa7b6;box-shadow:0 1px 3px rgba(0,0,0,.4)}
 .spot{cursor:pointer}
 .spot:hover circle:nth-child(2){fill:#fff}
-.lens{position:fixed;left:10px;right:10px;height:44vh;border-radius:18px;overflow:hidden;border:3px solid var(--gold);background:#fbf9f4;z-index:30;
-  box-shadow:0 14px 34px rgba(20,35,56,.45),inset 0 0 0 2px rgba(255,255,255,.6);display:none}
+.lens{position:fixed;left:14px;right:14px;height:40vh;border-radius:20px;overflow:hidden;background:#fbf9f4;z-index:30;display:none;
+  border:5px solid var(--gold);border-color:#F6E7C3 #B8955A #8A6C3A #E2C78F;
+  box-shadow:0 0 0 1.5px #6E5530,0 16px 30px rgba(20,35,56,.5),0 4px 8px rgba(20,35,56,.35)}
+.lens:after{content:"";position:absolute;inset:0;border-radius:15px;pointer-events:none;z-index:2;
+  box-shadow:inset 0 3px 3px rgba(255,255,255,.85),inset 0 -4px 10px rgba(20,35,56,.28),inset 0 0 22px rgba(20,35,56,.18);
+  background:radial-gradient(ellipse 70% 40% at 50% 0%,rgba(255,255,255,.28),transparent 70%)}
+.lens-fab{position:fixed;left:16px;bottom:calc(18px + var(--safe-bot));z-index:25;width:56px;height:56px;border-radius:50%;font-size:26px;cursor:pointer;
+  border:2px solid #F3E3BE;background:linear-gradient(180deg,var(--gold2),var(--gold));box-shadow:0 4px 0 var(--gold3),0 8px 16px rgba(0,0,0,.3)}
+.lens-fab.on{display:none}
 .lens.on{display:block}
 .lens .li{position:absolute;left:0;top:0;transform-origin:0 0}
 .lens .li svg{display:block;width:100%;height:auto}.lens .li img.m208{display:block;width:100%;height:auto}
@@ -289,9 +297,9 @@ button{font-family:inherit}
 <!-- ═════════ הכוונה ═════════ -->
 <section class="screen" id="s-hub">
   <div class="hdr">
-    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small>Prisa+</small></div></div>
+    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small><span class="bchip" data-bchip></span>Prisa+</small></div></div>
     <div class="htitle">הכוונה</div>
-    <div class="bcol"><span class="bchip" data-bchip></span><button class="mapbtn" data-go="map">🗺️ מפה</button></div>
+    <button class="mapbtn" data-go="map">🗺️ מפה</button>
     <button class="back" data-back>חזרה ›</button>
     <span class="sync" data-sync></span>
   </div>
@@ -306,9 +314,9 @@ button{font-family:inherit}
 <!-- ═════════ תצוגות ═════════ -->
 <section class="screen" id="s-disp">
   <div class="hdr">
-    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small>Prisa+</small></div></div>
+    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small><span class="bchip" data-bchip></span>Prisa+</small></div></div>
     <div class="htitle">תצוגות</div>
-    <div class="bcol"><span class="bchip" data-bchip></span><button class="mapbtn" data-go="map">🗺️ מפה</button></div>
+    <button class="mapbtn" data-go="map">🗺️ מפה</button>
     <button class="back" data-back>חזרה ›</button>
     <span class="sync" data-sync></span>
   </div>
@@ -321,28 +329,26 @@ button{font-family:inherit}
 <!-- ═════════ מפה ═════════ -->
 <section class="screen" id="s-map">
   <div class="hdr">
-    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small>Prisa+</small></div></div>
+    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small><span class="bchip" data-bchip></span>Prisa+</small></div></div>
     <div class="htitle">מפת הסניף</div>
-    <div class="bcol"><span class="bchip" data-bchip></span><button class="mapbtn" data-go="map">🗺️ מפה</button></div>
+    <button class="mapbtn" data-go="map">🗺️ מפה</button>
     <button class="back" data-back>חזרה ›</button>
     <span class="sync" data-sync></span>
   </div>
   <div class="body">
-    <div class="map-tools">
-      <div style="flex:1"></div><button class="lens-btn" id="lensBtn">🔍 זכוכית מגדלת</button>
-    </div>
     <div class="map-wrap" id="mapWrap"><div class="map-inner" id="mapInner"></div></div>
     <div class="muted" style="margin-top:8px;text-align:center">הקישו על עיגול כדי לפתוח את המקום המיוחד · <span dir="ltr">Tap a circle to open it</span></div>
   </div>
+  <button class="lens-fab" id="lensBtn" title="זכוכית מגדלת">🔍</button>
   <div class="lens" id="lens"><span class="lt">×2.6 · גררו על המפה</span><button class="lens-x" id="lensX">✕</button><div class="li" id="lensInner"></div></div>
 </section>
 
 <!-- ═════════ רשימת מקומות לפי סוג ═════════ -->
 <section class="screen" id="s-group">
   <div class="hdr">
-    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small>Prisa+</small></div></div>
+    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small><span class="bchip" data-bchip></span>Prisa+</small></div></div>
     <div class="htitle" id="gTitle"></div>
-    <div class="bcol"><span class="bchip" data-bchip></span><button class="mapbtn" data-go="map">🗺️ מפה</button></div>
+    <button class="mapbtn" data-go="map">🗺️ מפה</button>
     <button class="back" data-back>חזרה ›</button>
     <span class="sync" data-sync></span>
   </div>
@@ -359,9 +365,9 @@ button{font-family:inherit}
 <!-- ═════════ מקום בודד (מהמפה) ═════════ -->
 <section class="screen" id="s-spot">
   <div class="hdr">
-    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small>Prisa+</small></div></div>
+    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small><span class="bchip" data-bchip></span>Prisa+</small></div></div>
     <div class="htitle" id="spTitle"></div>
-    <div class="bcol"><span class="bchip" data-bchip></span><button class="mapbtn" data-go="map">🗺️ מפה</button></div>
+    <button class="mapbtn" data-go="map">🗺️ מפה</button>
     <button class="back" data-back>חזרה ›</button>
     <span class="sync" data-sync></span>
   </div>
@@ -371,9 +377,9 @@ button{font-family:inherit}
 <!-- ═════════ ידיעון ═════════ -->
 <section class="screen" id="s-yed">
   <div class="hdr">
-    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small>Prisa+</small></div></div>
+    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small><span class="bchip" data-bchip></span>Prisa+</small></div></div>
     <div class="htitle">ידיעון</div>
-    <div class="bcol"><span class="bchip" data-bchip></span><button class="mapbtn" data-go="map">🗺️ מפה</button></div>
+    <button class="mapbtn" data-go="map">🗺️ מפה</button>
     <button class="back" data-back>חזרה ›</button>
     <span class="sync" data-sync></span>
   </div>
@@ -397,9 +403,9 @@ button{font-family:inherit}
 <!-- ═════════ ארכיון ═════════ -->
 <section class="screen" id="s-arch">
   <div class="hdr">
-    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small>Prisa+</small></div></div>
+    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small><span class="bchip" data-bchip></span>Prisa+</small></div></div>
     <div class="htitle">ארכיון פריסות</div>
-    <div class="bcol"><span class="bchip" data-bchip></span><button class="mapbtn" data-go="map">🗺️ מפה</button></div>
+    <button class="mapbtn" data-go="map">🗺️ מפה</button>
     <button class="back" data-back>חזרה ›</button>
     <span class="sync" data-sync></span>
   </div>
@@ -419,9 +425,9 @@ button{font-family:inherit}
 <!-- ═════════ צפייה בחודש מהארכיון ═════════ -->
 <section class="screen" id="s-archv">
   <div class="hdr">
-    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small>Prisa+</small></div></div>
+    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small><span class="bchip" data-bchip></span>Prisa+</small></div></div>
     <div class="htitle" id="avTitle"></div>
-    <div class="bcol"><span class="bchip" data-bchip></span><button class="mapbtn" data-go="map">🗺️ מפה</button></div>
+    <button class="mapbtn" data-go="map">🗺️ מפה</button>
     <button class="back" data-back>חזרה ›</button>
   </div>
   <div class="body"><button class="gold-btn" data-act="restore" style="margin-bottom:12px">♻️ שחזור לפריסה הנוכחית <small>Restore</small></button><div id="avBody" class="ro"></div></div>
@@ -512,7 +518,8 @@ const LAYOUT={
 /* נקודות על מפת 208 (תמונה) — [id, x%, y%] */
 const HOT208=[['ENT1',24,19],['ST1',34,19],['E1',46,21],['E2',49,31],['E3',48,43],['E4',49,51],['CC2',23,49],['ST2',28,59],['CC1',44,61],['E6',47,68],['E7',44,76]];
 /* אזורי הלחיצה בתמונת התצוגות (% מהתמונה) */
-const DISP_HOT=[['H',0,10,40,45],['SB',62,0,37,52],['W',63,53,37,36],['P',41,72,29,28],['S',25,63,16,36],['B',6,47,18,48]];
+// [group,x,y,w,h, badgeX,badgeY] — אחוזים מהתמונה
+const DISP_HOT=[['H',6.5,15,35,39,38,16],['SB',60.5,6.5,32,45,90,9],['W',61,53,33,31,92,76],['P',42,69,25,24,49,70],['S',28,61,14,31,38,62],['B',11.5,47,16,42,24,48]];
 const HEB_MONTHS=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
 function defMonth(){const d=new Date();d.setDate(d.getDate()+20);return HEB_MONTHS[d.getMonth()]+' '+d.getFullYear()}
 function monthKey(label){const m=String(label||'').match(/(\S+)\s+(\d{4})/);if(!m)return 'x';const i=HEB_MONTHS.indexOf(m[1]);return m[2]+'-'+String(i+1).padStart(2,'0')}
@@ -609,7 +616,9 @@ async function autoFetchImages(){if(fetching)return;fetching=true;const b=BR;
 
 /* ═══════════════ ניווט ═══════════════ */
 const stack=[]; let cur='s-branch';
-function show(id){$$('.screen').forEach(s=>s.classList.toggle('on',s.id===id));cur=id;$$('.screen.on .body').forEach(b=>b.scrollTop=0);if(id!=='s-map')lensOff()}
+function fitTitle(){const t=document.querySelector('.screen.on .htitle');if(!t)return;let z=20.5;t.style.fontSize=z+'px';while(t.scrollWidth>t.clientWidth+1&&z>12){z-=.5;t.style.fontSize=z+'px'}t.style.marginTop=Math.max(0,(29-z*1.2)/2)+'px'}
+addEventListener('resize',fitTitle);
+function show(id){$$('.screen').forEach(s=>s.classList.toggle('on',s.id===id));cur=id;requestAnimationFrame(fitTitle);$$('.screen.on .body').forEach(b=>b.scrollTop=0);if(id!=='s-map')lensOff()}
 function go(id,push=true){if(push&&cur!==id){stack.push(cur);history.pushState({s:id},'')}show(id)}
 function back(){if(!stack.length){show('s-branch');return}show(stack.pop())}
 window.addEventListener('popstate',()=>{if($('#mOv').classList.contains('on')){closeM();history.pushState({},'');return}if(stack.length)show(stack.pop())});
@@ -627,7 +636,7 @@ function fillState(id){const s=ST.sp[id];if(!s)return 0;const f=s.items.filter(B
 
 /* ═══════════════ מסכים ═══════════════ */
 let curGroup='H', curSpot=null; const OPENC=new Set();
-function renderGroup(){const g=GROUPS[curGroup];$('#gTitle').textContent=g.he;
+function renderGroup(){const g=GROUPS[curGroup];$('#gTitle').textContent=g.he;requestAnimationFrame(fitTitle);
   $('#gTabs').innerHTML=GORDER.map(k=>{const n=spots().filter(s=>s.g===k).length;return `<div class="gtab${k===curGroup?' on':''}" data-group="${k}"><img src="${GROUPS[k].icon}" alt=""><b>${esc(GROUPS[k].he)}</b><span class="c">${k==='B'&&BR==118?'1–30':n||'—'}</span></div>`}).join('');
   const list=spots().filter(s=>s.g===curGroup);
   if(curGroup==='B'&&BR==118){$('#gList').innerHTML=`<div class="placeholder"><b>סטנדים יזומים וסטנדים ממותגים 1–30</b>סוג הגרפיקה ואופן מילוי הלשונית יוגדרו בהמשך.<br><span class="en" style="font-size:13px">Layout and filling method — coming soon</span></div>`;return}
@@ -642,10 +651,10 @@ function renderSpot(){const d=spotDef(curSpot);if(!d)return;$('#spTitle').textCo
 function fitDisp(){const h=$('#dispBox').parentElement,s=Math.min(h.clientWidth,h.clientHeight);$('#dispBox').style.width=$('#dispBox').style.height=s+'px'}
 addEventListener('resize',()=>{if(cur==='s-disp')fitDisp()});
 function renderDisp(){$('#miniMap').className='mini-map'+(BR==208?' b208':'');$('#miniMap').innerHTML=mapMarkup(true);paintMap($('#miniMap'));
-  $('#dispBox').querySelectorAll('.dh').forEach(e=>e.remove());
-  DISP_HOT.forEach(([k,x,y,w,h])=>{const n=spots().filter(s=>s.g===k);const f=n.filter(s=>fillState(s.id)>0).length;
+  $('#dispBox').querySelectorAll('.dh,.dbadge').forEach(e=>e.remove());
+  DISP_HOT.forEach(([k,x,y,w,h,bx,by])=>{const n=spots().filter(s=>s.g===k);const f=n.filter(s=>fillState(s.id)>0).length;
     const el=document.createElement('div');el.className='dh';el.dataset.group=k;el.style.cssText=`left:${x}%;top:${y}%;width:${w}%;height:${h}%`;
-    el.innerHTML=n.length?`<span class="n">${f}/${n.length}</span>`:'';$('#dispBox').appendChild(el)});requestAnimationFrame(fitDisp)}
+    $('#dispBox').appendChild(el);if(n.length){const b=document.createElement('span');b.className='dbadge';b.style.cssText=`left:${bx}%;top:${by}%`;b.textContent=`${f}/${n.length}`;$('#dispBox').appendChild(b)}});requestAnimationFrame(fitDisp)}
 
 /* מפה */
 let SVG118='';
@@ -655,19 +664,20 @@ function mapMarkup(mini){if(BR==118)return SVG118?uniq(SVG118,mini?'_m':'_f'):'<
 function paintMap(root){const C=['#9aa7b6','#CFAB6F','#2e9e5b'];
   root.querySelectorAll('.spot[data-id]').forEach(g=>{const id=g.dataset.id;const dot=g.querySelector('.dot');if(dot)dot.setAttribute('fill',spotDef(id)?C[fillState(id)]:'#9aa7b6')});
   root.querySelectorAll('.hs[data-id]').forEach(h=>{h.querySelector('i').style.background=C[fillState(h.dataset.id)]})}
-function renderMap(){$('#mapInner').innerHTML=mapMarkup(false);paintMap($('#mapInner'));if(lensOn)buildLens()}
+function renderMap(){$('#mapInner').innerHTML=mapMarkup(false);paintMap($('#mapInner'));if(lensOn)buildLens();else lensStart()}
 
 /* זכוכית מגדלת — מלבן גדול שמגדיל חלק מהמפה */
 let lensOn=false, LZ=2.6, foc={x:.5,y:.3};
 function buildLens(){const li=$('#lensInner'),mi=$('#mapInner');li.innerHTML=uniq(mi.innerHTML.replace(/_f(?=["')])/g,''),'_l');li.style.width=mi.offsetWidth+'px';li.style.height=mi.offsetHeight+'px';paintMap(li);placeLens()}
 function placeLens(){if(!lensOn)return;const L=$('#lens'),mi=$('#mapInner'),r=mi.getBoundingClientRect();
   const fyScreen=r.top+foc.y*r.height;const topHalf=fyScreen<innerHeight*.52;
-  L.style.top=topHalf?'auto':`calc(var(--safe-top) + 70px)`;L.style.bottom=topHalf?`calc(14px + var(--safe-bot))`:'auto';
+  const hb=$('#s-map .hdr').getBoundingClientRect().bottom;L.style.top=topHalf?'auto':(hb+10)+'px';L.style.bottom=topHalf?`calc(14px + var(--safe-bot))`:'auto';
   const lw=L.clientWidth,lh=L.clientHeight;const z=BR==118?2.6:2.2;
   const tx=lw/2-foc.x*r.width*z,ty=lh/2-foc.y*r.height*z;
   $('#lensInner').style.transform=`translate(${tx}px,${ty}px) scale(${z})`;$('#lens .lt').textContent=`×${z} · גררו על המפה`}
 function lensOff(){lensOn=false;$('#lens').classList.remove('on');$('#lensBtn').classList.remove('on');$('#mapWrap').classList.remove('lensing')}
-$('#lensBtn').onclick=()=>{if(lensOn){lensOff();return}lensOn=true;$('#lens').classList.add('on');$('#lensBtn').classList.add('on');$('#mapWrap').classList.add('lensing');buildLens();toast('גררו את האצבע על המפה · Drag over the map')};
+function lensStart(){lensOn=true;foc={x:.5,y:.78};$('#lens').classList.add('on');$('#lensBtn').classList.add('on');$('#mapWrap').classList.add('lensing');requestAnimationFrame(buildLens)}
+$('#lensBtn').onclick=()=>{if(lensOn){lensOff();return}lensStart()};
 $('#lensX').onclick=lensOff;
 (()=>{const w=$('#mapWrap');let down=false;
   const mv=e=>{if(!lensOn)return;const r=$('#mapInner').getBoundingClientRect();foc.x=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));foc.y=Math.min(1,Math.max(0,(e.clientY-r.top)/r.height));placeLens()};
