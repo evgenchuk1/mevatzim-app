@@ -121,7 +121,7 @@ button{font-family:inherit}
 .hs i{position:absolute;top:6%;right:6%;width:22%;height:22%;border-radius:50%;border:1.5px solid #fff;background:#9aa7b6;box-shadow:0 1px 3px rgba(0,0,0,.4)}
 .spot{cursor:pointer}
 .spot:hover circle:nth-child(2){fill:#fff}
-.lens{position:fixed;left:14px;right:14px;height:40vh;border-radius:20px;overflow:hidden;background:#fbf9f4;z-index:30;display:none;
+.lens{position:fixed;left:0;top:0;width:min(66vw,300px);height:min(30vh,210px);pointer-events:none;border-radius:20px;overflow:hidden;background:#fbf9f4;z-index:30;display:none;
   border:5px solid var(--gold);border-color:#F6E7C3 #B8955A #8A6C3A #E2C78F;
   box-shadow:0 0 0 1.5px #6E5530,0 16px 30px rgba(20,35,56,.5),0 4px 8px rgba(20,35,56,.35)}
 .lens:after{content:"";position:absolute;inset:0;border-radius:15px;pointer-events:none;z-index:2;
@@ -129,7 +129,7 @@ button{font-family:inherit}
   background:radial-gradient(ellipse 70% 40% at 50% 0%,rgba(255,255,255,.28),transparent 70%)}
 .lens-fab{position:fixed;left:16px;bottom:calc(18px + var(--safe-bot));z-index:25;width:56px;height:56px;border-radius:50%;font-size:26px;cursor:pointer;
   border:2px solid #F3E3BE;background:linear-gradient(180deg,var(--gold2),var(--gold));box-shadow:0 4px 0 var(--gold3),0 8px 16px rgba(0,0,0,.3)}
-.lens-fab.on{display:none}
+.lens-fab.on{background:linear-gradient(180deg,var(--navy3),var(--navy));border-color:var(--gold);box-shadow:0 4px 0 #0E1A2A,0 8px 16px rgba(0,0,0,.3)}
 .lens.on{display:block}
 .lens .li{position:absolute;left:0;top:0;transform-origin:0 0}
 .lens .li svg{display:block;width:100%;height:auto}.lens .li img.m208{display:block;width:100%;height:auto}
@@ -271,7 +271,6 @@ button{font-family:inherit}
 @media (min-width:760px){
   html,body{background:radial-gradient(circle at 50% 30%,#2a4566,#142338 75%)}
   .screen,#intro{max-width:900px;margin:0 auto;box-shadow:0 0 40px rgba(0,0,0,.45)}
-  .lens{max-width:880px;margin:0 auto}
 }
 </style>
 </head>
@@ -338,7 +337,7 @@ button{font-family:inherit}
     <div class="muted" style="margin-top:8px;text-align:center">הקישו על עיגול כדי לפתוח את המקום המיוחד · <span dir="ltr">Tap a circle to open it</span></div>
   </div>
   <button class="lens-fab" id="lensBtn" title="זכוכית מגדלת">🔍</button>
-  <div class="lens" id="lens"><span class="lt">×2.6 · גררו על המפה</span><button class="lens-x" id="lensX">✕</button><div class="li" id="lensInner"></div></div>
+  <div class="lens" id="lens"><span class="lt">×2.6</span><div class="li" id="lensInner"></div></div>
 </section>
 
 <!-- ═════════ רשימת מקומות לפי סוג ═════════ -->
@@ -652,7 +651,7 @@ function renderDisp(){$('#miniMap').className='mini-map'+(BR==208?' b208':'');$(
   $('#dispBox').querySelectorAll('.dh,.dbadge').forEach(e=>e.remove());
   DISP_HOT.forEach(([k,x,y,w,h,bx,by])=>{const n=spots().filter(s=>s.g===k);const f=n.filter(s=>fillState(s.id)>0).length;
     const el=document.createElement('div');el.className='dh';el.dataset.group=k;el.style.cssText=`left:${x}%;top:${y}%;width:${w}%;height:${h}%`;
-    $('#dispBox').appendChild(el);const tot=k==='B'&&BR==118?30:n.length;if(tot){const b=document.createElement('span');b.className='dbadge';b.style.cssText=`left:${bx}%;top:${by}%`;b.textContent=k==='B'&&BR==118?'30':`${f}/${n.length}`;$('#dispBox').appendChild(b)}});requestAnimationFrame(fitDisp)}
+    $('#dispBox').appendChild(el);const tot=k==='B'&&BR==118?30:n.length;if(tot){const b=document.createElement('span');b.className='dbadge';b.style.cssText=`left:${bx}%;top:${by}%`;b.textContent=k==='B'&&BR==118?'0/30':`${f}/${n.length}`;$('#dispBox').appendChild(b)}});requestAnimationFrame(fitDisp)}
 
 /* מפה */
 let SVG118='';
@@ -668,20 +667,19 @@ function renderMap(){$('#mapInner').innerHTML=mapMarkup(false);paintMap($('#mapI
 let lensOn=false, LZ=2.6, foc={x:.5,y:.3};
 function buildLens(){const li=$('#lensInner'),mi=$('#mapInner');li.innerHTML=uniq(mi.innerHTML.replace(/_f(?=["')])/g,''),'_l');li.style.width=mi.offsetWidth+'px';li.style.height=mi.offsetHeight+'px';paintMap(li);placeLens()}
 function placeLens(){if(!lensOn)return;const L=$('#lens'),mi=$('#mapInner'),r=mi.getBoundingClientRect();
-  const fyScreen=r.top+foc.y*r.height;const topHalf=fyScreen<innerHeight*.52;
-  const hb=$('#s-map .hdr').getBoundingClientRect().bottom;L.style.top=topHalf?'auto':(hb+10)+'px';L.style.bottom=topHalf?`calc(14px + var(--safe-bot))`:'auto';
-  const lw=L.clientWidth,lh=L.clientHeight;const z=BR==118?2.6:2.2;
+  const lw=L.offsetWidth,lh=L.offsetHeight;const z=BR==118?2.6:2.2;
+  const px=r.left+foc.x*r.width,py=r.top+foc.y*r.height;   // הנקודה על המסך — מרכז הזכוכית
+  L.style.transform=`translate(${px-lw/2}px,${py-lh/2}px)`;
   const tx=lw/2-foc.x*r.width*z,ty=lh/2-foc.y*r.height*z;
-  $('#lensInner').style.transform=`translate(${tx}px,${ty}px) scale(${z})`;$('#lens .lt').textContent=`×${z} · גררו על המפה`}
+  $('#lensInner').style.transform=`translate(${tx}px,${ty}px) scale(${z})`;$('#lens .lt').textContent=`×${z}`}
 function lensOff(){lensOn=false;$('#lens').classList.remove('on');$('#lensBtn').classList.remove('on');$('#mapWrap').classList.remove('lensing')}
-function lensStart(){lensOn=true;foc={x:.5,y:.78};$('#lens').classList.add('on');$('#lensBtn').classList.add('on');$('#mapWrap').classList.add('lensing');requestAnimationFrame(buildLens)}
+function lensStart(){lensOn=true;{const r=$('#mapInner').getBoundingClientRect();foc={x:.5,y:r.height?Math.min(.9,Math.max(.1,(innerHeight*.5-r.top)/r.height)):.5}}$('#lens').classList.add('on');$('#lensBtn').classList.add('on');$('#mapWrap').classList.add('lensing');requestAnimationFrame(buildLens)}
 $('#lensBtn').onclick=()=>{if(lensOn){lensOff();return}lensStart()};
-$('#lensX').onclick=lensOff;
 (()=>{const w=$('#mapWrap');let down=false;
   const mv=e=>{if(!lensOn)return;const r=$('#mapInner').getBoundingClientRect();foc.x=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));foc.y=Math.min(1,Math.max(0,(e.clientY-r.top)/r.height));placeLens()};
   w.addEventListener('pointerdown',e=>{if(!lensOn)return;down=true;mv(e)});
   w.addEventListener('pointermove',e=>{if(lensOn&&(down||e.pointerType==='mouse'))mv(e)});
-  addEventListener('pointerup',()=>down=false);addEventListener('resize',()=>{if(lensOn)buildLens()})})();
+  addEventListener('pointerup',()=>down=false);$('#s-map .body').addEventListener('scroll',placeLens);addEventListener('resize',()=>{if(lensOn)buildLens()})})();
 
 /* ידיעון */
 let yFilter='all';
