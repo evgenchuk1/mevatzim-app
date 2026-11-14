@@ -2,1593 +2,868 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>פריסה+</title>
+<meta name="theme-color" content="#203550">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="מבצעים">
-<meta name="theme-color" content="#C8102E">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="פריסה+">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
-<title>מבצעים חודשיים | שופרסל</title>
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --red:#C8102E;--red-dark:#A00D24;--red-light:#FFE8EB;
-  --bg:#F7F0F1;--card:#FFF;--border:#DDD;--empty:#F5F5F5;
-  --text:#1A1A1A;--muted:#777;--shadow:0 2px 8px rgba(200,16,46,.1);
-  --r:12px;
+  --navy:#203550;--navy2:#2d4a70;--navy3:#3a5d88;--deep:#142338;
+  --gold:#CFAB6F;--gold2:#E8D3A6;--gold3:#A8864A;
+  --cream:#F4F1EA;--cream2:#EAE4D6;--card:#FFFDF8;--muted:#8a8578;
+  --ok:#2e9e5b;--bad:#c0392b;
+  --safe-top:env(safe-area-inset-top,0px);--safe-bot:env(safe-area-inset-bottom,0px);
 }
-html,body{height:100%;overflow:hidden}
-body{
-  font-family:-apple-system,'Heebo','Arial Hebrew',Arial,sans-serif;
-  background:var(--bg);color:var(--text);direction:rtl;
-  display:flex;flex-direction:column;height:100vh;height:100dvh;
-}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--cream)}
+body{font-family:'Heebo',Arial,sans-serif;color:var(--deep);overflow:hidden;-webkit-text-size-adjust:100%}
+button{font-family:inherit}
+.en{font-size:.5em;font-weight:600;opacity:.85;direction:ltr;unicode-bidi:isolate}
+.screen{position:fixed;inset:0;display:none;flex-direction:column;background:var(--cream)}
+.screen.on{display:flex}
+.body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px calc(24px + var(--safe-bot))}
 
-/* ── HEADER ── */
-.hdr{background:var(--red);color:#fff;padding:10px 14px 8px;flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,.25)}
-.hdr-row{display:flex;align-items:center;gap:8px}
-.logo-box{background:#fff;border-radius:6px;padding:2px 7px;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;min-height:36px}
-.logo-box img{height:30px;width:auto;display:block}
-.logo-box span{color:var(--red);font-size:15px;font-weight:900;letter-spacing:-.5px}
-.hdr-title{font-size:27px;font-weight:700;flex:1;text-align:center}
-.month-btn{background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.45);
-  color:#fff;border-radius:8px;padding:4px 10px;font-size:19px;font-family:inherit;
-  cursor:pointer;font-weight:600;white-space:nowrap}
+/* ───── header ───── */
+.hdr{flex-shrink:0;display:flex;align-items:center;gap:10px;padding:calc(var(--safe-top) + 8px) 12px 9px;color:#fff;
+  background:linear-gradient(160deg,var(--navy3) 0%,var(--navy) 55%,var(--deep) 100%);
+  box-shadow:0 4px 12px rgba(20,35,56,.35);border-bottom:3px solid var(--gold);position:relative;z-index:5}
+.brand{display:flex;align-items:center;gap:8px;flex-shrink:0;cursor:pointer}
+.brand img{width:42px;height:42px;border-radius:50%;background:#fff;object-fit:cover;border:2px solid var(--gold);box-shadow:0 0 0 2px rgba(207,171,111,.25),0 3px 8px rgba(0,0,0,.35)}
+.brand .nm{font-size:21px;font-weight:900;color:var(--gold2);line-height:1}
+.brand .nm small{display:block;font-size:10.5px;font-weight:700;color:var(--gold2);opacity:.8;letter-spacing:.3px;direction:ltr;text-align:right;margin-top:2px}
+.htitle{flex:1;min-width:0;text-align:center;font-size:18px;font-weight:900;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.htitle small{display:block;font-size:10.5px;font-weight:600;color:var(--gold2);direction:ltr}
+.back{flex-shrink:0;border:1.5px solid var(--gold);background:rgba(255,255,255,.08);color:var(--gold2);border-radius:999px;padding:7px 13px;font-size:15px;font-weight:800;cursor:pointer}
+.back small{display:block;font-size:9px;font-weight:600;opacity:.8}
+.bchip{flex-shrink:0;background:linear-gradient(180deg,var(--gold2),var(--gold));color:var(--deep);border-radius:999px;padding:3px 10px;font-weight:900;font-size:14px}
+.sync{position:absolute;left:8px;bottom:-14px;font-size:10px;font-weight:700;color:var(--gold3);background:var(--card);border:1px solid var(--cream2);border-radius:999px;padding:0 7px;line-height:16px}
+.sync.err{color:var(--bad)}
 
-/* ── TABS ── */
-.tabs{display:flex;background:var(--red-dark);flex-shrink:0}
-.tab-btn{flex:1;padding:7px 2px 5px;background:none;border:none;
-  color:rgba(255,255,255,.6);font-family:inherit;font-size:13px;font-weight:600;
-  cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;
-  border-bottom:3px solid transparent;transition:all .2s}
-.tab-btn .ti{font-size:22px}
-.tab-btn.active{color:#fff;border-bottom-color:#fff}
+/* ───── buttons ───── */
+.gold-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:none;border-radius:16px;padding:12px;font-size:19px;font-weight:900;color:var(--deep);cursor:pointer;
+  background:linear-gradient(170deg,#F3E3BE 0%,var(--gold) 55%,#B8955A 100%);box-shadow:0 4px 0 #8A6C3A,0 7px 14px rgba(0,0,0,.18)}
+.gold-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #8A6C3A}
+.gold-btn small{font-size:11px;font-weight:700;opacity:.8}
+.navy-btn{border:none;border-radius:14px;padding:11px 14px;font-size:16px;font-weight:800;color:#fff;cursor:pointer;
+  background:linear-gradient(170deg,var(--navy3),var(--navy));box-shadow:0 3px 0 #0E1A2A}
+.ghost-btn{border:1.5px solid var(--gold);background:var(--card);color:var(--navy);border-radius:14px;padding:10px 14px;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 3px 0 var(--cream2)}
+.row-btns{display:flex;gap:8px;margin-top:12px}.row-btns>*{flex:1}
 
-/* ── CONTENT ── */
-.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.tab-view{display:none;padding:0}
-.tab-view.active{display:block}
-#view-map,#view-list,#view-edit{padding:10px}
+/* ───── branch entry ───── */
+#s-branch .body{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding-top:30px}
+.entry-logo{width:120px;height:120px;border-radius:28px;box-shadow:0 10px 26px rgba(20,35,56,.35)}
+.entry-t{text-align:center;font-size:30px;font-weight:900;color:var(--navy);line-height:1.05}
+.entry-t small{display:block;font-size:14px;color:var(--gold3);font-weight:700;margin-top:4px}
+.bigbr{width:min(78vw,320px);height:118px;border-radius:26px;border:none;cursor:pointer;color:var(--gold2);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:linear-gradient(165deg,var(--navy3) 0%,var(--navy) 55%,var(--deep) 100%);border-top:2px solid var(--gold);
+  box-shadow:0 7px 0 #0E1A2A,0 12px 22px rgba(16,28,46,.35),inset 0 1px 0 rgba(255,255,255,.2)}
+.bigbr:active{transform:translateY(5px);box-shadow:0 2px 0 #0E1A2A}
+.bigbr b{font-size:56px;font-weight:900;line-height:1;letter-spacing:2px}
+.bigbr span{font-size:14px;font-weight:700;color:#fff;opacity:.85}
+.foot{text-align:center;font-size:12px;color:var(--muted);padding:8px 10px calc(8px + var(--safe-bot))}
+.cp-link{cursor:pointer;text-decoration:underline;text-decoration-color:var(--gold)}
 
-/* ── STORE MAP TAB ── */
-.store-map-wrap{position:relative;width:100%;display:block}
-.store-map-wrap img.store-img{width:100%;display:block}
-.store-hotspot{position:absolute;transform:translate(-50%,-50%);
-  background:transparent;border:none;
-  border-radius:50%;width:50px;height:50px;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;-webkit-tap-highlight-color:transparent}
-.store-hotspot:active{background:rgba(200,16,46,.18)}
-.store-hotspot span{display:none}
-.store-text-cover{position:absolute;top:0;right:0;width:57%;height:3.8%;background:#f0ebe4;z-index:5;pointer-events:none}
-#coord-display{display:none;position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.8);color:#fff;padding:5px 14px;border-radius:10px;font-size:14px;font-weight:700;z-index:20;pointer-events:none;white-space:nowrap}
+/* ───── hub (הכוונה) ───── */
+#s-hub .stage{flex:1;position:relative;overflow:hidden;background:#0d63c6}
+#s-hub .stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hz{position:absolute;left:0;right:0;cursor:pointer}
+.hz-top{top:0;height:58%}.hz-bot{bottom:0;height:42%}
+.hz .cap{position:absolute;background:rgba(20,35,56,.72);color:#fff;border:1.5px solid var(--gold);border-radius:999px;padding:6px 14px;font-size:17px;font-weight:900;
+  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);box-shadow:0 4px 10px rgba(0,0,0,.3);pointer-events:none}
+.hz .cap .en{font-size:11px;color:var(--gold2);display:block;text-align:center}
+.hz-top .cap{top:14px;right:14px}.hz-bot .cap{bottom:calc(64px + var(--safe-bot));left:50%;transform:translateX(-50%)}
+.hz:active{background:rgba(255,255,255,.12)}
+.hub-bar{position:absolute;left:10px;right:10px;bottom:calc(10px + var(--safe-bot));display:flex;gap:8px;justify-content:space-between;z-index:3}
+.hub-bar button{border:1.5px solid var(--gold);background:rgba(255,253,248,.94);color:var(--navy);border-radius:999px;padding:7px 13px;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 3px 8px rgba(0,0,0,.25)}
 
-/* ── MAP ── */
-.gmap{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.gcard{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);
-  border:1.5px solid var(--border);overflow:hidden}
-.gcard.wide{grid-column:span 2}
-.gcard-hdr{background:var(--red);color:#fff;padding:7px 12px;
-  display:flex;flex-direction:column;gap:1px}
-.gcard-hdr .gname{font-size:24px;font-weight:700;line-height:1.2}
-.gcard-hdr .gid{font-size:18px;opacity:.85}
-.gcard-body{padding:5px}
+/* ───── תצוגות ───── */
+#s-disp .split{flex:1;display:flex;flex-direction:column;min-height:0}
+.half{flex:1;min-height:0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.half.mapH{background:var(--cream);border-bottom:3px solid var(--gold);cursor:pointer;padding:6px}
+.mini-map{height:100%;max-width:100%;aspect-ratio:600/845;position:relative;pointer-events:none}
+.mini-map.b208{aspect-ratio:1664/2520}
+.mini-map svg,.mini-map img{width:100%;height:100%;display:block}
+.half .tapcap{position:absolute;bottom:8px;left:8px;background:var(--navy);color:var(--gold2);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:800;box-shadow:0 3px 8px rgba(0,0,0,.3)}
+.half.dispH{background:#2f4962}
+.disp-box{position:relative;height:100%;aspect-ratio:1/1;max-width:100%}
+.disp-box img{width:100%;height:100%;display:block;object-fit:contain}
+.dh{position:absolute;cursor:pointer;border-radius:16px}
+.dh:active{background:rgba(232,211,166,.28);outline:2px solid var(--gold2)}
+.dh .n{position:absolute;top:2px;right:2px;background:var(--gold);color:var(--deep);font-size:11px;font-weight:900;border-radius:999px;padding:0 6px;line-height:17px;box-shadow:0 2px 4px rgba(0,0,0,.35)}
 
-/* Shelf slots */
-.shelf-stack{display:flex;flex-direction:column;gap:3px}
-.slot{border:1.5px dashed #DDD;border-radius:6px;background:var(--empty);
-  min-height:85px;display:flex;flex-direction:column;align-items:stretch;
-  position:relative;overflow:hidden;cursor:pointer;
-  transition:border-color .2s,background .2s}
-.slot.filled{border:1.5px solid #E0B5BA;background:#FFF8F9}
-.slot .snum{position:absolute;top:2px;right:4px;font-size:13px;color:#BBB;font-weight:700;z-index:2}
-.slot .sph{font-size:32px;opacity:.25;display:flex;align-items:center;justify-content:center;
-  flex:1;min-height:60px}
-.slot .shelf-fill{width:100%;flex:1;min-height:60px;cursor:pointer;
-  background-repeat:repeat-x;background-size:auto 95%;background-position:center}
-.slot .slot-footer{display:flex;align-items:center;gap:6px;padding:3px 4px 2px;flex-shrink:0}
-.slot .sname{font-size:22px;font-weight:700;color:var(--muted);line-height:1.2;
-  flex:1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;
-  -webkit-box-orient:vertical;direction:rtl;text-align:right}
-.slot .bc-mini{width:32px;height:22px;background:#2D8A4E;border-radius:4px;
-  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;z-index:3}
-.slot .bc-mini svg{width:20px;height:14px}
+/* ───── map ───── */
+#s-map .body{padding:8px 8px calc(16px + var(--safe-bot));position:relative}
+.map-tools{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.map-tools .lg{flex:1;display:flex;gap:10px;font-size:12px;font-weight:700;color:var(--muted);flex-wrap:wrap}
+.map-tools .lg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-inline-end:4px;vertical-align:-1px;border:1px solid #fff;box-shadow:0 0 0 1px #ccc}
+.lens-btn{border:1.5px solid var(--gold);background:var(--card);color:var(--navy);border-radius:999px;padding:7px 12px;font-size:15px;font-weight:900;cursor:pointer;box-shadow:0 3px 0 var(--cream2)}
+.lens-btn.on{background:linear-gradient(180deg,var(--gold2),var(--gold));color:var(--deep)}
+.map-wrap{position:relative;width:100%;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 4px 16px rgba(20,35,56,.18);border:1px solid var(--cream2)}
+.map-wrap.lensing{touch-action:none}
+.map-inner{position:relative;width:100%}
+.map-inner svg{display:block;width:100%;height:auto}
+.map-inner img.m208{display:block;width:100%;height:auto}
+.cover208{position:absolute;top:0;right:0;width:24%;height:3.4%;background:#fbf9f4}
+.hs{position:absolute;width:13%;aspect-ratio:1/1;transform:translate(-50%,-50%);border-radius:50%;cursor:pointer}
+.hs i{position:absolute;top:6%;right:6%;width:22%;height:22%;border-radius:50%;border:1.5px solid #fff;background:#9aa7b6;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.spot{cursor:pointer}
+.spot:hover circle:nth-child(2){fill:#fff}
+.lens{position:fixed;left:10px;right:10px;height:44vh;border-radius:18px;overflow:hidden;border:3px solid var(--gold);background:#fbf9f4;z-index:30;
+  box-shadow:0 14px 34px rgba(20,35,56,.45),inset 0 0 0 2px rgba(255,255,255,.6);display:none}
+.lens.on{display:block}
+.lens .li{position:absolute;left:0;top:0;transform-origin:0 0}
+.lens .li svg{display:block;width:100%;height:auto}.lens .li img.m208{display:block;width:100%;height:auto}
+.lens .lt{position:absolute;top:6px;left:8px;background:rgba(20,35,56,.8);color:var(--gold2);font-size:11px;font-weight:800;border-radius:999px;padding:2px 9px;z-index:2;pointer-events:none}
+.lens-x{position:absolute;top:6px;right:8px;z-index:3;width:32px;height:32px;border-radius:50%;border:1.5px solid var(--gold);background:var(--card);color:var(--navy);font-size:18px;font-weight:900;cursor:pointer}
 
-/* Stand grid (2 cols × 3 rows) */
-.stand-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px}
-.stand-grid.ltr{direction:ltr}
-.stand-grid.ltr .slot{direction:rtl}
-.stand-grid .slot{min-height:100px}
+/* ───── group/spot cards (פירוט תכולה) ───── */
+.gtabs{display:flex;gap:7px;overflow-x:auto;padding:2px 2px 10px;margin:0 -4px 4px;scrollbar-width:none}
+.gtabs::-webkit-scrollbar{display:none}
+.gtab{flex:0 0 auto;width:74px;border:2px solid transparent;border-radius:14px;background:var(--card);padding:4px 4px 5px;cursor:pointer;text-align:center;box-shadow:0 2px 6px rgba(20,35,56,.12)}
+.gtab img{width:62px;height:50px;object-fit:cover;border-radius:10px;display:block;margin:0 auto 3px}
+.gtab b{display:block;font-size:11.5px;font-weight:800;color:var(--navy);line-height:1.1}
+.gtab.on{border-color:var(--gold);background:#FBF4E6;box-shadow:0 3px 0 var(--gold3)}
+.gtab .c{display:block;font-size:10px;color:var(--gold3);font-weight:800}
+.auto-btn{margin:2px 0 14px}
+.sec-h{font-size:15px;font-weight:900;color:var(--gold3);margin:18px 4px 8px;display:flex;align-items:center;gap:8px}
+.sec-h:after{content:"";flex:1;height:1.5px;background:var(--cream2)}
+.scard{background:var(--card);border-radius:18px;border:1px solid var(--cream2);box-shadow:0 3px 10px rgba(20,35,56,.08);margin-bottom:14px;overflow:hidden}
+.scard.flash{animation:flash 1.4s}
+@keyframes flash{0%,60%{box-shadow:0 0 0 4px var(--gold)}}
+.sch{display:flex;align-items:center;gap:8px;padding:11px 12px;background:linear-gradient(180deg,#FBF4E6,#F4EAD3);border-bottom:1.5px solid var(--gold2)}
+.sct{flex:1;min-width:0;font-size:18px;font-weight:900;color:var(--navy);line-height:1.1}
+.sct small{display:block;font-size:10px;color:var(--gold3);font-weight:700;direction:ltr;text-align:right}
+.cnt{flex-shrink:0;background:var(--navy);color:var(--gold2);border-radius:999px;padding:3px 10px;font-weight:900;font-size:14px;direction:ltr}
+.cnt.full{background:var(--ok);color:#fff}
+.clr{flex-shrink:0;border:1.5px solid var(--gold);background:#fff;color:var(--navy);border-radius:12px;padding:5px 9px;font-size:13px;font-weight:800;cursor:pointer}
+.shv{display:flex;align-items:center;gap:4px;padding:7px 12px;background:#FFFBF2;border-bottom:1px solid #F0E8D6;font-size:13px;font-weight:800;color:var(--muted)}
+.shv button{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--gold);background:#fff;color:var(--navy);font-size:18px;font-weight:900;cursor:pointer;line-height:1}
+.shv b{min-width:22px;text-align:center;color:var(--navy);font-size:16px}
+.shv .sp{flex:1}
+.srow{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid #F1EBDD;min-height:64px}
+.srow:last-child{border-bottom:none}
+.num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:linear-gradient(170deg,var(--navy3),var(--navy));color:var(--gold2);font-weight:900;font-size:17px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 #0E1A2A}
+.empty{flex:1;color:#c3bdb0;font-size:18px;font-weight:700}
+.add{flex-shrink:0;border:1.5px solid var(--gold);background:#fff;color:var(--navy);border-radius:12px;padding:8px 14px;font-size:16px;font-weight:900;cursor:pointer;box-shadow:0 2px 0 var(--cream2)}
+.thumb{flex-shrink:0;width:50px;height:50px;border-radius:10px;object-fit:contain;background:#fff;border:1px solid var(--cream2)}
+.thumb.ph{display:flex;align-items:center;justify-content:center;font-size:24px;background:#F6F1E6}
+.pinfo{flex:1;min-width:0;cursor:pointer}
+.pname{font-size:17px;font-weight:800;color:var(--deep);line-height:1.2;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.pbc{font-size:12.5px;color:var(--muted);font-weight:700;direction:ltr;text-align:right;margin-top:2px;display:flex;gap:6px;align-items:center;justify-content:flex-start;flex-wrap:wrap}
+.promo{display:inline-flex;align-items:center;gap:3px;background:linear-gradient(170deg,#F3E3BE,var(--gold));color:var(--deep);border-radius:999px;padding:1px 8px;font-size:12px;font-weight:900;direction:rtl;cursor:pointer;white-space:nowrap}
+.dots{flex-shrink:0;width:36px;height:36px;border-radius:50%;border:1px solid var(--cream2);background:#fff;color:var(--navy);font-size:22px;font-weight:900;cursor:pointer;line-height:1}
+.ro .add,.ro .dots,.ro .clr,.ro .shv button{display:none}
+.placeholder{background:var(--card);border:2px dashed var(--gold);border-radius:18px;padding:22px 16px;text-align:center;color:var(--navy);font-size:17px;font-weight:700;line-height:1.5}
+.placeholder b{display:block;font-size:20px;font-weight:900;margin-bottom:6px}
 
-/* ── MAP TOOLBAR ── */
-.map-toolbar{display:flex;justify-content:flex-end;padding:8px 10px 4px}
-.mail-btn{background:var(--red);color:#fff;border:none;border-radius:10px;
-  padding:9px 20px;font-size:20px;font-family:inherit;cursor:pointer;
-  font-weight:700;display:flex;align-items:center;gap:7px}
-.mail-btn:active{background:var(--red-dark)}
-
-/* ── LIST ── */
-.list-toolbar{display:flex;gap:8px;margin-bottom:8px;align-items:stretch}
-.list-toolbar .search-box{margin-bottom:0;flex:1}
-.search-box{background:#fff;border:1.5px solid var(--border);border-radius:10px;
-  padding:8px 12px;font-size:24px;font-family:inherit;width:100%;
-  direction:rtl}
-.import-btn{background:var(--red);color:#fff;border:none;border-radius:10px;
-  padding:8px 14px;font-size:19px;font-family:inherit;cursor:pointer;
-  white-space:nowrap;font-weight:600;flex-shrink:0}
-.cat-filter{display:flex;gap:6px;margin-bottom:8px}
-.cat-chip{flex:1;background:#fff;border:1.5px solid var(--border);border-radius:20px;
-  padding:7px 4px;font-size:15px;font-family:inherit;cursor:pointer;color:var(--muted);
-  font-weight:700}
-.cat-chip.active{background:var(--red);color:#fff;border-color:var(--red)}
-.cat-badge{display:inline-block;font-size:14px;font-weight:700;border-radius:8px;
-  padding:1px 8px;margin-inline-start:6px}
-.cat-badge.entrance{background:#E3F2FD;color:#1565C0}
-.cat-badge.monthly{background:#FFF3CD;color:#856404}
-.cat-badge.credit{background:#E8F5E9;color:#2E7D32}
-.auto-btn{width:100%;background:var(--red);color:#fff;border:none;border-radius:12px;
-  padding:12px;font-size:21px;font-weight:700;font-family:inherit;cursor:pointer;
-  margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px}
-.auto-btn:active{background:var(--red-dark)}
-.import-status{padding:8px 12px;border-radius:10px;font-size:18px;
-  text-align:center;margin-bottom:8px}
-.import-status.loading{background:#FFF3CD;color:#856404}
-.import-status.ok{background:#D4EDDA;color:#155724}
-.import-status.err{background:#F8D7DA;color:#721C24}
-.prod-table{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
-.prow{display:flex;align-items:center;padding:10px 12px;gap:10px;
-  border-bottom:1px solid #F0ECEC;background:#fff;transition:background .2s}
+/* ───── ידיעון ───── */
+.ycard{background:var(--card);border-radius:18px;border:1px solid var(--cream2);padding:14px;margin-bottom:12px;box-shadow:0 3px 10px rgba(20,35,56,.07)}
+.ymonth{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:900;color:var(--navy)}
+.ymonth .m{flex:1}
+.ymonth small{display:block;font-size:12px;color:var(--muted);font-weight:700}
+.stats{display:flex;gap:8px;margin-top:12px}
+.stat{flex:1;background:#F8F3E8;border-radius:12px;padding:7px;text-align:center;font-size:12px;font-weight:700;color:var(--muted)}
+.stat b{display:block;font-size:22px;color:var(--navy);font-weight:900}
+.search{display:flex;align-items:center;gap:6px;background:#fff;border:1.5px solid var(--gold);border-radius:14px;padding:4px 10px;margin:4px 0 10px}
+.search input{flex:1;border:none;outline:none;font:inherit;font-size:17px;padding:7px 2px;background:transparent;min-width:0}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.chip{border:1.5px solid var(--cream2);background:#fff;color:var(--navy);border-radius:999px;padding:6px 11px;font-size:14px;font-weight:800;cursor:pointer}
+.chip.on{background:var(--navy);color:var(--gold2);border-color:var(--navy)}
+.prow{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid #F1EBDD}
 .prow:last-child{border-bottom:none}
-.prow.assigned{background:#F5EBEC}
-.pthumb{width:64px;height:64px;object-fit:contain;flex-shrink:0;
-  border-radius:6px;background:#F5F5F5}
-.pthumb-ph{width:64px;height:64px;background:var(--empty);border-radius:6px;
-  display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0}
-.pinfo{flex:1;min-width:0}
-.pname{font-size:21px;font-weight:700;line-height:1.3;margin-bottom:2px}
-.ppos-assigned{font-size:17px;color:var(--red);font-weight:700;margin-bottom:1px}
-.ppos-unassigned{font-size:17px;color:#BBB;margin-bottom:1px}
-.pbc{font-size:16px;color:var(--muted)}
-.bc-btn{width:50px;height:50px;background:var(--red-light);border:none;border-radius:8px;
-  cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.bc-btn svg{width:32px;height:32px}
-.no-items{text-align:center;padding:40px 20px;color:var(--muted);font-size:24px}
-.fetch-prog{text-align:center;padding:8px;font-size:16px;color:var(--muted);background:#FAFAFA;border-radius:8px;margin-bottom:8px}
+.prow .no{flex-shrink:0;width:26px;text-align:center;font-size:13px;color:var(--muted);font-weight:800}
+.loc{display:inline-flex;align-items:center;gap:2px;background:#EEF2F8;color:var(--navy);border:1px solid #DCE3EE;border-radius:999px;padding:1px 8px;font-size:12px;font-weight:900;cursor:pointer;direction:ltr}
+.loc.none{background:#FDF0EE;color:var(--bad);border-color:#F5D5CF;cursor:default;direction:rtl}
+.sheet-h{font-size:14px;font-weight:900;color:#fff;background:linear-gradient(170deg,var(--navy3),var(--navy));border-radius:10px;padding:6px 10px;margin:12px 0 4px;display:flex;justify-content:space-between}
+.sheet-h span{color:var(--gold2)}
+.muted{color:var(--muted);font-size:14px;font-weight:600;line-height:1.5}
 
-/* ── EDIT ── */
-.esec{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);
-  margin-bottom:8px;overflow:hidden}
-.esec-hdr{background:var(--red-light);padding:10px 14px;font-weight:700;
-  font-size:21px;color:var(--red-dark);display:flex;align-items:center;gap:8px;
-  cursor:pointer;user-select:none}
-.esec-hdr .ename-main{flex:1}
-.esec-hdr .fill-badge{background:var(--red);color:#fff;border-radius:20px;
-  padding:3px 10px;font-size:16px;font-weight:700;white-space:nowrap}
-.esec-hdr .eid-arrow{font-size:16px;color:#999;flex-shrink:0}
-.esec-hdr .eclear-btn{background:#fff;border:1.5px solid var(--red);color:var(--red);
-  border-radius:8px;padding:4px 10px;font-size:15px;font-family:inherit;
-  cursor:pointer;font-weight:700;white-space:nowrap;flex-shrink:0}
-.esec-hdr .eclear-btn:active{background:var(--red);color:#fff}
-.esec-body{padding:6px 12px}
-.erow{display:flex;align-items:center;gap:8px;padding:7px 0;
-  border-bottom:1px solid #F5F0F0}
-.erow:last-child{border-bottom:none}
-.enum{background:var(--red);color:#fff;border-radius:50%;width:32px;height:32px;
-  display:flex;align-items:center;justify-content:center;font-size:18px;
-  font-weight:700;flex-shrink:0}
-.ethumb{width:48px;height:48px;object-fit:contain;background:#F5F5F5;
-  border-radius:4px;flex-shrink:0}
-.einfo{flex:1;min-width:0}
-.ename{font-size:19px;font-weight:600;line-height:1.2}
-.ebc{font-size:16px;color:var(--muted)}
-.eempty{font-size:19px;color:#CCC}
-.ebtn{background:var(--red-light);border:1px solid var(--red);color:var(--red-dark);
-  border-radius:8px;padding:7px 13px;font-size:18px;font-family:inherit;
-  cursor:pointer;font-weight:600;flex-shrink:0}
-.ecbtn{background:#fff;border:1px solid #DDD;color:#888;border-radius:8px;
-  padding:7px 10px;font-size:18px;font-family:inherit;cursor:pointer;flex-shrink:0}
+/* ───── archive ───── */
+.arow{display:flex;align-items:center;gap:10px;padding:12px;background:var(--card);border:1px solid var(--cream2);border-radius:14px;margin-bottom:8px;cursor:pointer;box-shadow:0 2px 6px rgba(20,35,56,.06)}
+.arow .ic{font-size:26px}
+.arow .t{flex:1;font-size:18px;font-weight:900;color:var(--navy)}
+.arow .t small{display:block;font-size:12px;color:var(--muted);font-weight:700}
 
-/* ── MODAL ── */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:999;
-  display:flex;align-items:flex-end;justify-content:center;
-  animation:fi .2s}
-@keyframes fi{from{opacity:0}to{opacity:1}}
-.modal{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:500px;
-  max-height:92vh;overflow-y:auto;padding:18px 16px 36px;
-  animation:su .25s}
-@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.mhandle{width:40px;height:4px;background:#DDD;border-radius:2px;margin:0 auto 14px}
-.mtitle{font-size:27px;font-weight:800;color:var(--red-dark);
-  margin-bottom:14px;text-align:center}
-.flabel{font-size:21px;font-weight:700;color:var(--text);
-  margin-bottom:4px;display:block}
-.finput{width:100%;border:1.5px solid var(--border);border-radius:10px;
-  padding:10px 12px;font-size:24px;font-family:inherit;direction:rtl;
-  margin-bottom:10px}
-.finput:focus{outline:none;border-color:var(--red)}
-.upload-area{border:2px dashed var(--border);border-radius:10px;padding:18px;
-  text-align:center;cursor:pointer;margin-bottom:10px;background:#FAFAFA}
-.upload-area img{width:100%;max-height:140px;object-fit:contain;border-radius:6px;margin-bottom:6px}
-.upload-hint{font-size:19px;color:var(--muted)}
-.fetch-status{font-size:16px;padding:6px 10px;border-radius:8px;margin-bottom:8px;text-align:center}
-.fetch-status.loading{background:#FFF3CD;color:#856404}
-.fetch-status.found{background:#D4EDDA;color:#155724}
-.fetch-status.notfound{background:#F8D7DA;color:#721C24}
-.btn1{width:100%;background:var(--red);color:#fff;border:none;border-radius:12px;
-  padding:13px;font-size:24px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:7px}
-.btn2{width:100%;background:#fff;color:var(--muted);border:1.5px solid var(--border);
-  border-radius:12px;padding:11px;font-size:22px;font-weight:600;
-  font-family:inherit;cursor:pointer}
+/* ───── modal ───── */
+.ov{position:fixed;inset:0;z-index:100;background:rgba(14,26,42,.55);display:none;align-items:flex-end;justify-content:center;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+.ov.on{display:flex}
+.sheet{background:var(--cream);width:100%;max-width:560px;max-height:90vh;border-radius:22px 22px 0 0;display:flex;flex-direction:column;border-top:4px solid var(--gold);box-shadow:0 -10px 30px rgba(0,0,0,.3)}
+.sheet .mh{padding:14px 16px 8px;font-size:19px;font-weight:900;color:var(--navy);display:flex;align-items:center;gap:8px}
+.sheet .mh .x{margin-inline-start:auto;width:34px;height:34px;border-radius:50%;border:1.5px solid var(--gold);background:#fff;color:var(--navy);font-size:18px;font-weight:900;cursor:pointer}
+.sheet .mh small{display:block;font-size:12px;color:var(--gold3);font-weight:700}
+.sheet .mb{flex:1;overflow-y:auto;padding:4px 16px 12px}
+.sheet .mf{padding:10px 16px calc(14px + var(--safe-bot));border-top:1px solid var(--cream2);display:flex;gap:8px}
+.sheet .mf>*{flex:1}
+.pick{display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:12px;background:#fff;border:1px solid var(--cream2);margin-bottom:7px;cursor:pointer}
+.pick:active{background:#FBF4E6}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:14px;font-weight:800;color:var(--navy);margin-bottom:4px}
+.field input,.field select{width:100%;font:inherit;font-size:18px;padding:10px 12px;border:1.5px solid var(--cream2);border-radius:12px;background:#fff;outline:none}
+.field input:focus{border-color:var(--gold)}
+.up{display:flex;align-items:center;gap:12px;border:2px dashed var(--gold);border-radius:14px;padding:10px;background:#fff;cursor:pointer;font-weight:800;color:var(--navy)}
+.up img{width:64px;height:64px;object-fit:contain;border-radius:10px}
+.fstat{font-size:13px;font-weight:800;margin-top:4px;min-height:18px}
+.menu-list button{display:flex;align-items:center;gap:10px;width:100%;text-align:right;border:none;background:#fff;border-radius:14px;padding:14px;font-size:18px;font-weight:800;color:var(--navy);margin-bottom:8px;cursor:pointer;border:1px solid var(--cream2)}
+.menu-list button.red{color:var(--bad)}
+.tgt{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px;margin-bottom:10px}
+.tgt button{border:1.5px solid var(--cream2);background:#fff;border-radius:12px;padding:8px 2px;font-size:14px;font-weight:900;color:var(--navy);cursor:pointer;direction:ltr}
+.tgt button small{display:block;font-size:10px;color:var(--muted);font-weight:700}
+.tgt button.on{background:var(--navy);color:var(--gold2);border-color:var(--navy)}
+#bcBox svg{max-width:100%;height:auto;background:#fff}
 
-/* Barcode modal */
-.bc-modal{text-align:center}
-.bc-prod-img{max-width:140px;max-height:140px;object-fit:contain;
-  margin:0 auto 10px;display:block}
-.bc-name{font-size:22px;color:var(--muted);margin-bottom:14px}
-.bc-wrap{background:#fff;border:1px solid #EEE;border-radius:8px;padding:12px;
-  display:block;width:100%}
-.bc-wrap svg{width:100%;height:auto}
-.bc-num{font-size:32px;font-weight:700;color:var(--text);margin-top:10px;
-  letter-spacing:1px;font-family:monospace}
+/* ───── copyright ───── */
+.cp-box{background:#fff;border-radius:20px;padding:20px 18px;max-width:380px;width:calc(100% - 28px);max-height:88vh;overflow-y:auto;margin:auto;border-top:4px solid var(--gold);box-shadow:0 8px 40px rgba(32,53,80,.28)}
+#cpOv{align-items:center}
+.cp-logo{display:block;width:150px;margin:0 auto 10px;border-radius:12px}
+.cp-box h3{font-size:18px;font-weight:900;color:var(--navy);margin-bottom:12px;text-align:center}
+.cp-text{font-size:14px;line-height:1.6;color:#333}
+.cp-sep{border:none;border-top:1px solid var(--cream2);margin:14px 0}
 
-/* Gondola detail header (in modal) */
-.gdtl-hdr{background:var(--red);color:#fff;border-radius:10px;
-  padding:10px 14px;margin-bottom:10px;display:flex;flex-direction:column;gap:2px}
-.gdtl-name{font-size:24px;font-weight:700}
-.gdtl-id{font-size:18px;opacity:.85}
-
-/* ── PICKER MODAL ── */
-.picker-loc{background:var(--red-light);border-radius:8px;padding:8px 12px;
-  margin-bottom:12px;font-size:19px;color:var(--red-dark);font-weight:600}
-.picker-list{display:flex;flex-direction:column;gap:6px}
-.picker-item{display:flex;align-items:center;gap:10px;padding:8px;
-  background:#FAFAFA;border-radius:8px;border:1.5px solid #EEE;cursor:pointer}
-.picker-item:active{background:var(--red-light);border-color:var(--red)}
-.picker-thumb{width:50px;height:50px;object-fit:contain;background:#F5F5F5;
-  border-radius:6px;flex-shrink:0}
-.picker-thumb-ph{width:50px;height:50px;background:var(--empty);border-radius:6px;
-  display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
-.picker-info{flex:1;min-width:0}
-.picker-name{font-size:19px;font-weight:700;line-height:1.2}
-.picker-bc{font-size:16px;color:var(--muted)}
-.picker-empty{text-align:center;padding:24px 16px;color:var(--muted);font-size:20px;line-height:1.6}
-
-/* ── PHOTO POPUP ── */
-.photo-popup{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1001;
-  display:flex;align-items:flex-end;justify-content:center;
-  animation:fi .2s}
-.photo-box{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:500px;
-  padding:14px 16px 30px;animation:su .25s}
-.photo-box-img{width:100%;max-height:52vh;object-fit:contain;display:block;
-  border-radius:10px;background:#F5F5F5}
-.photo-box-name{font-size:20px;font-weight:700;color:var(--text);margin-top:10px;
-  text-align:center;direction:rtl}
-.photo-box-close{margin-top:12px;width:100%;background:#F0F0F0;border:none;
-  border-radius:12px;padding:12px;font-size:21px;font-family:inherit;
-  cursor:pointer;color:#555;font-weight:600}
-
-/* ── COPYRIGHT POPUP ── */
-.cp-popup{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;
-  display:flex;align-items:center;justify-content:center}
-.cp-box{background:#fff;border-radius:18px;padding:26px 22px;max-width:340px;
-  width:92%;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.3);direction:rtl}
-.cp-title{font-size:26px;font-weight:800;color:var(--red-dark);margin-bottom:14px}
-.cp-text{font-size:17px;color:var(--text);line-height:1.65;margin-bottom:20px;text-align:center}
-.cp-text p{margin-bottom:10px}
-.cp-text p:last-child{margin-bottom:0}
-.cp-close{background:var(--red);color:#fff;border:none;border-radius:12px;
-  padding:12px 0;width:100%;font-size:19px;font-family:inherit;cursor:pointer;font-weight:700}
-
-/* ── EMAIL PICKER ── */
-.email-pick-item{width:100%;background:#FAFAFA;border:1.5px solid var(--border);
-  border-radius:12px;padding:13px;font-size:20px;font-family:inherit;
-  cursor:pointer;font-weight:700;color:var(--red-dark);margin-bottom:8px;
-  direction:ltr;text-align:center;display:block}
-.email-pick-item:active{background:var(--red-light);border-color:var(--red)}
-
-/* ── FOOTER ── */
-.footer{text-align:center;font-size:16px;color:#AAA;padding:6px;
-  flex-shrink:0;background:#fff;border-top:1px solid var(--border);
-  cursor:pointer;user-select:none}
-.footer:active{color:var(--red)}
+/* ───── intro / toast ───── */
+#intro{position:fixed;inset:0;z-index:300;background:#000;transition:opacity .5s}
+#intro[hidden]{display:none}
+#intro.out{opacity:0;pointer-events:none}
+#intro video{width:100%;height:100%;object-fit:cover}
+#intro button{position:absolute;top:calc(var(--safe-top) + 12px);border:1.5px solid rgba(255,255,255,.6);background:rgba(0,0,0,.35);color:#fff;border-radius:999px;padding:8px 16px;font:inherit;font-size:16px;font-weight:800;cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+#intro .in-skip{left:14px}
+#intro .in-snd{right:14px;padding:8px 12px}
+#intro .in-snd.ask{background:rgba(207,171,111,.85);color:#142338;border-color:#fff;animation:pulse 1.2s infinite}
+@keyframes pulse{50%{transform:scale(1.08)}}
+.toast{position:fixed;left:50%;bottom:calc(26px + var(--safe-bot));transform:translateX(-50%) translateY(30px);opacity:0;background:var(--navy);color:var(--gold2);border:1.5px solid var(--gold);padding:10px 18px;border-radius:999px;font-weight:800;font-size:15px;z-index:400;transition:.25s;pointer-events:none;max-width:92vw;text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<div class="hdr">
-  <div class="hdr-row">
-    <div class="logo-box">
-      <img src="https://evgenchuk1.github.io/order-schedule/logo.jpg" alt="שופרסל"
-        onerror="this.outerHTML='<span>שופרסל</span>'">
+<!-- ═════════ כניסה: בחירת סניף ═════════ -->
+<section class="screen on" id="s-branch">
+  <div class="hdr">
+    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small>Prisa+ · ET studio</small></div></div>
+    <div class="htitle">בחירת סניף<small>Choose branch</small></div>
+  </div>
+  <div class="body">
+    <img class="entry-logo" src="icon-512.png" alt="">
+    <div class="entry-t">פריסה+<small>פריסת מבצעים במקומות המיוחדים · <span dir="ltr">Promo display planner</span></small></div>
+    <button class="bigbr" data-branch="118"><b>118</b><span>סניף 118 · <span dir="ltr">Branch 118</span></span></button>
+    <button class="bigbr" data-branch="208"><b>208</b><span>סניף 208 · <span dir="ltr">Branch 208</span></span></button>
+  </div>
+  <div class="foot"><span class="cp-link" data-cp>© 2026 ET studio · Evgeniy Tsipis — כל הזכויות שמורות · All rights reserved</span></div>
+</section>
+
+<!-- ═════════ הכוונה ═════════ -->
+<section class="screen" id="s-hub">
+  <div class="hdr">
+    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small>Prisa+</small></div></div>
+    <div class="htitle">הכוונה<small>Guidance</small></div>
+    <span class="bchip" data-bchip></span>
+    <button class="back" data-back>חזרה ›<small>Back</small></button>
+    <span class="sync" data-sync></span>
+  </div>
+  <div class="stage">
+    <img src="hub.jpg" alt="">
+    <div class="hz hz-top" data-go="disp"><span class="cap">תצוגות<span class="en">Displays</span></span></div>
+    <div class="hz hz-bot" data-go="yed"><span class="cap">ידיעון<span class="en">Directive</span></span></div>
+    <div class="hub-bar"><button data-go="arch">🗄️ ארכיון פריסות <span class="en">Archive</span></button><button data-go="yed" id="hubMonth"></button></div>
+  </div>
+</section>
+
+<!-- ═════════ תצוגות ═════════ -->
+<section class="screen" id="s-disp">
+  <div class="hdr">
+    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small>Prisa+</small></div></div>
+    <div class="htitle">תצוגות<small>Displays</small></div>
+    <span class="bchip" data-bchip></span>
+    <button class="back" data-back>חזרה ›<small>Back</small></button>
+    <span class="sync" data-sync></span>
+  </div>
+  <div class="split">
+    <div class="half mapH" data-go="map"><div class="mini-map" id="miniMap"></div><span class="tapcap">🗺️ מפת הסניף · <span dir="ltr">Store map</span></span></div>
+    <div class="half dispH"><div class="disp-box" id="dispBox"><img src="displays.jpg" alt="תצוגות"></div></div>
+  </div>
+</section>
+
+<!-- ═════════ מפה ═════════ -->
+<section class="screen" id="s-map">
+  <div class="hdr">
+    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small>Prisa+</small></div></div>
+    <div class="htitle">מפת הסניף<small>Store map</small></div>
+    <span class="bchip" data-bchip></span>
+    <button class="back" data-back>חזרה ›<small>Back</small></button>
+    <span class="sync" data-sync></span>
+  </div>
+  <div class="body">
+    <div class="map-tools">
+      <div class="lg"><span><i style="background:#9aa7b6"></i>ריק</span><span><i style="background:#CFAB6F"></i>חלקי</span><span><i style="background:#2e9e5b"></i>מלא</span></div>
+      <button class="lens-btn" id="lensBtn">🔍 זכוכית מגדלת</button>
     </div>
-    <div class="hdr-title">מבצעים חודשיים</div>
-    <button class="month-btn" id="month-btn" onclick="editMonth()">טוען...</button>
+    <div class="map-wrap" id="mapWrap"><div class="map-inner" id="mapInner"></div></div>
+    <div class="muted" style="margin-top:8px;text-align:center">הקישו על עיגול כדי לפתוח את המקום המיוחד · <span dir="ltr">Tap a circle to open it</span></div>
   </div>
-</div>
+  <div class="lens" id="lens"><span class="lt">×2.6 · גררו על המפה</span><button class="lens-x" id="lensX">✕</button><div class="li" id="lensInner"></div></div>
+</section>
 
-<!-- TABS -->
-<div class="tabs">
-  <button class="tab-btn active" id="tab-store" onclick="switchTab('store')">
-    <span class="ti">🏪</span>חנות
-  </button>
-  <button class="tab-btn" id="tab-map" onclick="switchTab('map')">
-    <span class="ti">🗺️</span>מבצעים
-  </button>
-  <button class="tab-btn" id="tab-list" onclick="switchTab('list')">
-    <span class="ti">📋</span>רשימה
-  </button>
-  <button class="tab-btn" id="tab-edit" onclick="switchTab('edit')">
-    <span class="ti">✏️</span>עריכה
-  </button>
-</div>
+<!-- ═════════ רשימת מקומות לפי סוג ═════════ -->
+<section class="screen" id="s-group">
+  <div class="hdr">
+    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small>Prisa+</small></div></div>
+    <div class="htitle" id="gTitle"></div>
+    <span class="bchip" data-bchip></span>
+    <button class="back" data-back>חזרה ›<small>Back</small></button>
+    <span class="sync" data-sync></span>
+  </div>
+  <div class="body">
+    <div class="gtabs" id="gTabs"></div>
+    <button class="gold-btn auto-btn" data-act="auto">🤖 שיבוץ אוטומטי <small>Auto-assign</small></button>
+    <div id="gList"></div>
+  </div>
+</section>
 
-<!-- CONTENT -->
-<div class="content">
+<!-- ═════════ מקום בודד (מהמפה) ═════════ -->
+<section class="screen" id="s-spot">
+  <div class="hdr">
+    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small>Prisa+</small></div></div>
+    <div class="htitle" id="spTitle"></div>
+    <span class="bchip" data-bchip></span>
+    <button class="back" data-back>חזרה ›<small>Back</small></button>
+    <span class="sync" data-sync></span>
+  </div>
+  <div class="body"><div id="spBody"></div><button class="ghost-btn" style="width:100%" id="spAll"></button></div>
+</section>
 
-  <!-- STORE MAP -->
-  <div class="tab-view active" id="view-store">
-    <div class="store-map-wrap" id="store-layout">
-      <img class="store-img" src="images/store-map.png" alt="מפת החנות" id="store-img">
-      <div class="store-text-cover"></div>
-      <div id="coord-display"></div>
+<!-- ═════════ ידיעון ═════════ -->
+<section class="screen" id="s-yed">
+  <div class="hdr">
+    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small>Prisa+</small></div></div>
+    <div class="htitle">ידיעון<small>Head-office directive</small></div>
+    <span class="bchip" data-bchip></span>
+    <button class="back" data-back>חזרה ›<small>Back</small></button>
+    <span class="sync" data-sync></span>
+  </div>
+  <div class="body">
+    <div class="ycard">
+      <div class="ymonth"><div class="m" id="yMonth"></div><button class="ghost-btn" data-act="month" style="padding:6px 12px;font-size:14px">✎ חודש</button></div>
+      <div class="stats" id="yStats"></div>
+      <div class="row-btns">
+        <button class="navy-btn" data-act="import">📥 ייבוא אקסל<br><small style="font-size:11px;opacity:.8">Import Excel</small></button>
+        <button class="ghost-btn" data-act="addprod">＋ מוצר ידני<br><small style="font-size:11px;opacity:.7">Add item</small></button>
+      </div>
+      <input type="file" id="xlsIn" accept=".xlsx,.xls,.csv" hidden>
+      <div class="muted" id="yHint" style="margin-top:10px"></div>
     </div>
+    <div class="search">🔎<input id="ySearch" placeholder="חיפוש שם / ברקוד · Search" autocomplete="off"></div>
+    <div class="chips" id="yChips"></div>
+    <div id="yList"></div>
   </div>
+</section>
 
-  <!-- MAP -->
-  <div class="tab-view" id="view-map">
-    <div class="map-toolbar">
-      <button class="mail-btn" onclick="openEmailDialog()">✉️ מייל</button>
+<!-- ═════════ ארכיון ═════════ -->
+<section class="screen" id="s-arch">
+  <div class="hdr">
+    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small>Prisa+</small></div></div>
+    <div class="htitle">ארכיון פריסות<small>Monthly archive</small></div>
+    <span class="bchip" data-bchip></span>
+    <button class="back" data-back>חזרה ›<small>Back</small></button>
+    <span class="sync" data-sync></span>
+  </div>
+  <div class="body">
+    <div class="ycard">
+      <div class="ymonth"><div class="m" id="aCur"></div></div>
+      <div class="row-btns">
+        <button class="navy-btn" data-act="archsave">📦 שמירה לארכיון<br><small style="font-size:11px;opacity:.8">Save month</small></button>
+        <button class="ghost-btn" data-act="newmonth">🆕 חודש חדש<br><small style="font-size:11px;opacity:.7">New month</small></button>
+      </div>
+      <div class="muted" style="margin-top:10px">הפריסה הסופית של כל חודש נשמרת כאן לפי הוראות המשרד הראשי. «חודש חדש» שומר קודם לארכיון ואז מרוקן את כל המקומות ואת רשימת הידיעון.</div>
     </div>
-    <div class="gmap" id="gondola-map"></div>
+    <div id="aList"></div>
   </div>
+</section>
 
-  <!-- LIST -->
-  <div class="tab-view" id="view-list">
-    <div class="list-toolbar">
-      <input class="search-box" type="search" placeholder="חיפוש לפי שם או ברקוד..."
-        oninput="filterList(this.value)" id="search-inp">
-      <button class="import-btn" onclick="openImportPicker()">📥 ייבוא</button>
-    </div>
-    <div class="cat-filter" id="cat-filter">
-      <button class="cat-chip active" data-cat="" onclick="setCatFilter('')">הכל</button>
-      <button class="cat-chip" data-cat="entrance" onclick="setCatFilter('entrance')">כניסה</button>
-      <button class="cat-chip" data-cat="monthly" onclick="setCatFilter('monthly')">חודשי</button>
-      <button class="cat-chip" data-cat="credit" onclick="setCatFilter('credit')">אשראי</button>
-    </div>
-    <input type="file" id="import-file" accept=".xlsx,.xls" style="display:none"
-      onchange="handleImportFile(event)">
-    <div id="import-status" style="display:none" class="import-status"></div>
-    <div id="fetch-prog" style="display:none" class="fetch-prog"></div>
-    <div class="prod-table" id="prod-list"></div>
+<!-- ═════════ צפייה בחודש מהארכיון ═════════ -->
+<section class="screen" id="s-archv">
+  <div class="hdr">
+    <div class="brand" data-cp><img src="et-mark.png" alt="ET studio"><div class="nm">פריסה+<small>Prisa+</small></div></div>
+    <div class="htitle" id="avTitle"></div>
+    <span class="bchip" data-bchip></span>
+    <button class="back" data-back>חזרה ›<small>Back</small></button>
   </div>
+  <div class="body"><button class="gold-btn" data-act="restore" style="margin-bottom:12px">♻️ שחזור לפריסה הנוכחית <small>Restore</small></button><div id="avBody" class="ro"></div></div>
+</section>
 
-  <!-- EDIT -->
-  <div class="tab-view" id="view-edit">
-    <div id="edit-body"></div>
-  </div>
+<!-- ═════════ חלונות ═════════ -->
+<div class="ov" id="mOv"><div class="sheet" id="mSheet"></div></div>
 
-</div>
-
-<!-- FOOTER -->
-<div class="footer" onclick="showCopyright()">© יבגני ציפיס 2026 — כל הזכויות שמורות</div>
-
-<!-- OVERLAY -->
-<div class="overlay" id="overlay" style="display:none" onclick="tryCloseOverlay(event)">
-  <div class="modal" id="modal">
-    <div class="mhandle"></div>
-    <div id="modal-body"></div>
-  </div>
-</div>
-
-<!-- COPYRIGHT POPUP -->
-<div class="cp-popup" id="cp-popup" style="display:none" onclick="this.style.display='none'">
-  <div class="cp-box" onclick="event.stopPropagation()">
-    <div class="cp-title">זכויות יוצרים</div>
+<div class="ov" id="cpOv">
+  <div class="cp-box">
+    <img class="cp-logo" src="et-logo.jpg" alt="ET studio">
+    <h3>זכויות יוצרים · Copyright</h3>
     <div class="cp-text">
-      <p>כל הזכויות שמורות ליבגני ציפיס © 2026</p>
-      <p>יישום זה פותח ועוצב על ידי יבגני ציפיס לצורך ניהול לוחות ספירות בסניפי שופרסל 208 — דיל נחל אורה ושופרסל 118.</p>
-      <p>חל איסור על העתקה, הפצה או שימוח מסחרי בכל חלק מהיישום ללא אישור בכתב מהמחבר.</p>
-      <p>כל הסימנים המסחריים הם רכושם של בעליהם בהתאמה.</p>
+      © כל הזכויות שמורות ליבגני ציפיס, ET studio 2026<br><br>
+      יישום «פריסה+» פותח ועוצב על ידי יבגני ציפיס (ET studio) עבור מנהלי ועובדי הסניפים 118 ו-208, לתכנון ולתיעוד פריסת מוצרי המבצעים החודשיים בראשי גונדולה, במות, סטנדים ושאר המקומות המיוחדים בסניף.<br><br>
+      חל איסור על העתקה, הפצה או שימוש מסחרי בכל חלק מהיישום ללא אישור בכתב מהמחבר.<br><br>
+      כל הסימנים המסחריים הם רכושם של בעליהם בהתאמה.
     </div>
-    <button class="cp-close" onclick="document.getElementById('cp-popup').style.display='none'">סגור</button>
-  </div>
-</div>
-
-<!-- PHOTO POPUP -->
-<div id="photo-popup" style="display:none" class="photo-popup" onclick="closePhoto()">
-  <div class="photo-box" onclick="event.stopPropagation()">
-    <img id="photo-popup-img" class="photo-box-img" src="" alt="">
-    <div id="photo-popup-name" class="photo-box-name"></div>
-    <button class="photo-box-close" onclick="closePhoto()">סגור</button>
-  </div>
-</div>
-
-<!-- EMAIL DIALOG -->
-<div id="email-dialog" style="display:none" class="cp-popup" onclick="closeEmailDialog()">
-  <div class="cp-box" onclick="event.stopPropagation()" style="max-width:360px">
-    <div class="cp-title">שליחת מייל</div>
-    <div style="font-size:17px;color:var(--muted);margin-bottom:14px;text-align:center">
-      בחר כתובת דוא"ל לשליחה
+    <hr class="cp-sep">
+    <div class="cp-text" style="text-align:left;direction:ltr">
+      © 2026 Evgeniy Tsipis, ET studio. All rights reserved.<br><br>
+      «Prisa+» was developed and designed by Evgeniy Tsipis (ET studio) for the managers and staff of branches 118 and 208, to plan and record the monthly placement of promotional products on gondola ends, stages, stands and the other special display spots in the store.<br><br>
+      Copying, distribution or commercial use of any part of this application without the author's written permission is prohibited.<br><br>
+      All trademarks are the property of their respective owners.
     </div>
-    <div id="email-pick-list"></div>
-    <button class="btn2" onclick="closeEmailDialog()">ביטול</button>
+    <button class="gold-btn" style="margin-top:16px" id="cpClose">סגירה · Close</button>
   </div>
 </div>
 
-<!-- SheetJS for Excel parsing -->
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<!-- JsBarcode -->
-<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+<div id="intro" hidden><video id="introV" playsinline preload="auto"><source src="intro.mp4" type="video/mp4"></video>
+  <button class="in-skip" id="introSkip">דלג ›</button><button class="in-snd" id="introSnd" aria-label="קול">🔊</button></div>
+<div class="toast" id="toast"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.6/JsBarcode.all.min.js"></script>
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});</script>
 <script>
-// ─── DATA ────────────────────────────────────────────────────────────────
-const SK = 'mevatzim_v2';
+'use strict';
+/* ═══════════════ הגדרות ═══════════════ */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ls={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
+function toast(t,ms=2200){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),ms)}
 
-const DEFAULTS = {
-  month: 'יוני 2026',
-  products: [],
-  gondolas: [
-    { id:'ENT1', name:'עמדת כניסה', type:'stand', cols:2, rows:3, ltrShelves:true, slots:[
-      {pos:1,barcode:null,label:null},
-      {pos:2,barcode:null,label:null},
-      {pos:3,barcode:null,label:null},
-      {pos:4,barcode:null,label:null},
-      {pos:5,barcode:null,label:null},
-      {pos:6,barcode:null,label:null}
-    ]},
-    { id:'ST1', name:'עמדת St1', type:'gondola', shelves:4, slots:[
-      {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
-      {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
-    ]},
-    { id:'E1', name:'ראש גונדולה 1', type:'gondola', shelves:4, slots:[
-      {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
-      {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
-    ]},
-    { id:'E2', name:'ראש גונדולה 2', type:'gondola', shelves:4, slots:[
-      {pos:1,barcode:null,label:null},
-      {pos:2,barcode:null,label:null},
-      {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
-    ]},
-    { id:'E3', name:'ראש גונדולה 3', type:'gondola', shelves:4, slots:[
-      {pos:1,barcode:null,label:null},
-      {pos:2,barcode:null,label:null},
-      {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
-    ]},
-    { id:'E4', name:'ראש גונדולה 4', type:'gondola', shelves:4, slots:[
-      {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
-      {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
-    ]},
-    { id:'ST2', name:'עמדת St2', type:'gondola', shelves:4, slots:[
-      {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
-      {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
-    ]},
-    { id:'CC1', name:'ראש גונדולה 5', type:'gondola', shelves:5, slots:[
-      {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
-      {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null},
-      {pos:5,barcode:null,label:null}
-    ]},
-    { id:'E6', name:'ראש גונדולה 6', type:'gondola', shelves:4, slots:[
-      {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
-      {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
-    ]},
-    { id:'E7', name:'ראש גונדולה 7', type:'gondola', shelves:4, slots:[
-      {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
-      {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
-    ]},
-    { id:'CC2', name:'עמדת קופות שירות עצמי', type:'stand', cols:3, rows:4, ltrShelves:true, slots:[
-      {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
-      {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null},
-      {pos:5,barcode:null,label:null},{pos:6,barcode:null,label:null},
-      {pos:7,barcode:null,label:null},{pos:8,barcode:null,label:null},
-      {pos:9,barcode:null,label:null},{pos:10,barcode:null,label:null},
-      {pos:11,barcode:null,label:null},{pos:12,barcode:null,label:null}
-    ]}
+/* גיליונות הידיעון (מהמשרד הראשי) */
+const SHEETS={
+  credit:{he:'ראשי גונדולה כרטיס אשראי',en:'Credit-card gondola ends'},
+  var:   {he:'גונדולה משתנה',en:'Variable gondola'},
+  stage: {he:'במות',en:'Stages'},
+  other: {he:'אחר / ידני',en:'Other / manual'}
+};
+function sheetKind(name){name=String(name||'');
+  if(/אשראי/.test(name))return 'credit';if(/משתנ/.test(name))return 'var';if(/במות|במה/.test(name))return 'stage';return 'other'}
+
+/* סוגי המקומות המיוחדים */
+const GROUPS={
+  H: {he:'ראשי גונדולה',en:'Gondola ends',icon:'ic-gondola.jpg'},
+  SB:{he:'ראשי גונדולה sbox',en:'Sbox gondola ends',icon:'ic-sbox.jpg'},
+  W: {he:'במות קיר כוח',en:'Power-wall stages',icon:'ic-wall.jpg'},
+  P: {he:'במות',en:'Stages',icon:'ic-stage.jpg'},
+  S: {he:'במות קטנות',en:'Small stages',icon:'ic-small.jpg'},
+  B: {he:'סטנדים יזומים וממותגים',en:'Initiated & brand stands',icon:'ic-stand.jpg'}
+};
+const GORDER=['H','SB','W','P','S','B'];
+const R=(a,b)=>Array.from({length:b-a+1},(_,i)=>a+i);
+const sp=(id,g,he,en,kind,def,sheet,sec,max)=>({id,g,he,en,kind,def:kind==='single'?1:def,max:kind==='single'?1:(max||Math.max(6,def)),sheet,sec});
+const LAYOUT={
+  118:[
+    ...R(1,15).map(i=>sp('H'+i,'H','ראש גונדולה H'+i,'Gondola end H'+i,'multi',4,'var','ראשי גונדולה H1–H15')),
+    sp('F1','H','מקפיא F1','Freezer F1','multi',4,null,'מקפיאים F1–F2'),
+    sp('F2','H','מקפיא F2','Freezer F2','multi',4,null,'מקפיאים F1–F2'),
+    sp('Sbox1','SB','ראש גונדולה Sbox1','Sbox end 1','multi',4,'credit'),
+    sp('Sbox2','SB','ראש גונדולה Sbox2','Sbox end 2','multi',4,'credit'),
+    ...R(1,6).map(i=>sp('W'+i,'W','במת קיר כוח W'+i,'Power wall W'+i,'single',1,'stage')),
+    ...R(1,5).map(i=>sp('E'+i,'P','במת כניסה E'+i,'Entrance stage E'+i,'single',1,'stage','במות כניסה E1–E5')),
+    ...R(1,12).map(i=>sp('P'+i,'P','במה P'+i,'Stage P'+i,'single',1,'var','במות P1–P12')),
+    ...R(1,5).map(i=>sp('S'+i,'S','במה קטנה S'+i,'Small stage S'+i,'single',1,null))
+  ],
+  208:[
+    ...[1,2,3,4,6,7].map(i=>sp('E'+i,'H','ראש גונדולה '+i,'Gondola end '+i,'multi',4,'var')),
+    sp('CC1','SB','ראש גונדולה 5 · אשראי','Gondola end 5 · credit','multi',5,'credit'),
+    sp('CC2','SB','עמדת קופות שירות עצמי','Self-checkout stand','multi',12,'credit',null,12),
+    sp('ENT1','B','עמדת כניסה','Entrance stand','multi',6,'stage'),
+    sp('ST1','B','עמדת St1','Stand St1','multi',4,null),
+    sp('ST2','B','עמדת St2','Stand St2','multi',4,null)
   ]
 };
+/* נקודות על מפת 208 (תמונה) — [id, x%, y%] */
+const HOT208=[['ENT1',24,19],['ST1',34,19],['E1',46,21],['E2',49,31],['E3',48,43],['E4',49,51],['CC2',23,49],['ST2',28,59],['CC1',44,61],['E6',47,68],['E7',44,76]];
+/* אזורי הלחיצה בתמונת התצוגות (% מהתמונה) */
+const DISP_HOT=[['H',4,15,36,41],['SB',61,5,33,47],['W',62,53,33,32],['P',42,69,26,25],['S',28,61,14,32],['B',12,47,16,43]];
+const HEB_MONTHS=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+function defMonth(){const d=new Date();d.setDate(d.getDate()+20);return HEB_MONTHS[d.getMonth()]+' '+d.getFullYear()}
+function monthKey(label){const m=String(label||'').match(/(\S+)\s+(\d{4})/);if(!m)return 'x';const i=HEB_MONTHS.indexOf(m[1]);return m[2]+'-'+String(i+1).padStart(2,'0')}
 
-const HOTSPOTS = [
-  ['ENT1', 'Ent',  24, 19],
-  ['ST1',  'St1',  34, 19],
-  ['E1',   'E1',   46, 21],
-  ['E2',   'E2',   49, 31],
-  ['E3',   'E3',   48, 43],
-  ['E4',   'E4',   49, 51],
-  ['CC2',  'Cc2',  23, 49],
-  ['ST2',  'St2',  28, 59],
-  ['CC1',  'Cc1',  44, 61],
-  ['E6',   'E6',   47, 68],
-  ['E7',   'E7',   44, 76]
-];
+/* ═══════════════ Firestore (REST, כמו ניהול+) ═══════════════ */
+const FS_BASE='https://firestore.googleapis.com/v1/projects/expiry-tracker-ebf92/databases/(default)/documents/';
+const FS_KEY='AIzaSyCRBmBDYpcERv_tbwd0E7GEskm-_xHYBhk';
+const fv=v=>v==null?{nullValue:null}:typeof v==='boolean'?{booleanValue:v}:typeof v==='number'?{integerValue:String(v)}:v instanceof Date?{timestampValue:v.toISOString()}:{stringValue:String(v)};
+const unf=v=>v.stringValue??v.integerValue??v.booleanValue??v.timestampValue??null;
+async function fsGet(path){const r=await fetch(FS_BASE+path+'?key='+FS_KEY,{cache:'no-store'});if(r.status===404)return null;if(!r.ok)throw new Error(r.status);
+  const j=await r.json(),o={};for(const [k,v] of Object.entries(j.fields||{}))o[k]=unf(v);return o}
+async function fsPatch(path,obj){const q=Object.keys(obj).map(k=>'&updateMask.fieldPaths='+encodeURIComponent('`'+k+'`')).join('');
+  const r=await fetch(FS_BASE+path+'?key='+FS_KEY+q,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields:Object.fromEntries(Object.entries(obj).map(([k,v])=>[k,fv(v)]))})});
+  if(!r.ok)throw new Error(r.status)}
+async function fsList(col,fields){const out=[];let tok='';
+  do{const u=FS_BASE+col+'?pageSize=300&key='+FS_KEY+fields.map(f=>'&mask.fieldPaths='+f).join('')+(tok?'&pageToken='+encodeURIComponent(tok):'');
+    const r=await fetch(u,{cache:'no-store'});if(!r.ok)throw new Error(r.status);const j=await r.json();
+    (j.documents||[]).forEach(d=>{const o={id:d.name.split('/').pop()};for(const [k,v] of Object.entries(d.fields||{}))o[k]=unf(v);out.push(o)});tok=j.nextPageToken}while(tok);
+  return out}
 
-// ─── DISCOUNT CATEGORIES ───────────────────────────────────────────────────
-// Every gondola/stand slot belongs to exactly one monthly-discount category.
-// Products imported for a category may only be placed in that category's zones.
-const CATEGORIES = {
-  entrance: { label:'כניסה', zones:[
-    {gid:'ENT1'},{gid:'ST1'},{gid:'E1'},{gid:'E2'},{gid:'E3'},{gid:'E4'},{gid:'ST2'}
-  ]},
-  monthly: { label:'חודשי', zones:[
-    {gid:'E6'},{gid:'E7'},{gid:'CC2',posRange:[9,12]}
-  ]},
-  credit: { label:'אשראי', zones:[
-    {gid:'CC1'},{gid:'CC2',posRange:[1,8]}
-  ]}
-};
-const CATEGORY_LABELS = { entrance:'כניסה', monthly:'חודשי', credit:'אשראי' };
+/* ═══════════════ מצב ═══════════════ */
+let BR=null;            // סניף נוכחי
+let ST=null;            // {month, products:[], sp:{id:{n,items}}}
+const pending=new Set(); let saveT=null, syncState='';
+const lsKey=b=>'prisa_'+b;
+function blank(){return {month:defMonth(),products:[],sp:{}}}
+function spots(){return LAYOUT[BR]}
+function spotDef(id){return spots().find(s=>s.id===id)}
+function getSp(id){const d=spotDef(id);let s=ST.sp[id];
+  if(!s){s=ST.sp[id]={n:d.def,items:Array(d.def).fill(null)}}
+  while(s.items.length<s.n)s.items.push(null);if(s.items.length>s.n)s.items.length=s.n;return s}
+function fromDoc(doc){const st=blank();if(!doc)return st;
+  if(doc.month)st.month=doc.month;try{st.products=JSON.parse(doc.products||'[]')}catch{}
+  for(const [k,v] of Object.entries(doc))if(k.startsWith('sp_')){try{st.sp[k.slice(3)]=JSON.parse(v)}catch{}}
+  return st}
+function setSync(t,err){syncState=t;$$('[data-sync]').forEach(e=>{e.textContent=t;e.classList.toggle('err',!!err)})}
+function touch(...fields){ // fields: 'month' | 'products' | 'sp_<id>'
+  fields.forEach(f=>pending.add(f));ls.set(lsKey(BR),ST);setSync('שומר…');
+  if(!saveT)saveT=setTimeout(()=>{saveT=null;flush()},700)}
+async function flush(){if(!pending.size)return;const f=[...pending];pending.clear();const b=BR,obj={};
+  f.forEach(k=>{obj[k]=k==='month'?ST.month:k==='products'?JSON.stringify(ST.products):JSON.stringify(ST.sp[k.slice(3)]||null)});
+  obj.updatedAt=new Date().toISOString();
+  try{await fsPatch('prisa_state/'+b,obj);setSync('✓ מסונכרן')}catch(e){f.forEach(k=>pending.add(k));setSync('⚠ לא מחובר — נשמר במכשיר',1);if(!saveT)saveT=setTimeout(()=>{saveT=null;flush()},15000)}}
+async function pull(first){if(!BR)return;const b=BR;
+  try{let doc=await fsGet('prisa_state/'+b);if(b!==BR)return;
+    if(!doc&&first&&b===208){const mig=migrate208();if(mig){ST=mig;ls.set(lsKey(b),ST);touch('month','products',...Object.keys(ST.sp).map(k=>'sp_'+k));renderAll();return}}
+    if(!doc){if(first)setSync('✓ מסונכרן');return}
+    const remote=fromDoc(doc);
+    if(!pending.has('month'))ST.month=remote.month;
+    if(!pending.has('products'))ST.products=remote.products;
+    for(const id of new Set([...Object.keys(remote.sp),...Object.keys(ST.sp)]))if(!pending.has('sp_'+id)){if(remote.sp[id])ST.sp[id]=remote.sp[id];else delete ST.sp[id]}
+    ls.set(lsKey(b),ST);if(!pending.size)setSync('✓ מסונכרן');renderAll()}
+  catch(e){setSync('⚠ אין חיבור — מוצג מהמכשיר',1)}}
+/* מעבר חד-פעמי מהאפליקציה הישנה (מבצעים חודשיים, סניף 208) */
+function migrate208(){const o=ls.get('mevatzim_v2',null);if(!o||!o.gondolas)return null;const st=blank();if(o.month)st.month=o.month;
+  const catMap={credit:'credit',monthly:'var',entrance:'stage'};
+  st.products=(o.products||[]).map((p,i)=>({bc:p.barcode,name:p.name||p.barcode,sheet:catMap[p.category]||'other',no:p.no||i+1,img:imgUrlOk(localStorage.getItem('ci_'+p.barcode))}));
+  for(const g of o.gondolas){const d=LAYOUT[208].find(s=>s.id===g.id);if(!d)continue;const n=Math.max(d.def,(g.slots||[]).length);
+    const items=Array(n).fill(null);(g.slots||[]).forEach(s=>{if(s.barcode&&s.pos<=n)items[s.pos-1]={bc:s.barcode,name:s.label||s.barcode,img:imgUrlOk(localStorage.getItem('ci_'+s.barcode))}});
+    st.sp[g.id]={n,items}}
+  return st}
+const imgUrlOk=u=>u&&/^https?:/.test(u)?u:null;
 
-function zoneCategory(gid,pos){
-  for(const cat in CATEGORIES){
-    for(const z of CATEGORIES[cat].zones){
-      if(z.gid!==gid) continue;
-      if(z.posRange){ if(pos>=z.posRange[0] && pos<=z.posRange[1]) return cat; }
-      else return cat;
-    }
-  }
-  return null;
-}
+/* ═══════════════ מבצעים מ"ניהול+" (ma_promos) ═══════════════ */
+let PROMOS=[], PROMO_BC=new Map();
+const norm=s=>String(s||'').replace(/["'״׳\-–.,()]/g,' ').replace(/\s+/g,' ').trim();
+async function loadPromos(){try{const list=await fsList('ma_promos',['name','brand','price','dealQty','regUnit','until','codes']);
+  const today=new Date().toISOString().slice(0,10);PROMOS=list.filter(p=>!p.until||p.until>=today);PROMO_BC=new Map();
+  PROMOS.forEach(p=>String(p.codes||'').split(/[^0-9]+/).filter(c=>c.length>=4).forEach(c=>{PROMO_BC.set(c,p);PROMO_BC.set(c.replace(/^0+/,''),p)}));
+  renderAll()}catch(e){console.log('promos',e.message)}}
+function promoOf(bc,name){if(bc){const p=PROMO_BC.get(String(bc))||PROMO_BC.get(String(bc).replace(/^0+/,''));if(p)return p}
+  const n=norm(name);if(n.length<6)return null;return PROMOS.find(p=>{const m=norm(p.name);return m.length>=6&&(m===n||n.includes(m)||m.includes(n))})||null}
+function promoTxt(p){const q=+p.dealQty||1;return (q>1?q+' ב-':'')+'₪'+p.price}
+function promoBadge(bc,name){const p=promoOf(bc,name);if(!p)return '';
+  return `<span class="promo" data-act="promo" data-pid="${esc(p.id)}">₪ מבצע · ${esc(promoTxt(p))}</span>`}
 
-let D;
-
-function load(){
-  try{
-    const s=localStorage.getItem(SK);
-    if(s){ D=JSON.parse(s); migrate(); }
-    else reset();
-  } catch(e){ reset(); }
-}
-
-function migrate(){
-  let changed=false;
-  const cc1=D.gondolas.find(g=>g.id==='CC1');
-  if(cc1 && cc1.type==='stand'){
-    cc1.type='gondola'; cc1.name='ראש גונדולה 5'; cc1.shelves=4;
-    cc1.slots=[{pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
-               {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}];
-    delete cc1.cols; delete cc1.rows; delete cc1.ltrShelves;
-    changed=true;
-  }
-  ['ENT1','CC2'].forEach(id=>{
-    const g=D.gondolas.find(x=>x.id===id);
-    if(g && !g.ltrShelves){ g.ltrShelves=true; changed=true; }
-  });
-  if(!D.products){ D.products=[]; changed=true; }
-
-  if(!D.gondolas.find(g=>g.id==='ST1')){
-    const idx=D.gondolas.findIndex(g=>g.id==='ENT1');
-    D.gondolas.splice(idx+1,0,{ id:'ST1', name:'עמדת St1', type:'gondola', shelves:4, slots:[
-      {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
-      {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
-    ]});
-    changed=true;
-  }
-  if(!D.gondolas.find(g=>g.id==='ST2')){
-    const idx=D.gondolas.findIndex(g=>g.id==='E4');
-    const insertAt = idx>=0 ? idx+1 : D.gondolas.length;
-    D.gondolas.splice(insertAt,0,{ id:'ST2', name:'עמדת St2', type:'gondola', shelves:4, slots:[
-      {pos:1,barcode:null,label:null},{pos:2,barcode:null,label:null},
-      {pos:3,barcode:null,label:null},{pos:4,barcode:null,label:null}
-    ]});
-    changed=true;
-  }
-  const cc1b=D.gondolas.find(g=>g.id==='CC1');
-  if(cc1b && cc1b.shelves===4){
-    cc1b.shelves=5;
-    cc1b.slots.push({pos:5,barcode:null,label:null});
-    changed=true;
-  }
-  const cc2=D.gondolas.find(g=>g.id==='CC2');
-  if(cc2 && cc2.cols===2){
-    // Old CC2 numbering (2x3) doesn't map onto the new 3x4 layout, so clear it.
-    D.products.forEach(p=>{ if(p.assignedGid==='CC2'){ p.assignedGid=null; p.assignedPos=null; } });
-    cc2.cols=3; cc2.rows=4;
-    cc2.slots=[1,2,3,4,5,6,7,8,9,10,11,12].map(pos=>({pos,barcode:null,label:null}));
-    changed=true;
-  }
-  if(D.products.some(p=>p.category===undefined)){
-    D.products.forEach(p=>{
-      if(p.category===undefined){
-        p.category = p.assignedGid ? zoneCategory(p.assignedGid,p.assignedPos) : null;
-      }
-    });
-    changed=true;
-  }
-
-  // One-time purge of the 4 sample products baked into old installs' localStorage
-  // (DEFAULTS no longer seeds them, but existing saved data still has them).
-  const LEGACY_DEMO=[
-    {gid:'ENT1',pos:1,barcode:'8001841625188'},
-    {gid:'ENT1',pos:4,barcode:'8000500325384'},
-    {gid:'E2',pos:2,barcode:'7290019644330'},
-    {gid:'E3',pos:2,barcode:'2453352'}
-  ];
-  LEGACY_DEMO.forEach(d=>{
-    const s=slot(d.gid,d.pos);
-    if(s && s.barcode===d.barcode){
-      s.barcode=null; s.label=null;
-      const p=D.products.find(x=>x.barcode===d.barcode);
-      if(p){ p.assignedGid=null; p.assignedPos=null; }
-      changed=true;
-    }
-  });
-
-  if(changed) save();
-}
-
-function reset(){ D=JSON.parse(JSON.stringify(DEFAULTS)); save(); }
-function save(){ localStorage.setItem(SK,JSON.stringify(D)); }
-
-function getCImg(bc){ return bc ? localStorage.getItem('ci_'+bc) : null; }
-function setCImg(bc,url){ localStorage.setItem('ci_'+bc,url); }
-
-function imgOf(bc){
-  if(!bc) return null;
-  return getCImg(bc) || ('images/'+bc+'.gif');
-}
-
-// ─── TABS ────────────────────────────────────────────────────────────────
-function switchTab(t){
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.tab-view').forEach(v=>v.classList.remove('active'));
-  document.getElementById('tab-'+t).classList.add('active');
-  document.getElementById('view-'+t).classList.add('active');
-  if(t==='map') renderMap();
-  if(t==='list') renderList();
-  if(t==='edit') renderEdit();
-}
-
-// ─── STORE MAP ────────────────────────────────────────────────────────────
-function initStoreMap(){
-  const img = document.getElementById('store-img');
-  const wrap = document.getElementById('store-layout');
-  const cd = document.getElementById('coord-display');
-  wrap.addEventListener('click', function(e){
-    if(e.target.closest('.store-hotspot')) return;
-    const r = wrap.getBoundingClientRect();
-    const x = Math.round((e.clientX - r.left) / r.width * 100);
-    const y = Math.round((e.clientY - r.top) / r.height * 100);
-    cd.textContent = 'X:'+x+'%  Y:'+y+'%';
-    cd.style.display = 'block';
-    clearTimeout(cd._t);
-    cd._t = setTimeout(()=>{ cd.style.display='none'; }, 3000);
-  });
-  function placeHotspots(){
-    wrap.querySelectorAll('.store-hotspot').forEach(h=>h.remove());
-    HOTSPOTS.forEach(([id,label,xPct,yPct])=>{
-      const btn = document.createElement('button');
-      btn.className = 'store-hotspot';
-      btn.style.left = xPct+'%';
-      btn.style.top  = yPct+'%';
-      btn.innerHTML = `<span>${label}</span>`;
-      btn.onclick = ()=>showGondolaDetail(id);
-      wrap.appendChild(btn);
-    });
-  }
-  if(img.complete) placeHotspots();
-  else img.onload = placeHotspots;
-}
-
-function showGondolaDetail(gid){
-  const g=D.gondolas.find(x=>x.id===gid);
-  if(!g) return;
-  const filled=g.slots.filter(s=>s.barcode).length;
-  setModal(`
-    <div class="gdtl-hdr">
-      <span class="gdtl-name">${g.name}</span>
-      <span class="gdtl-id">${g.id} · ${filled}/${g.slots.length}</span>
-    </div>
-    ${gcardBodyInner(g)}
-    <button class="btn2" style="margin-top:14px" onclick="closeModal()">סגור</button>
-  `);
-  showOverlay();
-}
-
-// ─── MAP ─────────────────────────────────────────────────────────────────
-function renderMap(){
-  document.getElementById('gondola-map').innerHTML=
-    D.gondolas.map(g=>gcardHTML(g)).join('');
-}
-
-function slotHTML(g, sl){
-  const f=!!sl.barcode;
-  const pos=sl.pos;
-  if(!f){
-    return `<div class="slot" onclick="openSlotAction('${g.id}',${pos})">
-      <span class="snum">${pos}</span>
-      <div class="sph">+</div>
-    </div>`;
-  }
-  const imgUrl=imgOf(sl.barcode);
-  const lbl=esc(sl.label||sl.barcode);
-  return `<div class="slot filled" onclick="openEdit('${g.id}',${pos})">
-    <span class="snum">${pos}</span>
-    <div class="shelf-fill" style="background-image:url('${imgUrl}')" onclick="showPhotoFromSlot(event,'${imgUrl}','${lbl}')"></div>
-    <div class="slot-footer">
-      <button class="bc-mini" onclick="openBc(event,'${sl.barcode}','${lbl}')" title="הצג ברקוד">
-        ${bcMiniIcon()}
-      </button>
-      <span class="sname">${lbl}</span>
-    </div>
-  </div>`;
-}
-
-function gcardBodyInner(g){
-  if(g.type==='stand'){
-    const rows=g.rows, cols=g.cols;
-    const ltr=g.ltrShelves;
-    let html=`<div class="stand-grid${ltr?' ltr':''}" style="grid-template-columns:repeat(${cols},1fr)">`;
-    for(let r=0;r<rows;r++){
-      for(let c=0;c<cols;c++){
-        const pos=c*rows+r+1;
-        const sl=g.slots.find(s=>s.pos===pos)||{pos};
-        html+=slotHTML(g,sl);
-      }
-    }
-    html+='</div>';
-    return `<div class="gcard-body">${html}</div>`;
-  } else {
-    return `<div class="gcard-body"><div class="shelf-stack">${
-      g.slots.map(sl=>slotHTML(g,sl)).join('')
-    }</div></div>`;
-  }
-}
-
-function gcardHTML(g){
-  const filled=g.slots.filter(s=>s.barcode).length;
-  const wide=(g.type==='stand')?' wide':'';
-  return `<div class="gcard${wide}">
-    <div class="gcard-hdr">
-      <span class="gname">${g.name}</span>
-      <span class="gid">${g.id} · ${filled}/${g.slots.length}</span>
-    </div>
-    ${gcardBodyInner(g)}
-  </div>`;
-}
-
-// ─── BARCODE OPEN FROM SLOT ─────────────────────────────────────────────
-function openBc(e, bc, name){
-  e.stopPropagation();
-  showBarcode(bc, name);
-}
-
-// ─── PHOTO OPEN FROM SLOT ────────────────────────────────────────────────
-function showPhotoFromSlot(e, src, name){
-  e.stopPropagation();
-  showPhoto(src, name);
-}
-
-// ─── LIST ─────────────────────────────────────────────────────────────────
-let _catFilter='';
-function setCatFilter(cat){
-  _catFilter=cat;
-  document.querySelectorAll('.cat-chip').forEach(b=>b.classList.toggle('active', b.dataset.cat===cat));
-  renderList(document.getElementById('search-inp').value);
-}
-
-function renderList(filter){
-  const box = document.getElementById('prod-list');
-  if(!D.products || D.products.length === 0){
-    box.innerHTML='<div class="no-items">יש לייבא רשימת מוצרים<br><span style="font-size:20px;color:#BBB">לחץ 📥 ייבוא</span></div>';
-    return;
-  }
-  let shown = _catFilter ? D.products.filter(p=>p.category===_catFilter) : D.products;
-  const q=(filter||'').trim().toLowerCase();
-  if(q) shown = shown.filter(p=>(p.name||'').toLowerCase().includes(q)||(p.barcode||'').includes(q));
-  if(!shown.length){ box.innerHTML='<div class="no-items">לא נמצאו מוצרים</div>'; return; }
-  box.innerHTML=shown.map(p=>{
-    const assigned = !!(p.assignedGid);
-    const img = getCImg(p.barcode) || ('images/'+p.barcode+'.gif');
-    const catBadge = p.category ? `<span class="cat-badge ${p.category}">${CATEGORY_LABELS[p.category]}</span>` : '';
-    let posHtml = '';
-    if(assigned){
-      const g = D.gondolas.find(x=>x.id===p.assignedGid);
-      posHtml = `<div class="ppos-assigned">📍 ${g?g.name:p.assignedGid} · מדף ${p.assignedPos}</div>`;
-    } else {
-      posHtml = `<div class="ppos-unassigned">לא שובץ</div>`;
-    }
-    return `<div class="prow${assigned?' assigned':''}">
-      <img class="pthumb" src="${img}" alt="${esc(p.name||'')}" style="cursor:pointer"
-        onclick="showPhoto('${img}','${esc(p.name||p.barcode).replace(/'/g,"\\'")}')"
-        onerror="this.style.display='none';this.nextSibling.style.display='flex'">
-      <div class="pthumb-ph" style="display:none">🛒</div>
-      <div class="pinfo">
-        <div class="pname">${esc(p.name||p.barcode)}${catBadge}</div>
-        ${posHtml}
-        <div class="pbc">${p.barcode}</div>
-      </div>
-      <button class="bc-btn" onclick="showBarcode('${p.barcode}','${esc(p.name||'').replace(/'/g,"\\'")}')"
-        title="הצג ברקוד">
-        ${bcIcon()}
-      </button>
-    </div>`;
-  }).join('');
-}
-
-function filterList(v){ renderList(v); }
-
-// ─── IMPORT EXCEL ─────────────────────────────────────────────────────────
-let _importCat=null;
-
-function openImportPicker(){
-  setModal(`
-    <div class="mtitle">ייבוא קובץ Excel</div>
-    <div style="font-size:18px;color:var(--muted);margin-bottom:14px;text-align:center">
-      בחר לאיזו קטגוריית מבצע שייך הקובץ
-    </div>
-    <button class="btn1" onclick="triggerImport('entrance')">🚪 כניסה</button>
-    <button class="btn1" onclick="triggerImport('monthly')">📅 חודשי</button>
-    <button class="btn1" onclick="triggerImport('credit')">💳 כרטיס אשראי</button>
-    <button class="btn2" style="margin-top:6px" onclick="closeModal()">ביטול</button>
-  `);
-  showOverlay();
-}
-
-function triggerImport(cat){
-  _importCat=cat;
-  closeModal();
-  document.getElementById('import-file').click();
-}
-
-async function handleImportFile(e){
-  const file = e.target.files[0]; if(!file) return;
-  e.target.value='';
-  const cat=_importCat;
-  if(!cat) return;
-  const status = document.getElementById('import-status');
-  status.style.display='block';
-  status.className='import-status loading';
-  status.textContent='מעבד קובץ...';
-  try{
-    const ab = await file.arrayBuffer();
-    const wb = XLSX.read(ab, {type:'array'});
-    const ws = wb.Sheets[wb.SheetNames[0]];
-    const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:'', raw:false});
-    const newProds=[];
-    for(let i=1;i<rows.length;i++){
-      const row=rows[i];
-      const bcCell=String(row[1]||'').trim();
-      const barcode=(bcCell.split(/\s+/)[0]||'').replace(/[^0-9]/g,'').slice(0,14);
-      const name=String(row[2]||'').trim();
-      if(!barcode) continue;
-      const existing=D.products.find(p=>p.barcode===barcode && p.category===cat);
-      newProds.push({
-        no: Number(row[0])||i,
-        barcode,
-        name: name||barcode,
-        category: cat,
-        assignedGid: existing?existing.assignedGid:null,
-        assignedPos: existing?existing.assignedPos:null
-      });
-    }
-    // only replace this category's products — the other two categories keep their data
-    D.products = D.products.filter(p=>p.category!==cat).concat(newProds);
-    save();
-    status.className='import-status ok';
-    status.textContent=`✓ יובאו ${newProds.length} מוצרים לקטגוריית ${CATEGORY_LABELS[cat]}`;
-    renderList(document.getElementById('search-inp').value);
-    renderEdit();
-    autoFetchImages();
-  } catch(err){
-    console.error(err);
-    status.className='import-status err';
-    status.textContent='שגיאה בקריאת הקובץ';
-  }
-}
-
-let _fetchAbort=false;
-async function autoFetchImages(){
-  _fetchAbort=false;
-  const prog=document.getElementById('fetch-prog');
-  const toFetch=D.products.filter(p=>p.barcode && !getCImg(p.barcode));
-  if(!toFetch.length){ if(prog) prog.style.display='none'; return; }
-  if(prog){ prog.style.display='block'; }
-  let done=0;
-  for(const p of toFetch){
-    if(_fetchAbort) break;
-    if(prog) prog.textContent=`טוען תמונות... ${done}/${toFetch.length}`;
-    if(!getCImg(p.barcode)){
-      const result=await fetchProductData(p.barcode);
-      if(result && result.image){
-        setCImg(p.barcode,result.image);
-        if(result.name && (!p.name || p.name===p.barcode)) p.name=result.name;
-        save();
-        const listView=document.getElementById('view-list');
-        if(listView && listView.classList.contains('active'))
-          renderList(document.getElementById('search-inp').value);
-      }
-    }
-    done++;
-    await new Promise(r=>setTimeout(r,350));
-  }
-  if(prog) prog.style.display='none';
-}
-
-// ─── SLOT ACTION (empty slot click) ─────────────────────────────────────
-function openSlotAction(gid, pos){
-  if(D.products && D.products.length>0){
-    openSlotPicker(gid, pos);
-  } else {
-    openEdit(gid, pos);
-  }
-}
-
-// ─── SLOT PICKER ─────────────────────────────────────────────────────────
-function openSlotPicker(gid, pos){
-  const g=D.gondolas.find(x=>x.id===gid);
-  const zoneCat=zoneCategory(gid,pos);
-  // legacy products imported before categories existed (category===null) may go anywhere
-  const unassigned=D.products.filter(p=>!p.assignedGid && (!zoneCat || !p.category || p.category===zoneCat));
-  let listHtml='';
-  if(unassigned.length===0){
-    listHtml=`<div class="picker-empty">אין מוצרים פנויים לשיבוץ במיקום זה${zoneCat?` (קטגוריית ${CATEGORY_LABELS[zoneCat]})`:''}<br><span style="font-size:18px">ניתן לפנות מקום או להשתמש בהזנה ידנית</span></div>`;
-  } else {
-    listHtml=`<div class="picker-list">${unassigned.map(p=>{
-      const img=getCImg(p.barcode)||('images/'+p.barcode+'.gif');
-      return `<div class="picker-item" onclick="assignProduct('${p.barcode}','${esc(p.name||p.barcode).replace(/'/g,"\\'")}','${gid}',${pos})">
-        <img class="picker-thumb" src="${img}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">
-        <div class="picker-thumb-ph" style="display:none">🛒</div>
-        <div class="picker-info">
-          <div class="picker-name">${esc(p.name||p.barcode)}</div>
-          <div class="picker-bc">${p.barcode}</div>
-        </div>
-      </div>`;
-    }).join('')}</div>`;
-  }
-  setModal(`
-    <div class="mtitle">בחר מוצר</div>
-    <div class="picker-loc">📍 ${g.name} · מדף ${pos}${zoneCat?` · קטגוריה: ${CATEGORY_LABELS[zoneCat]}`:''}</div>
-    ${listHtml}
-    <button class="btn2" style="margin-top:12px" onclick="openEdit('${gid}',${pos})">✏️ הזנה ידנית</button>
-    <button class="btn2" style="margin-top:6px" onclick="closeModal()">ביטול</button>
-  `);
-  showOverlay();
-}
-
-function assignProduct(bc, name, gid, pos){
-  const zoneCat=zoneCategory(gid,pos);
-  const prod0=D.products.find(x=>x.barcode===bc);
-  if(prod0 && prod0.category && zoneCat && prod0.category!==zoneCat){
-    alert(`המוצר שייך לקטגוריית "${CATEGORY_LABELS[prod0.category]}" ולא ניתן לשבץ אותו במיקום של קטגוריית "${CATEGORY_LABELS[zoneCat]}"`);
-    return;
-  }
-  const s=slot(gid,pos);
-  // Unassign old product if different barcode was there
-  if(s.barcode && s.barcode!==bc){
-    const old=D.products.find(p=>p.barcode===s.barcode);
-    if(old){ old.assignedGid=null; old.assignedPos=null; }
-  }
-  s.barcode=bc; s.label=name;
-  const p=D.products.find(x=>x.barcode===bc);
-  if(p){ p.assignedGid=gid; p.assignedPos=pos; }
-  save(); closeModal(); renderMap(); renderEdit();
-  const lv=document.getElementById('view-list');
-  if(lv && lv.classList.contains('active')) renderList(document.getElementById('search-inp').value);
-}
-
-// ─── AUTO ASSIGNMENT ───────────────────────────────────────────────────────
-// Heuristic placement: physically bulky items go on the bottom shelf of each
-// zone; everything else is sorted alphabetically (Hebrew) so that similarly
-// named products (and therefore similar consumer groups, e.g. "סוכר"/"קמח")
-// land in adjacent slots. This is an approximation of true category-based
-// grouping — fine-tune manually afterwards in the עריכה tab if needed.
-const BULKY_KEYWORDS = [
-  'נייר טואלט','מגבון','מגבות נייר','טישו','שקיות אשפה','אבקת כביסה',
-  'מרכך כביסה','נוזל כלים','ניקוי רצפות','דישון','חיתולים','רב פעמי',
-  '4 ליטר','5 ליטר',"4 ל'","5 ל'",'6 יחידות','12 יחידות','מארז'
-];
-
-function isBulky(name){
-  const n=name||'';
-  return BULKY_KEYWORDS.some(k=>n.includes(k));
-}
-
-function isBottomSlot(g,pos){
-  if(g.type==='gondola') return pos===g.shelves;
-  if(g.type==='stand') return pos % g.rows === 0;
-  return false;
-}
-
-function categorySlots(cat){
-  const out=[];
-  CATEGORIES[cat].zones.forEach(z=>{
-    const g=D.gondolas.find(x=>x.id===z.gid);
-    if(!g) return;
-    g.slots.forEach(s=>{
-      if(z.posRange && (s.pos<z.posRange[0] || s.pos>z.posRange[1])) return;
-      out.push({ gid:g.id, pos:s.pos, bottom:isBottomSlot(g,s.pos) });
-    });
-  });
-  return out;
-}
-
-function autoAssignCategory(cat){
-  const emptySlots = categorySlots(cat).filter(s=>!slot(s.gid,s.pos).barcode);
-  const products = D.products.filter(p=>p.category===cat && !p.assignedGid);
-  if(!products.length || !emptySlots.length) return 0;
-
-  products.sort((a,b)=>(a.name||'').localeCompare(b.name||'','he'));
-  const bulky = products.filter(p=>isBulky(p.name));
-  const regular = products.filter(p=>!isBulky(p.name));
-
-  const bottomSlots = emptySlots.filter(s=>s.bottom);
-  const topSlots = emptySlots.filter(s=>!s.bottom);
-
-  function place(slotObj, prod){
-    const sl=slot(slotObj.gid,slotObj.pos);
-    sl.barcode=prod.barcode; sl.label=prod.name||prod.barcode;
-    prod.assignedGid=slotObj.gid; prod.assignedPos=slotObj.pos;
-  }
-
-  let placed=0, bi=0;
-  bottomSlots.forEach(s=>{
-    let prod=null;
-    if(bi<bulky.length){ prod=bulky[bi]; bi++; }
-    else if(regular.length){ prod=regular.shift(); }
-    if(prod){ place(s,prod); placed++; }
-  });
-  const remaining=[...bulky.slice(bi), ...regular];
-  topSlots.forEach(s=>{
-    if(!remaining.length) return;
-    place(s, remaining.shift());
-    placed++;
-  });
-  return placed;
-}
-
-function autoAssignAll(){
-  let total=0;
-  Object.keys(CATEGORIES).forEach(cat=>{ total+=autoAssignCategory(cat)||0; });
-  save(); renderMap(); renderEdit();
-  const lv=document.getElementById('view-list');
-  if(lv && lv.classList.contains('active')) renderList(document.getElementById('search-inp').value);
-  alert(total ? `✓ שובצו ${total} מוצרים אוטומטית` : 'אין מוצרים חדשים לשיבוץ');
-}
-
-// ─── EDIT ──────────────────────────────────────────────────────────────────
-function renderEdit(){
-  const autoBtn = `<button class="auto-btn" onclick="autoAssignAll()">🤖 שיבוץ אוטומטי</button>`;
-  document.getElementById('edit-body').innerHTML= autoBtn +
-    D.gondolas.map(g=>{
-      const filled=g.slots.filter(s=>s.barcode).length;
-      const total=g.slots.length;
-      const rows=g.slots.map(s=>{
-        const f=!!s.barcode;
-        const thumb=f?`<img class="ethumb" src="${imgOf(s.barcode)}" style="cursor:pointer"
-          onclick="showPhoto('${imgOf(s.barcode)}','${esc(s.label||s.barcode).replace(/'/g,"\\'")}')"
-          onerror="this.style.display='none'">`:'';
-        const addBtn=f
-          ?`<button class="ebtn" onclick="openEdit('${g.id}',${s.pos})">עריכה</button>`
-          :`<button class="ebtn" onclick="openSlotAction('${g.id}',${s.pos})">+ הוסף</button>`;
-        return `<div class="erow">
-          <div class="enum">${s.pos}</div>
-          ${thumb}
-          <div class="einfo">
-            ${f
-              ?`<div class="ename">${esc(s.label||s.barcode)}</div><div class="ebc">${s.barcode}</div>`
-              :`<div class="eempty">ריק</div>`}
-          </div>
-          ${addBtn}
-          ${f?`<button class="ecbtn" onclick="clearSlot('${g.id}',${s.pos})">✕</button>`:''}
-        </div>`;
-      }).join('');
-      return `<div class="esec">
-        <div class="esec-hdr" onclick="toggleSec(this)">
-          <span class="ename-main">${g.name}</span>
-          <span class="fill-badge">${filled}/${total}</span>
-          <button class="eclear-btn" onclick="event.stopPropagation();clearGondola('${g.id}')">🗑️ נקה</button>
-          <span class="eid-arrow">${g.id} ▾</span>
-        </div>
-        <div class="esec-body">${rows}</div>
-      </div>`;
-    }).join('');
-}
-
-function toggleSec(el){
-  const b=el.nextElementSibling;
-  b.style.display=b.style.display==='none'?'':'none';
-}
-
-function clearGondola(gid){
-  const g=D.gondolas.find(x=>x.id===gid);
-  if(!g) return;
-  const filled=g.slots.filter(s=>s.barcode).length;
-  if(!filled) return;
-  if(!confirm(`לרוקן את כל ${filled} המוצרים ב"${g.name}"?`)) return;
-  g.slots.forEach(s=>{
-    if(s.barcode){
-      const p=D.products.find(x=>x.barcode===s.barcode);
-      if(p){ p.assignedGid=null; p.assignedPos=null; }
-      s.barcode=null; s.label=null;
-    }
-  });
-  save(); renderEdit(); renderMap();
-  const lv=document.getElementById('view-list');
-  if(lv && lv.classList.contains('active')) renderList(document.getElementById('search-inp').value);
-}
-
-function clearSlot(gid,pos){
-  const sl=slot(gid,pos);
-  if(sl.barcode){
-    const p=D.products.find(x=>x.barcode===sl.barcode);
-    if(p){ p.assignedGid=null; p.assignedPos=null; }
-  }
-  sl.barcode=null; sl.label=null;
-  save(); renderEdit(); renderMap();
-  const lv=document.getElementById('view-list');
-  if(lv && lv.classList.contains('active')) renderList(document.getElementById('search-inp').value);
-}
-
-function slot(gid,pos){
-  return D.gondolas.find(g=>g.id===gid).slots.find(s=>s.pos===pos);
-}
-
-// ─── EDIT MODAL ─────────────────────────────────────────────────────────
-let _gid,_pos,_pendImg=null;
-let _fetchTimer=null;
-
-function openEdit(gid,pos){
-  _gid=gid; _pos=pos; _pendImg=null;
-  const g=D.gondolas.find(x=>x.id===gid);
-  const s=slot(gid,pos);
-  const bc=s.barcode||'', lb=s.label||'';
-  const ci=bc?getCImg(bc):null;
-
-  setModal(`
-    <div class="mtitle">עריכת מיקום</div>
-    <div style="background:var(--red-light);border-radius:8px;padding:8px 12px;
-      margin-bottom:12px;font-size:19px;color:var(--red-dark);font-weight:600">
-      📍 ${g.name} · מדף ${pos}
-    </div>
-    <label class="flabel">ברקוד מוצר</label>
-    <input class="finput" type="tel" id="eb" value="${bc}"
-      placeholder="הכנס ברקוד..." inputmode="numeric" pattern="[0-9]*"
-      oninput="scheduleFetch(this.value)">
-    <div id="fetch-status" style="display:none" class="fetch-status"></div>
-    <label class="flabel">שם מוצר (עברית)</label>
-    <input class="finput" type="text" id="el" value="${lb}"
-      placeholder="שם המוצר...">
-    <label class="flabel">תמונת מוצר</label>
-    <div class="upload-area" id="uparea" onclick="document.getElementById('upfile').click()">
-      ${ci?`<img src="${ci}">`:'<div style="font-size:30px;margin-bottom:6px">📷</div>'}
-      <div class="upload-hint">${ci?'לחץ להחלפה':'לחץ לבחירת תמונה מהאלבום'}</div>
-    </div>
-    <input type="file" id="upfile" accept="image/*" style="display:none"
-      onchange="handleUp(event)">
-    <button class="btn1" onclick="saveSlot()">✔ שמור</button>
-    <button class="btn2" onclick="closeModal()">ביטול</button>
-  `);
-  showOverlay();
-  if(bc) scheduleFetch(bc, true);
-}
-
-function scheduleFetch(bc, immediate){
-  clearTimeout(_fetchTimer);
-  if(!bc || bc.length < 6) return;
-  const delay = immediate ? 100 : 900;
-  _fetchTimer = setTimeout(()=>fetchAndFill(bc), delay);
-}
-
-async function fetchAndFill(bc){
-  const statusEl = document.getElementById('fetch-status');
-  const uparea = document.getElementById('uparea');
-  if(!statusEl) return;
-  statusEl.style.display='block';
-  statusEl.className='fetch-status loading';
-  statusEl.textContent='מחפש מוצר...';
-  const result = await fetchProductData(bc);
-  if(!statusEl) return;
-  if(result){
-    statusEl.className='fetch-status found';
-    statusEl.textContent='✓ מוצר נמצא אוטומטית';
-    const elInput = document.getElementById('el');
-    if(elInput && !elInput.value && result.name) elInput.value = result.name;
-    if(result.image && uparea && !getCImg(bc)){
-      _pendImg = result.image;
-      uparea.innerHTML=`<img src="${result.image}" onerror="this.src=''"><div class="upload-hint">תמונה אוטומטית • לחץ להחלפה</div>`;
-    }
-  } else {
-    statusEl.className='fetch-status notfound';
-    statusEl.textContent='לא נמצא ברשת — ניתן לצרף תמונה ידנית';
-  }
-}
-
-// Open Food Facts only covers actual food. Open Beauty Facts / Open Products Facts
-// are sibling databases (same org, same open API, same CORS policy) covering
-// cosmetics/hygiene and general household goods respectively — trying all three
-// automatically catches far more supermarket items (deodorant, shampoo, etc.)
-// without needing any manual step.
-const OFF_HOSTS = [
-  'world.openfoodfacts.org',
-  'world.openbeautyfacts.org',
-  'world.openproductsfacts.org'
-];
-
-// Shufersal Online has photos for most Israeli-market products that the Open
-// __ Facts databases above never carry (local/private-label items). Its site
-// has no CORS headers of its own, so a tiny Cloudflare Worker fetches the
-// Shufersal search page server-side and relays just {name,image} with CORS
-// open — see C:\Users\etsip\shufersal-image-proxy (deployed 2026-07-04).
-const SHUFERSAL_PROXY = 'https://shufersal-image-proxy.evgenchuk1.workers.dev/';
-
-async function fetchFromShufersal(bc){
-  try{
-    const r = await fetch(
-      `${SHUFERSAL_PROXY}?barcode=${encodeURIComponent(bc)}`,
-      {signal: AbortSignal.timeout(8000)}
-    );
-    if(r.ok){
-      const d = await r.json();
-      if(d && (d.image || d.name)) return { name: d.name||'', image: d.image||null };
-    }
-  } catch(e){}
-  return null;
-}
-
+/* ═══════════════ תמונות מוצרים ═══════════════ */
+const OFF_HOSTS=['world.openfoodfacts.org','world.openbeautyfacts.org','world.openproductsfacts.org'];
+const SHUFERSAL_PROXY='https://shufersal-image-proxy.evgenchuk1.workers.dev/';
 async function fetchProductData(bc){
-  for(const host of OFF_HOSTS){
-    try{
-      const r = await fetch(
-        `https://${host}/api/v0/product/${bc}.json`,
-        {signal: AbortSignal.timeout(6000)}
-      );
-      if(r.ok){
-        const d = await r.json();
-        if(d.status===1 && d.product){
-          const p = d.product;
-          const image = p.image_front_url || p.image_url || null;
-          const name = p.product_name_he || p.product_name || '';
-          if(image || name) return { name, image };
-        }
-      }
-    } catch(e){}
+  for(const host of OFF_HOSTS){try{const r=await fetch(`https://${host}/api/v0/product/${bc}.json`,{signal:AbortSignal.timeout(6000)});
+    if(r.ok){const d=await r.json();if(d.status===1&&d.product){const p=d.product,image=p.image_front_url||p.image_url||null,name=p.product_name_he||p.product_name||'';if(image||name)return {name,image}}}}catch{}}
+  try{const r=await fetch(`${SHUFERSAL_PROXY}?barcode=${encodeURIComponent(bc)}`,{signal:AbortSignal.timeout(8000)});if(r.ok){const d=await r.json();if(d&&(d.image||d.name))return {name:d.name||'',image:d.image||null}}}catch{}
+  return null}
+function imgOf(it){if(!it)return null;if(it.img)return it.img;const p=ST.products.find(x=>x.bc===it.bc&&x.img);if(p)return p.img;
+  const c=localStorage.getItem('ci_'+it.bc);if(c)return c;return null}
+function thumb(it){const u=imgOf(it);return u?`<img class="thumb" src="${esc(u)}" loading="lazy" onerror="this.outerHTML='<div class=&quot;thumb ph&quot;>🛒</div>'">`:`<div class="thumb ph">🛒</div>`}
+let fetching=false;
+async function autoFetchImages(){if(fetching)return;fetching=true;const b=BR;
+  try{const todo=ST.products.filter(p=>p.bc&&!p.img&&!p.noimg).slice(0,60);
+    for(const p of todo){if(BR!==b)break;const r=await fetchProductData(p.bc);
+      if(r&&r.image){p.img=r.image;if(r.name&&(!p.name||p.name===p.bc))p.name=r.name}else p.noimg=1;
+      touch('products');renderIfOn();await new Promise(r=>setTimeout(r,300))}}finally{fetching=false}}
+
+/* ═══════════════ ניווט ═══════════════ */
+const stack=[]; let cur='s-branch';
+function show(id){$$('.screen').forEach(s=>s.classList.toggle('on',s.id===id));cur=id;$$('.screen.on .body').forEach(b=>b.scrollTop=0);if(id!=='s-map')lensOff()}
+function go(id,push=true){if(push&&cur!==id){stack.push(cur);history.pushState({s:id},'')}show(id)}
+function back(){if(!stack.length){show('s-branch');return}show(stack.pop())}
+window.addEventListener('popstate',()=>{if($('#mOv').classList.contains('on')){closeM();history.pushState({},'');return}if(stack.length)show(stack.pop())});
+
+/* ═══════════════ כרטיס מקום ═══════════════ */
+function cardHTML(id,ro,data){const d=spotDef(id);const s=data?(data[id]||{n:d.def,items:Array(d.def).fill(null)}):getSp(id);
+  const filled=s.items.filter(Boolean).length;
+  const rows=s.items.map((it,i)=>`<div class="srow" data-pos="${i}"><span class="num">${i+1}</span>${it?`${thumb(it)}
+      <div class="pinfo" data-act="bc"><div class="pname">${esc(it.name||it.bc)}</div><div class="pbc"><span>${esc(it.bc||'')}</span>${promoBadge(it.bc,it.name)}</div></div>
+      <button class="dots" data-act="menu">⋮</button>`:`<span class="empty">ריק</span><button class="add" data-act="add">+ הוסף</button>`}</div>`).join('');
+  const shv=d.kind==='multi'&&!ro?`<div class="shv"><span>${d.max>6?'מקומות':'מדפים'}:</span><button data-act="shm">−</button><b>${s.n}</b><button data-act="shp">+</button><span class="sp"></span><span>1–${d.max}</span></div>`:'';
+  return `<div class="scard" data-spot="${id}" id="card-${id}"><div class="sch"><div class="sct">${esc(d.he)}<small>${esc(d.en)}${d.sheet?' · '+esc(SHEETS[d.sheet].he):' · לפי החלטת הנהלת הסניף'}</small></div>
+    <span class="cnt${filled===s.n?' full':''}">${filled}/${s.n}</span>${ro?'':`<button class="clr" data-act="clr">🗑️ נקה</button>`}</div>${shv}${rows}</div>`}
+function fillState(id){const s=ST.sp[id];if(!s)return 0;const f=s.items.filter(Boolean).length;return f===0?0:f>=s.n?2:1}
+
+/* ═══════════════ מסכים ═══════════════ */
+let curGroup='H', curSpot=null;
+function renderGroup(){const g=GROUPS[curGroup];$('#gTitle').innerHTML=`${esc(g.he)}<small>${esc(g.en)}</small>`;
+  $('#gTabs').innerHTML=GORDER.map(k=>{const n=spots().filter(s=>s.g===k).length;return `<div class="gtab${k===curGroup?' on':''}" data-group="${k}"><img src="${GROUPS[k].icon}" alt=""><b>${esc(GROUPS[k].he)}</b><span class="c">${k==='B'&&BR==118?'1–30':n||'—'}</span></div>`}).join('');
+  const list=spots().filter(s=>s.g===curGroup);
+  if(curGroup==='B'&&BR==118){$('#gList').innerHTML=`<div class="placeholder"><b>סטנדים יזומים וסטנדים ממותגים 1–30</b>סוג הגרפיקה ואופן מילוי הלשונית יוגדרו בהמשך.<br><span class="en" style="font-size:13px">Layout and filling method — coming soon</span></div>`;return}
+  if(!list.length){$('#gList').innerHTML=`<div class="placeholder"><b>אין מקומות מסוג זה בסניף ${BR}</b><span class="en" style="font-size:13px">No spots of this type in branch ${BR}</span></div>`;return}
+  let h='',sec=null;list.forEach(s=>{if(s.sec&&s.sec!==sec){sec=s.sec;h+=`<div class="sec-h">${esc(sec)}</div>`}h+=cardHTML(s.id)});$('#gList').innerHTML=h}
+function openGroup(k,push=true){curGroup=k;renderGroup();go('s-group',push)}
+function openSpot(id){if(!spotDef(id)){toast('מקום לא מוגדר');return}curSpot=id;renderSpot();go('s-spot')}
+function renderSpot(){const d=spotDef(curSpot);if(!d)return;$('#spTitle').innerHTML=`${esc(d.he)}<small>${esc(d.en)}</small>`;
+  $('#spBody').innerHTML=cardHTML(curSpot);$('#spAll').innerHTML=`📋 כל ה${esc(GROUPS[d.g].he)} · <span class="en">All ${esc(GROUPS[d.g].en)}</span>`}
+
+/* תצוגות */
+function renderDisp(){$('#miniMap').className='mini-map'+(BR==208?' b208':'');$('#miniMap').innerHTML=mapMarkup(true);paintMap($('#miniMap'));
+  $('#dispBox').querySelectorAll('.dh').forEach(e=>e.remove());
+  DISP_HOT.forEach(([k,x,y,w,h])=>{const n=spots().filter(s=>s.g===k);const f=n.filter(s=>fillState(s.id)>0).length;
+    const el=document.createElement('div');el.className='dh';el.dataset.group=k;el.style.cssText=`left:${x}%;top:${y}%;width:${w}%;height:${h}%`;
+    el.innerHTML=n.length?`<span class="n">${f}/${n.length}</span>`:'';$('#dispBox').appendChild(el)})}
+
+/* מפה */
+let SVG118='';
+const uniq=(h,suf)=>h.replace(/(?<![\w-])id="([a-z]+)"/g,'id="$1'+suf+'"').replace(/url\(#([a-z]+)\)/g,'url(#$1'+suf+')');
+function mapMarkup(mini){if(BR==118)return SVG118?uniq(SVG118,mini?'_m':'_f'):'<div class="muted" style="padding:30px;text-align:center">טוען מפה…</div>';
+  return `<img class="m208" src="images/store-map-208.png" alt="מפת סניף 208"><div class="cover208"></div>`+(mini?'':HOT208.map(([id,x,y])=>`<div class="hs" data-id="${id}" style="left:${x}%;top:${y}%"><i></i></div>`).join(''))}
+function paintMap(root){const C=['#9aa7b6','#CFAB6F','#2e9e5b'];
+  root.querySelectorAll('.spot[data-id]').forEach(g=>{const id=g.dataset.id;const dot=g.querySelector('.dot');if(dot)dot.setAttribute('fill',spotDef(id)?C[fillState(id)]:'#9aa7b6')});
+  root.querySelectorAll('.hs[data-id]').forEach(h=>{h.querySelector('i').style.background=C[fillState(h.dataset.id)]})}
+function renderMap(){$('#mapInner').innerHTML=mapMarkup(false);paintMap($('#mapInner'));if(lensOn)buildLens()}
+
+/* זכוכית מגדלת — מלבן גדול שמגדיל חלק מהמפה */
+let lensOn=false, LZ=2.6, foc={x:.5,y:.3};
+function buildLens(){const li=$('#lensInner'),mi=$('#mapInner');li.innerHTML=uniq(mi.innerHTML.replace(/_f(?=["')])/g,''),'_l');li.style.width=mi.offsetWidth+'px';li.style.height=mi.offsetHeight+'px';paintMap(li);placeLens()}
+function placeLens(){if(!lensOn)return;const L=$('#lens'),mi=$('#mapInner'),r=mi.getBoundingClientRect();
+  const fyScreen=r.top+foc.y*r.height;const topHalf=fyScreen<innerHeight*.52;
+  L.style.top=topHalf?'auto':`calc(var(--safe-top) + 70px)`;L.style.bottom=topHalf?`calc(14px + var(--safe-bot))`:'auto';
+  const lw=L.clientWidth,lh=L.clientHeight;const z=BR==118?2.6:2.2;
+  const tx=lw/2-foc.x*r.width*z,ty=lh/2-foc.y*r.height*z;
+  $('#lensInner').style.transform=`translate(${tx}px,${ty}px) scale(${z})`;$('#lens .lt').textContent=`×${z} · גררו על המפה`}
+function lensOff(){lensOn=false;$('#lens').classList.remove('on');$('#lensBtn').classList.remove('on');$('#mapWrap').classList.remove('lensing')}
+$('#lensBtn').onclick=()=>{if(lensOn){lensOff();return}lensOn=true;$('#lens').classList.add('on');$('#lensBtn').classList.add('on');$('#mapWrap').classList.add('lensing');buildLens();toast('גררו את האצבע על המפה · Drag over the map')};
+$('#lensX').onclick=lensOff;
+(()=>{const w=$('#mapWrap');let down=false;
+  const mv=e=>{if(!lensOn)return;const r=$('#mapInner').getBoundingClientRect();foc.x=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));foc.y=Math.min(1,Math.max(0,(e.clientY-r.top)/r.height));placeLens()};
+  w.addEventListener('pointerdown',e=>{if(!lensOn)return;down=true;mv(e)});
+  w.addEventListener('pointermove',e=>{if(lensOn&&(down||e.pointerType==='mouse'))mv(e)});
+  addEventListener('pointerup',()=>down=false);addEventListener('resize',()=>{if(lensOn)buildLens()})})();
+
+/* ידיעון */
+let yFilter='all';
+function placements(){const m=new Map();for(const s of spots()){const st=ST.sp[s.id];if(!st)continue;st.items.forEach((it,i)=>{if(!it)return;const k=it.bc||it.name;if(!m.has(k))m.set(k,[]);m.get(k).push({id:s.id,pos:i,multi:s.kind==='multi'})})}return m}
+function locChips(pl){if(!pl||!pl.length)return '<span class="loc none">לא שובץ</span>';
+  return pl.map(p=>`<span class="loc" data-act="goto" data-id="${p.id}">📍 ${esc(p.id)}${p.multi?' · '+(p.pos+1):''}</span>`).join('')}
+function renderYed(){$('#yMonth').innerHTML=`📅 ${esc(ST.month)}<small>ידיעון החודש · סניף ${BR}</small>`;
+  const pl=placements();const total=ST.products.length,placed=ST.products.filter(p=>pl.has(p.bc||p.name)).length,promo=ST.products.filter(p=>promoOf(p.bc,p.name)).length;
+  $('#yStats').innerHTML=`<div class="stat"><b>${total}</b>מוצרים</div><div class="stat"><b>${placed}</b>שובצו</div><div class="stat"><b>${total-placed}</b>ממתינים</div><div class="stat"><b>${promo}</b>במבצע ניהול+</div>`;
+  $('#yHint').innerHTML=total?'':'ייבאו את קובץ האקסל של המשרד הראשי. גיליונות: <b>ראשי גונדולה כרטיס אשראי</b> → Sbox · <b>גונדולה משתנה</b> → ראשי גונדולה H ובמות P · <b>במות</b> → במות קיר כוח W ובמות כניסה E.';
+  const kinds=['all',...Object.keys(SHEETS).filter(k=>ST.products.some(p=>p.sheet===k)),'wait'];
+  $('#yChips').innerHTML=kinds.map(k=>`<button class="chip${yFilter===k?' on':''}" data-yf="${k}">${k==='all'?'הכל':k==='wait'?'לא שובצו':esc(SHEETS[k].he)} (${k==='all'?total:k==='wait'?total-placed:ST.products.filter(p=>p.sheet===k).length})</button>`).join('');
+  const q=norm($('#ySearch').value);let list=ST.products.filter(p=>(yFilter==='all'||yFilter==='wait'||p.sheet===yFilter)&&(yFilter!=='wait'||!pl.has(p.bc||p.name))&&(!q||norm(p.name).includes(q)||String(p.bc).includes(q)));
+  let h='';for(const k of Object.keys(SHEETS)){const part=list.filter(p=>p.sheet===k);if(!part.length)continue;
+    h+=`<div class="sheet-h">${esc(SHEETS[k].he)} <span>${part.length}</span></div><div class="ycard" style="padding:4px 10px">`+part.map(p=>`<div class="prow" data-bc="${esc(p.bc)}"><span class="no">${p.no||''}</span>${thumb(p)}
+      <div class="pinfo" data-act="bc"><div class="pname">${esc(p.name)}</div><div class="pbc"><span>${esc(p.bc)}</span>${promoBadge(p.bc,p.name)}</div><div class="pbc" style="margin-top:4px">${locChips(pl.get(p.bc||p.name))}</div></div>
+      <button class="dots" data-act="pmenu">⋮</button></div>`).join('')+'</div>'}
+  $('#yList').innerHTML=h||(total?'<div class="muted" style="text-align:center;padding:20px">לא נמצאו מוצרים</div>':'')}
+
+/* ארכיון */
+let ARCH=[], archView=null;
+async function renderArch(){$('#aCur').innerHTML=`📅 ${esc(ST.month)}<small>החודש הנוכחי · סניף ${BR}</small>`;$('#aList').innerHTML='<div class="muted" style="text-align:center;padding:16px">טוען…</div>';
+  try{ARCH=(await fsList('prisa_archive',['branch','month','savedAt','key'])).filter(a=>String(a.branch)===String(BR)).sort((a,b)=>String(b.key).localeCompare(String(a.key)));
+    $('#aList').innerHTML=ARCH.length?ARCH.map(a=>`<div class="arow" data-arch="${esc(a.id)}"><span class="ic">🗂️</span><div class="t">${esc(a.month)}<small>נשמר ${a.savedAt?new Date(a.savedAt).toLocaleDateString('he-IL'):''}</small></div><span style="font-size:22px;color:var(--gold3)">‹</span></div>`).join('')
+      :'<div class="placeholder"><b>הארכיון ריק</b>עדיין לא נשמרו פריסות חודשיות לסניף זה.</div>'}
+  catch(e){$('#aList').innerHTML='<div class="placeholder">אין חיבור לאינטרנט</div>'}}
+async function archSave(){const key=BR+'_'+monthKey(ST.month);
+  await fsPatch('prisa_archive/'+key,{branch:String(BR),month:ST.month,key:monthKey(ST.month),savedAt:new Date().toISOString(),data:JSON.stringify({products:ST.products,sp:ST.sp})});return key}
+async function openArch(id){try{const d=await fsGet('prisa_archive/'+id);if(!d){toast('לא נמצא');return}const data=JSON.parse(d.data||'{}');archView={id,month:d.month,data};
+  $('#avTitle').innerHTML=`${esc(d.month)}<small>Archive · ${BR}</small>`;
+  let h='';GORDER.forEach(k=>{const l=spots().filter(s=>s.g===k);if(!l.length)return;h+=`<div class="sheet-h">${esc(GROUPS[k].he)}<span>${l.length}</span></div>`;l.forEach(s=>h+=cardHTML(s.id,true,data.sp||{}))});
+  h+=`<div class="sheet-h">ידיעון <span>${(data.products||[]).length}</span></div><div class="ycard" style="padding:4px 10px">${(data.products||[]).map(p=>`<div class="prow"><span class="no">${p.no||''}</span><div class="pinfo"><div class="pname">${esc(p.name)}</div><div class="pbc">${esc(p.bc)} · ${esc(SHEETS[p.sheet]?.he||'')}</div></div></div>`).join('')}</div>`;
+  $('#avBody').innerHTML=h;go('s-archv')}catch(e){toast('אין חיבור')}}
+
+function renderAll(){if(!BR||!ST)return;$$('[data-bchip]').forEach(e=>e.textContent=BR);$('#hubMonth').innerHTML=`📅 ${esc(ST.month)}`;renderIfOn()}
+function renderIfOn(){if($('#mOv').classList.contains('on'))return;
+  ({'s-group':renderGroup,'s-spot':renderSpot,'s-disp':renderDisp,'s-map':renderMap,'s-yed':renderYed}[cur]||(()=>{}))()}
+
+/* ═══════════════ חלונות (modal) ═══════════════ */
+function openM(html){$('#mSheet').innerHTML=html;$('#mOv').classList.add('on')}
+function closeM(){$('#mOv').classList.remove('on');renderIfOn()}
+$('#mOv').addEventListener('click',e=>{if(e.target.id==='mOv')closeM()});
+const mHead=(t,sub)=>`<div class="mh"><div>${t}${sub?`<small>${sub}</small>`:''}</div><button class="x" data-act="close">✕</button></div>`;
+
+/* בחירת מוצר למקום */
+let pickCtx=null, pickAll=false;
+function openPicker(id,pos){pickCtx={id,pos};const d=spotDef(id);pickAll=!d.sheet||!ST.products.some(p=>p.sheet===d.sheet);
+  openM(mHead(`הוספה ל-${esc(d.id)}${d.kind==='multi'?` · ${d.max>6?'מקום':'מדף'} ${pos+1}`:''}`,esc(d.he))+
+   `<div class="mb"><div class="search">🔎<input id="pkQ" placeholder="חיפוש שם / ברקוד" autocomplete="off"></div><div class="chips" id="pkChips"></div><div id="pkList"></div></div>
+    <div class="mf"><button class="navy-btn" data-act="manual">✍️ הזנה ידנית</button><button class="ghost-btn" data-act="close">ביטול</button></div>`);
+  $('#pkQ').oninput=renderPick;renderPick()}
+function renderPick(){const d=spotDef(pickCtx.id),pl=placements(),q=norm($('#pkQ').value);
+  $('#pkChips').innerHTML=(d.sheet?`<button class="chip${!pickAll?' on':''}" data-pk="0">${esc(SHEETS[d.sheet].he)}</button>`:'')+`<button class="chip${pickAll?' on':''}" data-pk="1">כל הידיעון</button>`;
+  let list=ST.products.filter(p=>(pickAll||p.sheet===d.sheet)&&(!q||norm(p.name).includes(q)||String(p.bc).includes(q)));
+  list.sort((a,b)=>(pl.has(a.bc||a.name)?1:0)-(pl.has(b.bc||b.name)?1:0)||(a.no||0)-(b.no||0));
+  $('#pkList').innerHTML=list.length?list.map(p=>`<div class="pick" data-pickbc="${esc(p.bc)}">${thumb(p)}<div class="pinfo"><div class="pname">${esc(p.name)}</div><div class="pbc"><span>${esc(p.bc)}</span>${promoBadge(p.bc,p.name)}</div><div class="pbc" style="margin-top:3px">${locChips(pl.get(p.bc||p.name))}</div></div></div>`).join('')
+    :`<div class="muted" style="text-align:center;padding:18px">${ST.products.length?'אין מוצרים מתאימים':'רשימת הידיעון ריקה — ייבאו אקסל במסך «ידיעון» או הזינו ידנית'}</div>`}
+function place(id,pos,it){const s=getSp(id);s.items[pos]={bc:it.bc,name:it.name,...(it.img?{img:it.img}:{})};touch('sp_'+id)}
+
+/* הזנה ידנית */
+let manCtx=null,manImg=null,manT=null;
+function openManual(ctx){manCtx=ctx;manImg=null;const forList=!ctx.id;
+  openM(mHead(forList?'מוצר חדש לידיעון':'הזנה ידנית',forList?'Add item':'Manual entry')+`<div class="mb">
+    <div class="field"><label>ברקוד · Barcode</label><input id="mBc" inputmode="numeric" autocomplete="off" value="${esc(ctx.bc||'')}"><div class="fstat" id="mSt"></div></div>
+    <div class="field"><label>שם המוצר · Name</label><input id="mNm" autocomplete="off" value="${esc(ctx.name||'')}"></div>
+    ${forList?`<div class="field"><label>גיליון · Sheet</label><select id="mSh">${Object.entries(SHEETS).map(([k,v])=>`<option value="${k}"${(ctx.sheet||'other')===k?' selected':''}>${esc(v.he)}</option>`).join('')}</select></div>`:''}
+    <label class="up" id="mUp"><span id="mUpI">📷</span><span>תמונת מוצר (לא חובה)<br><small class="muted">Photo (optional)</small></span><input type="file" accept="image/*" id="mFile" hidden></label>
+  </div><div class="mf"><button class="gold-btn" data-act="mansave">שמירה</button><button class="ghost-btn" data-act="close">ביטול</button></div>`);
+  $('#mBc').oninput=()=>{clearTimeout(manT);const v=$('#mBc').value.replace(/\D/g,'');if(v.length>=6)manT=setTimeout(()=>lookup(v),900)};
+  $('#mFile').onchange=e=>{const f=e.target.files[0];if(f)shrink(f).then(u=>{manImg=u;$('#mUpI').innerHTML=`<img src="${u}">`})};
+  if(ctx.bc&&ctx.edit&&ctx.img){manImg=ctx.img;$('#mUpI').innerHTML=`<img src="${esc(ctx.img)}">`}}
+async function lookup(bc){const st=$('#mSt');if(!st)return;const known=ST.products.find(p=>p.bc===bc);
+  if(known){st.textContent='✓ קיים בידיעון';st.style.color='var(--ok)';if(!$('#mNm').value)$('#mNm').value=known.name;if(known.img&&!manImg){manImg=known.img;$('#mUpI').innerHTML=`<img src="${esc(known.img)}">`}return}
+  st.textContent='מחפש מוצר ברשת…';st.style.color='var(--gold3)';const r=await fetchProductData(bc);if(!$('#mSt')||$('#mBc').value.replace(/\D/g,'')!==bc)return;
+  if(r){st.textContent='✓ נמצא אוטומטית';st.style.color='var(--ok)';if(r.name&&!$('#mNm').value)$('#mNm').value=r.name;if(r.image&&!manImg){manImg=r.image;$('#mUpI').innerHTML=`<img src="${esc(r.image)}">`}}
+  else{st.textContent='לא נמצא ברשת — אפשר לצרף תמונה ידנית';st.style.color='var(--muted)'}}
+function shrink(file){return new Promise(res=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,260/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;
+  c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.72))};im.src=fr.result};fr.readAsDataURL(file)})}
+function manSave(){const bc=$('#mBc').value.replace(/\D/g,'');const name=$('#mNm').value.trim();if(!bc&&!name){toast('נא להזין ברקוד או שם');return}
+  const it={bc:bc||'',name:name||bc,img:manImg||null};
+  if(manCtx.edit){const p=ST.products.find(x=>x.bc===manCtx.bc);if(p){p.bc=it.bc;p.name=it.name;p.img=it.img;p.sheet=$('#mSh')?.value||p.sheet;delete p.noimg}touch('products');closeM();return}
+  let p=ST.products.find(x=>x.bc&&x.bc===bc);
+  if(!p){p={bc:it.bc,name:it.name,sheet:manCtx.id?(spotDef(manCtx.id).sheet||'other'):($('#mSh')?.value||'other'),no:ST.products.length+1,img:it.img,manual:1};ST.products.push(p);touch('products')}
+  else if(it.img&&!p.img){p.img=it.img;touch('products')}
+  if(manCtx.id)place(manCtx.id,manCtx.pos,it);closeM();toast('✓ נשמר')}
+
+/* תפריט מוצר במקום */
+function openItemMenu(id,pos){const it=getSp(id).items[pos];if(!it)return;
+  openM(mHead(esc(it.name),`${esc(id)}${spotDef(id).kind==='multi'?' · '+(pos+1):''} · ${esc(it.bc)}`)+`<div class="mb menu-list">
+    <button data-act="swap">🔄 החלפת מוצר <span class="en">Replace</span></button>
+    <button data-act="move">↔️ העברה למקום אחר <span class="en">Move</span></button>
+    <button data-act="bc">🏷️ ברקוד גדול <span class="en">Barcode</span></button>
+    <button class="red" data-act="rm">🗑️ הסרה מהמקום <span class="en">Remove</span></button></div>`);
+  $('#mSheet').dataset.spot=id;$('#mSheet').dataset.pos=pos}
+/* העברה */
+let mvSel=null;
+function openMove(id,pos){mvSel=null;const it=getSp(id).items[pos];
+  openM(mHead('העברה של «'+esc(it.name)+'»','מ-'+esc(id)+' · Move to')+`<div class="mb">${GORDER.map(k=>{const l=spots().filter(s=>s.g===k&&s.id!==id);if(!l.length)return '';
+    return `<div class="sec-h" style="margin-top:8px">${esc(GROUPS[k].he)}</div><div class="tgt">${l.map(s=>{const st=getSp(s.id);const f=st.items.filter(Boolean).length;return `<button data-mvt="${s.id}">${s.id}<small>${f}/${st.n}</small></button>`}).join('')}</div>`}).join('')}
+    <div id="mvPos"></div></div>`);
+  $('#mSheet').dataset.spot=id;$('#mSheet').dataset.pos=pos}
+function moveTo(fromId,fromPos,toId,toPos){const a=getSp(fromId),b=getSp(toId);const it=a.items[fromPos],other=b.items[toPos];b.items[toPos]=it;a.items[fromPos]=other||null;
+  touch('sp_'+fromId,'sp_'+toId);closeM();toast(`✓ הועבר ל-${toId}${other?' (הוחלף)':''}`)}
+
+/* ברקוד */
+function showBarcode(it){openM(mHead(esc(it.name),'Barcode')+`<div class="mb" style="text-align:center">${imgOf(it)?`<img src="${esc(imgOf(it))}" style="max-width:180px;max-height:180px;object-fit:contain;margin:6px auto 10px;display:block">`:''}<div id="bcBox"><svg id="bcSvg"></svg></div>
+  <div style="font-size:22px;font-weight:900;direction:ltr;margin-top:6px">${esc(it.bc)}</div>${promoOf(it.bc,it.name)?`<div style="margin-top:10px">${promoBadge(it.bc,it.name)}</div>`:''}</div>
+  <div class="mf"><button class="ghost-btn" data-act="close">סגירה</button></div>`);
+  try{const v=String(it.bc);JsBarcode('#bcSvg',v,{format:/^\d{13}$/.test(v)?'EAN13':/^\d{8}$/.test(v)?'EAN8':'CODE128',width:2.4,height:90,displayValue:false,margin:8})}catch{try{JsBarcode('#bcSvg',String(it.bc),{format:'CODE128',height:90,displayValue:false})}catch{$('#bcBox').innerHTML=''}}}
+function showPromo(pid){const p=PROMOS.find(x=>x.id===pid);if(!p)return;
+  openM(mHead('₪ מבצע מ«ניהול+»','Promotion from Nihul+')+`<div class="mb"><div class="ycard"><div class="pname" style="font-size:20px">${esc(p.name)}</div>
+   <div class="muted" style="margin-top:6px">${p.brand?esc(p.brand)+' · ':''}<b style="color:var(--navy);font-size:20px">${esc(promoTxt(p))}</b>${p.regUnit?` · רגיל ₪${esc(p.regUnit)} ליח׳`:''}</div>
+   <div class="muted">${p.until?'בתוקף עד '+esc(p.until.split('-').reverse().join('/')):''}${p.codes?' · קודים: '+esc(p.codes):''}</div></div></div><div class="mf"><button class="ghost-btn" data-act="close">סגירה</button></div>`)}
+
+/* ייבוא אקסל של הידיעון */
+function parseSheet(rows){rows=rows.filter(r=>r&&r.some(c=>String(c).trim()));if(!rows.length)return [];
+  const W=Math.max(...rows.map(r=>r.length));const score=Array(W).fill(0),heb=Array(W).fill(0);
+  rows.forEach(r=>{for(let c=0;c<W;c++){const v=String(r[c]??'').trim();if(/^\d{6,14}$/.test(v.replace(/[\s-]/g,'')))score[c]++;if(/[֐-׿]/.test(v))heb[c]+=Math.min(v.length,40)}});
+  const bcCol=score.indexOf(Math.max(...score));if(score[bcCol]<1)return [];
+  let nmCol=-1,best=0;heb.forEach((v,c)=>{if(c!==bcCol&&v>best){best=v;nmCol=c}});
+  const out=[];rows.forEach(r=>{const bc=String(r[bcCol]??'').replace(/[\s-]/g,'').match(/\d{6,14}/);if(!bc)return;
+    out.push({bc:bc[0],name:String(nmCol>=0?r[nmCol]??'':'').trim()||bc[0]})});return out}
+async function importXls(file){try{const wb=XLSX.read(await file.arrayBuffer(),{type:'array'});const found=[];
+  wb.SheetNames.forEach(n=>{const rows=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,defval:'',raw:false});const kind=sheetKind(n);
+    parseSheet(rows).forEach((p,i)=>found.push({...p,sheet:wb.SheetNames.length===1&&kind==='other'?'other':kind,no:i+1,src:n}))});
+  if(!found.length){toast('לא נמצאו ברקודים בקובץ');return}
+  const by=Object.keys(SHEETS).map(k=>[k,found.filter(p=>p.sheet===k).length]).filter(x=>x[1]);
+  if(ST.products.length&&!confirm(`נמצאו ${found.length} מוצרים:\n${by.map(([k,n])=>'• '+SHEETS[k].he+': '+n).join('\n')}\n\nלהחליף את רשימת הידיעון הנוכחית (${ST.products.length})?\nהשיבוצים במקומות לא יימחקו.`))return;
+  const old=new Map(ST.products.map(p=>[p.bc,p]));ST.products=found.map(p=>({...p,img:old.get(p.bc)?.img||null}));touch('products');renderYed();
+  toast(`✓ יובאו ${found.length} מוצרים · ${by.map(([k,n])=>SHEETS[k].he+' '+n).join(' · ')}`,3500);autoFetchImages()}
+  catch(e){console.error(e);toast('שגיאה בקריאת הקובץ')}}
+$('#xlsIn').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)importXls(f)};
+
+/* ═══════════════ אירועים ═══════════════ */
+document.addEventListener('click',async e=>{
+  const t=e.target;
+  if(t.closest('[data-cp]')){$('#cpOv').classList.add('on');return}
+  if(t.closest('[data-back]')){history.back();return}
+  const brb=t.closest('[data-branch]');if(brb){enterBranch(+brb.dataset.branch);return}
+  const gt=t.closest('[data-go]');if(gt){const k=gt.dataset.go;
+    if(k==='disp'){renderDisp();go('s-disp')}else if(k==='map'){go('s-map');renderMap()}else if(k==='yed'){renderYed();go('s-yed')}else if(k==='arch'){go('s-arch');renderArch()}return}
+  const grp=t.closest('[data-group]');if(grp){openGroup(grp.dataset.group,cur!=='s-group');return}
+  const spt=t.closest('#s-map [data-id], #lens [data-id]');if(spt){const id=spt.dataset.id;if(spotDef(id))openSpot(id);else toast(id+' — לא מקום מיוחד');return}
+  const brand=t.closest('.brand[data-n]');if(brand){openGroup('B');return}
+  const yf=t.closest('[data-yf]');if(yf){yFilter=yf.dataset.yf;renderYed();return}
+  const pk=t.closest('[data-pk]');if(pk){pickAll=pk.dataset.pk==='1';renderPick();return}
+  const pbc=t.closest('[data-pickbc]');if(pbc){const p=ST.products.find(x=>x.bc===pbc.dataset.pickbc);if(p){place(pickCtx.id,pickCtx.pos,p);closeM();toast('✓ שובץ ב-'+pickCtx.id)}return}
+  const mvt=t.closest('[data-mvt]');if(mvt){const to=mvt.dataset.mvt,d=spotDef(to),st=getSp(to),from=$('#mSheet').dataset.spot,fp=+$('#mSheet').dataset.pos;
+    if(d.kind==='single'){if(st.items[0]&&!confirm(`ב-${to} כבר יש «${st.items[0].name}». להחליף ביניהם?`))return;moveTo(from,fp,to,0);return}
+    $$('[data-mvt]').forEach(b=>b.classList.toggle('on',b===mvt));
+    $('#mvPos').innerHTML=`<div class="sec-h">${esc(to)} · בחרו ${d.max>6?'מקום':'מדף'}</div><div class="tgt">${st.items.map((it,i)=>`<button data-mvp="${i}" data-to="${to}">${i+1}<small>${it?esc(it.name).slice(0,10):'ריק'}</small></button>`).join('')}</div>`;
+    $('#mvPos').scrollIntoView({behavior:'smooth'});return}
+  const mvp=t.closest('[data-mvp]');if(mvp){moveTo($('#mSheet').dataset.spot,+$('#mSheet').dataset.pos,mvp.dataset.to,+mvp.dataset.mvp);return}
+  const arow=t.closest('[data-arch]');if(arow){openArch(arow.dataset.arch);return}
+
+  const a=t.closest('[data-act]');if(!a)return;const act=a.dataset.act;
+  const card=t.closest('[data-spot]'),row=t.closest('[data-pos]');const id=card?.dataset.spot,pos=row?+row.dataset.pos:null;
+  switch(act){
+    case 'close':closeM();break;
+    case 'auto':toast('🤖 עקרונות השיבוץ האוטומטי יוגדרו בהמשך · Coming soon',3000);break;
+    case 'add':openPicker(id,pos);break;
+    case 'manual':openManual({id:pickCtx.id,pos:pickCtx.pos});break;
+    case 'mansave':manSave();break;
+    case 'menu':openItemMenu(id,pos);break;
+    case 'swap':{const s=$('#mSheet').dataset;openPicker(s.spot,+s.pos);break}
+    case 'move':{const s=$('#mSheet').dataset;openMove(s.spot,+s.pos);break}
+    case 'rm':{const s=$('#mSheet').dataset;getSp(s.spot).items[+s.pos]=null;touch('sp_'+s.spot);closeM();toast('הוסר');break}
+    case 'bc':{if(t.closest('#mSheet')&&!card){const s=$('#mSheet').dataset;const it=s.spot?getSp(s.spot).items[+s.pos]:null;if(it)showBarcode(it);break}
+      if(card&&!t.closest('.ro')){const it=getSp(id).items[pos];if(it)showBarcode(it)}else{const r=t.closest('[data-bc]');const p=r&&ST.products.find(x=>x.bc===r.dataset.bc);if(p)showBarcode(p)}break}
+    case 'promo':e.stopPropagation();showPromo(a.dataset.pid);break;
+    case 'clr':{const s=getSp(id);if(!s.items.some(Boolean))break;if(!confirm(`לנקות את ${id}?`))break;s.items=s.items.map(()=>null);touch('sp_'+id);renderIfOn();break}
+    case 'shm':case 'shp':{const d=spotDef(id),s=getSp(id);const n=s.n+(act==='shp'?1:-1);if(n<1||n>d.max)break;
+      if(n<s.n&&s.items[s.n-1]&&!confirm(`במדף ${s.n} יש «${s.items[s.n-1].name}». להסיר את המדף?`))break;s.n=n;getSp(id);touch('sp_'+id);renderIfOn();break}
+    case 'goto':{const tid=a.dataset.id;if(cur==='s-group'||cur==='s-yed'||$('#mOv').classList.contains('on')){closeM();openSpot(tid)}break}
+    case 'month':{const v=prompt('שם החודש (לדוגמה: דצמבר 2026)',ST.month);if(v&&v.trim()){ST.month=v.trim();touch('month');renderAll()}break}
+    case 'import':$('#xlsIn').click();break;
+    case 'addprod':openManual({});break;
+    case 'pmenu':{const bc=t.closest('[data-bc]').dataset.bc;const p=ST.products.find(x=>x.bc===bc);if(!p)break;
+      openM(mHead(esc(p.name),esc(p.bc))+`<div class="mb menu-list"><button data-act="pedit" data-pbc="${esc(bc)}">✏️ עריכה <span class="en">Edit</span></button><button data-act="bcp" data-pbc="${esc(bc)}">🏷️ ברקוד <span class="en">Barcode</span></button><button class="red" data-act="pdel" data-pbc="${esc(bc)}">🗑️ מחיקה מהידיעון <span class="en">Delete</span></button></div>`);break}
+    case 'pedit':{const p=ST.products.find(x=>x.bc===a.dataset.pbc);if(p)openManual({...p,edit:1});break}
+    case 'bcp':{const p=ST.products.find(x=>x.bc===a.dataset.pbc);if(p)showBarcode(p);break}
+    case 'pdel':{if(!confirm('למחוק את המוצר מרשימת הידיעון?\n(השיבוצים במקומות יישארו)'))break;ST.products=ST.products.filter(x=>x.bc!==a.dataset.pbc);touch('products');closeM();break}
+    case 'archsave':{try{await flush();await archSave();toast('✓ «'+ST.month+'» נשמר בארכיון');renderArch()}catch{toast('אין חיבור — נסו שוב')}break}
+    case 'newmonth':{if(!confirm(`לשמור את «${ST.month}» בארכיון ולפתוח חודש חדש?\nכל המקומות ורשימת הידיעון יתרוקנו.`))break;
+      try{await flush();await archSave()}catch{toast('אין חיבור — לא ניתן לשמור לארכיון');break}
+      const nm=prompt('שם החודש החדש',defMonth());const ids=Object.keys(ST.sp);ST.sp={};ST.products=[];ST.month=(nm&&nm.trim())||defMonth();
+      spots().forEach(s=>getSp(s.id));touch('month','products',...new Set([...ids,...spots().map(s=>s.id)].map(i=>'sp_'+i)));renderAll();renderArch();toast('✓ נפתח חודש חדש');break}
+    case 'restore':{if(!archView||!confirm(`לשחזר את «${archView.month}» לפריסה הנוכחית?\nהפריסה הנוכחית תוחלף.`))break;
+      const ids=new Set([...Object.keys(ST.sp),...Object.keys(archView.data.sp||{})]);ST.sp=JSON.parse(JSON.stringify(archView.data.sp||{}));ST.products=archView.data.products||[];ST.month=archView.month;
+      touch('month','products',...[...ids].map(i=>'sp_'+i));toast('✓ שוחזר');history.back();break}
   }
-  const shufersal = await fetchFromShufersal(bc);
-  if(shufersal) return shufersal;
-  return null;
-}
+});
+$('#spAll').onclick=()=>{const d=spotDef(curSpot);if(d)openGroup(d.g)};
+$('#cpClose').onclick=()=>$('#cpOv').classList.remove('on');
+$('#cpOv').addEventListener('click',e=>{if(e.target.id==='cpOv')$('#cpOv').classList.remove('on')});
+$('#ySearch').oninput=renderYed;
 
-function handleUp(e){
-  const f=e.target.files[0]; if(!f) return;
-  const r=new FileReader();
-  r.onload=ev=>{
-    _pendImg=ev.target.result;
-    const up=document.getElementById('uparea');
-    if(up) up.innerHTML=`<img src="${_pendImg}"><div class="upload-hint">לחץ להחלפה</div>`;
-  };
-  r.readAsDataURL(f);
-}
+/* ═══════════════ כניסה לסניף ═══════════════ */
+function enterBranch(b){BR=b;ls.set('prisa_last',b);ST=ls.get(lsKey(b),null)||blank();if(!ST.sp)ST.sp={};if(!ST.products)ST.products=[];
+  pending.clear();setSync('…');renderAll();go('s-hub');pull(true)}
+fetch('map-118.svg').then(r=>r.text()).then(t=>{SVG118=t;if(BR==118)renderIfOn()}).catch(()=>{});
+loadPromos();
+setInterval(()=>{if(!document.hidden&&BR&&!$('#mOv').classList.contains('on'))pull()},45000);
+setInterval(()=>{if(!document.hidden)loadPromos()},10*60000);
+addEventListener('pagehide',()=>flush());
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&BR)pull();else flush()});
+history.replaceState({s:'s-branch'},'');
+const QS=new URLSearchParams(location.search);
+if(QS.get('b')){enterBranch(+QS.get('b'));const s=QS.get('screen');if(s==='disp'){renderDisp();go('s-disp')}else if(s==='map'){go('s-map');renderMap()}else if(s==='yed'){renderYed();go('s-yed')}else if(s==='arch'){go('s-arch');renderArch()}else if(s&&GROUPS[s])openGroup(s);else if(QS.get('spot'))openSpot(QS.get('spot'))}
 
-function saveSlot(){
-  const bc=document.getElementById('eb').value.trim();
-  const lb=document.getElementById('el').value.trim();
-  if(!bc){ alert('נא להזין ברקוד'); return; }
-  const zoneCat=zoneCategory(_gid,_pos);
-  const existingProd=D.products.find(p=>p.barcode===bc);
-  if(existingProd && existingProd.category && zoneCat && existingProd.category!==zoneCat){
-    alert(`המוצר שייך לקטגוריית "${CATEGORY_LABELS[existingProd.category]}" ולא ניתן לשבץ אותו במיקום של קטגוריית "${CATEGORY_LABELS[zoneCat]}"`);
-    return;
-  }
-  const s=slot(_gid,_pos);
-  // Unassign old barcode from products if changing
-  if(s.barcode && s.barcode!==bc){
-    const old=D.products.find(p=>p.barcode===s.barcode);
-    if(old){ old.assignedGid=null; old.assignedPos=null; }
-  }
-  s.barcode=bc; s.label=lb||bc;
-  if(_pendImg && typeof _pendImg==='string'){
-    setCImg(bc, _pendImg);
-    _pendImg=null;
-  }
-  // Sync product assignment if barcode is in products list
-  const p=D.products.find(x=>x.barcode===bc);
-  if(p){ p.assignedGid=_gid; p.assignedPos=_pos; if(lb) p.name=lb; }
-  save(); closeModal(); renderMap(); renderEdit();
-  const lv=document.getElementById('view-list');
-  if(lv && lv.classList.contains('active')) renderList(document.getElementById('search-inp').value);
-}
-
-// ─── BARCODE MODAL ───────────────────────────────────────────────────────
-function showBarcode(bc, name){
-  const img=imgOf(bc);
-  setModal(`
-    <div class="bc-modal">
-      <div class="mtitle">ברקוד מוצר</div>
-      <img class="bc-prod-img" src="${img}" alt="${esc(name)}"
-        onerror="this.style.display='none'">
-      <div class="bc-name">${esc(name)}</div>
-      <div class="bc-wrap">
-        <svg id="bc-svg"></svg>
-      </div>
-      <div class="bc-num">${bc}</div>
-      <button class="btn2" style="margin-top:14px" onclick="closeModal()">סגור</button>
-    </div>
-  `);
-  showOverlay();
-  setTimeout(()=>{
-    try{
-      const fmt=bc.length===13?'EAN13':bc.length===8?'EAN8':'CODE128';
-      JsBarcode('#bc-svg',bc,{format:fmt,width:2.2,height:90,displayValue:false,margin:10});
-    }catch(e){
-      try{ JsBarcode('#bc-svg',bc,{format:'CODE128',width:2,height:80,displayValue:false,margin:8}); }
-      catch(e2){ document.getElementById('bc-svg').parentNode.innerHTML='<div style="color:#888;padding:20px">ברקוד לא זמין</div>'; }
-    }
-  },60);
-}
-
-// ─── MONTH ───────────────────────────────────────────────────────────────
-function editMonth(){
-  const v=prompt('הכנס חודש ושנה:',D.month);
-  if(v&&v.trim()){ D.month=v.trim(); save(); document.getElementById('month-btn').textContent=D.month; }
-}
-
-// ─── EMAIL ───────────────────────────────────────────────────────────────
-const PRESET_EMAILS = ['Etsipis@013.net','snif208m@shufersal.co.il','evgenchuk1@gmail.com'];
-
-function openEmailDialog(){
-  document.getElementById('email-pick-list').innerHTML = PRESET_EMAILS.map(addr=>
-    `<button class="email-pick-item" onclick="doSendEmail('${addr}')">${addr}</button>`
-  ).join('');
-  document.getElementById('email-dialog').style.display='flex';
-}
-function closeEmailDialog(){
-  document.getElementById('email-dialog').style.display='none';
-}
-
-async function doSendEmail(email){
-  closeEmailDialog();
-
-  const { blob, filename } = buildDocBlob();
-  const subject = encodeURIComponent('מבצעים חודשיים — ' + D.month);
-  const body    = encodeURIComponent(buildEmailText());
-  const mailHref = `mailto:${encodeURIComponent(email)}?subject=${subject}&body=${body}`;
-
-  const file = new File([blob], filename, {type:'application/msword'});
-  if(navigator.canShare && navigator.canShare({files:[file]})){
-    try{
-      await navigator.share({files:[file], title:'מבצעים חודשיים — ' + D.month});
-    } catch(e){ /* user cancelled share */ }
-    window.location.href = mailHref;
-  } else {
-    // fallback: direct download
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = filename;
-    document.body.appendChild(a); a.click();
-    document.body.removeChild(a);
-    setTimeout(()=>URL.revokeObjectURL(url), 3000);
-    window.location.href = mailHref;
-  }
-}
-
-function buildEmailText(){
-  let t = `מבצעים חודשיים — ${D.month}\n${'─'.repeat(36)}\n\n`;
-  D.gondolas.forEach(g=>{
-    const filled = g.slots.filter(s=>s.barcode);
-    if(!filled.length) return;
-    t += `${g.name} (${g.id})\n`;
-    filled.forEach(s=>{ t += `  • מדף ${s.pos}: ${s.label||s.barcode}\n`; });
-    t += '\n';
-  });
-  return t;
-}
-
-function buildDocBlob(){
-  const month = D.month;
-
-  // Word renders <img> from wherever the file is opened, with no "images/"
-  // folder alongside it — a relative src (used live on GitHub Pages) is a
-  // broken link there, which Word shows as a red X. Every doc image must be
-  // an absolute URL so it resolves regardless of where the .doc is opened.
-  const DOC_ORIGIN = 'https://evgenchuk1.github.io/mevatzim-app/';
-  function docImgSrc(bc){
-    return getCImg(bc) || (DOC_ORIGIN + 'images/' + bc + '.gif');
-  }
-
-  function gondolaTable(g){
-    const rows = g.slots.map(s=>{
-      const filled = !!s.barcode;
-      const img = filled ? docImgSrc(s.barcode) : '';
-      const imgCell = filled
-        ? `<img src="${img}" width="42" height="42"
-             style="object-fit:contain;background:#F5F5F5;display:block;border-radius:3px"
-             onerror="this.style.display='none'">`
-        : `<div style="width:42px;height:42px;background:#EEEEEE;border-radius:3px;
-             text-align:center;line-height:42px;color:#CCC;font-size:14px">—</div>`;
-      const name = filled
-        ? `<b style="font-size:12pt;color:#1A1A1A">${esc(s.label||s.barcode)}</b>`
-        : `<i style="font-size:12pt;color:#BBBBBB">ריק</i>`;
-      const bc = filled
-        ? `<span style="font-size:12pt;color:#AAA;direction:ltr">${s.barcode}</span>`
-        : '';
-      return `<tr style="border-bottom:1px solid #F2EEEE;background:${filled?'#fff':'#FAFAFA'}">
-        <td style="width:18px;padding:3px 4px;text-align:center;vertical-align:middle;
-          font-size:10px;font-weight:700;color:#C8102E">${s.pos}</td>
-        <td style="width:48px;padding:2px 3px;vertical-align:middle">${imgCell}</td>
-        <td style="padding:2px 4px;vertical-align:middle;line-height:1.2;overflow:hidden;word-break:break-all">${name}<br>${bc}</td>
-      </tr>`;
-    }).join('');
-    const cnt = g.slots.filter(s=>s.barcode).length;
-    return `<table dir="rtl" style="width:100%;table-layout:fixed;border-collapse:collapse;
-        border:1px solid #E0B5BA;font-family:Arial,'Arial Hebrew',sans-serif;
-        page-break-inside:avoid;break-inside:avoid">
-      <tr>
-        <td colspan="3" style="background:#C8102E;color:#fff;padding:5px 8px;
-          font-size:14pt;font-weight:700;line-height:1.3;overflow:hidden">
-          ${g.name}
-          <span style="opacity:.75;font-size:9px"> ${g.id} · ${cnt}/${g.slots.length}</span>
-        </td>
-      </tr>
-      ${rows}
-    </table>`;
-  }
-
-  // Wide table for stands (ENT1, CC2) — one sub-column per g.cols, laid out
-  // in the same col-major numbering as the app's own grid (pos = col*rows+r+1)
-  // so position 1 lands top-left here too, matching the on-screen מבצעים tab.
-  function gondolaTableWide(g){
-    const cols = g.cols, rows = g.rows;
-    const columns = [];
-    for(let c=0; c<cols; c++){
-      const colSlots = [];
-      for(let r=0; r<rows; r++){
-        const pos = c*rows + r + 1;
-        colSlots.push(g.slots.find(s=>s.pos===pos) || null);
-      }
-      columns.push(colSlots);
-    }
-    // This table is dir="rtl": the first td-group in DOM order renders on the
-    // visual RIGHT. Reversing here puts column 0 (positions 1..rows) — the
-    // app's own leftmost column — physically on the left in Word too.
-    const domColumns = columns.slice().reverse();
-
-    function slotCellHtml(s){
-      if(!s) return `<td colspan="3" style="padding:2px"></td>`;
-      const filled = !!s.barcode;
-      const img = filled ? docImgSrc(s.barcode) : '';
-      const imgCell = filled
-        ? `<img src="${img}" width="42" height="42"
-             style="object-fit:contain;background:#F5F5F5;display:block;border-radius:3px"
-             onerror="this.style.display='none'">`
-        : `<div style="width:42px;height:42px;background:#EEEEEE;border-radius:3px;
-             text-align:center;line-height:42px;color:#CCC;font-size:14px">—</div>`;
-      const name = filled
-        ? `<b style="font-size:12pt;color:#1A1A1A">${esc(s.label||s.barcode)}</b>`
-        : `<i style="font-size:12pt;color:#BBBBBB">ריק</i>`;
-      const bcHtml = filled
-        ? `<span style="font-size:12pt;color:#AAA;direction:ltr">${s.barcode}</span>`
-        : '';
-      const bg = filled ? '#fff' : '#FAFAFA';
-      return `<td style="background:${bg};width:18px;padding:3px 4px;text-align:center;
-          vertical-align:middle;font-size:10px;font-weight:700;color:#C8102E">${s.pos}</td>
-        <td style="background:${bg};width:48px;padding:2px 3px;vertical-align:middle">${imgCell}</td>
-        <td style="background:${bg};padding:2px 6px 2px 4px;vertical-align:middle;line-height:1.2;
-          border-left:2px solid #F7F0F1;overflow:hidden;word-break:break-all">${name}<br>${bcHtml}</td>`;
-    }
-
-    const rowsHtml = [];
-    for(let r=0; r<rows; r++){
-      const tds = domColumns.map(colSlots => slotCellHtml(colSlots[r])).join('');
-      rowsHtml.push(`<tr style="border-bottom:1px solid #F2EEEE">${tds}</tr>`);
-    }
-
-    const cnt = g.slots.filter(s=>s.barcode).length;
-    return `<table dir="rtl" style="width:100%;table-layout:fixed;border-collapse:collapse;
-        border:1px solid #E0B5BA;font-family:Arial,'Arial Hebrew',sans-serif;
-        page-break-inside:avoid;break-inside:avoid">
-      <tr>
-        <td colspan="${cols*3}" style="background:#C8102E;color:#fff;padding:5px 8px;
-          font-size:14pt;font-weight:700;line-height:1.3;overflow:hidden">
-          ${g.name}
-          <span style="opacity:.75;font-size:9px"> ${g.id} · ${cnt}/${g.slots.length}</span>
-        </td>
-      </tr>
-      ${rowsHtml.join('')}
-    </table>`;
-  }
-
-  // Build grid: ENT1/CC2 → full width; others → 2 per row
-  const gs = D.gondolas;
-  const WIDE = new Set(['ENT1','CC2']);
-  let gridRows = '';
-  let i = 0;
-  while(i < gs.length){
-    const g = gs[i];
-    if(WIDE.has(g.id)){
-      gridRows += `<tr style="page-break-inside:avoid">
-        <td colspan="2" style="width:100%;vertical-align:top;padding:0 0 6px 0;page-break-inside:avoid">${gondolaTableWide(g)}</td>
-      </tr>`;
-      i++;
-    } else {
-      const left  = gondolaTable(g);
-      const next  = gs[i+1] && !WIDE.has(gs[i+1].id) ? gs[i+1] : null;
-      const right = next ? gondolaTable(next) : '';
-      const pageBreak = g.id==='E7' ? 'page-break-before:always;' : '';
-      gridRows += `<tr style="${pageBreak}page-break-inside:avoid">
-        <td style="width:50%;vertical-align:top;padding:0 3px 6px 0;page-break-inside:avoid">${left}</td>
-        <td style="width:50%;vertical-align:top;padding:0 0 6px 3px;page-break-inside:avoid">${right}</td>
-      </tr>`;
-      i += next ? 2 : 1;
-    }
-  }
-
-  const html = `<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8">
-<style>
-  @page{ margin:1cm; }
-  body{ font-family:Arial,'Arial Hebrew',sans-serif;direction:rtl;
-    margin:0;padding:0;color:#1A1A1A; }
-  h1{ background:#C8102E;color:#fff;padding:6px 12px;font-size:14px;
-    margin:0 0 8px 0;text-align:center; }
-</style></head><body>
-<h1>מבצעים חודשיים — ${month}</h1>
-<table style="width:100%;border-collapse:collapse"><tbody>${gridRows}</tbody></table>
-</body></html>`;
-
-  const blob = new Blob([html], {type:'application/msword'});
-  const filename = `מבצעים_${month.replace(/\s/g,'_')}.doc`;
-  return { blob, filename };
-}
-
-// ─── PHOTO POPUP ─────────────────────────────────────────────────────────
-function showPhoto(src, name){
-  document.getElementById('photo-popup-img').src=src;
-  document.getElementById('photo-popup-name').textContent=name||'';
-  document.getElementById('photo-popup').style.display='flex';
-}
-function closePhoto(){
-  document.getElementById('photo-popup').style.display='none';
-}
-
-// ─── COPYRIGHT ───────────────────────────────────────────────────────────
-function showCopyright(){
-  document.getElementById('cp-popup').style.display='flex';
-}
-
-// ─── OVERLAY ─────────────────────────────────────────────────────────────
-function setModal(html){ document.getElementById('modal-body').innerHTML=html; }
-function showOverlay(){ document.getElementById('overlay').style.display='flex'; }
-function closeModal(){ document.getElementById('overlay').style.display='none'; _pendImg=null; clearTimeout(_fetchTimer); }
-function tryCloseOverlay(e){ if(e.target.id==='overlay') closeModal(); }
-
-// ─── UTILITY ─────────────────────────────────────────────────────────────
-function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-function bcMiniIcon(){
-  return `<svg viewBox="0 0 20 14" fill="none">
-    <rect x="1" y="0" width="2" height="14" fill="white"/>
-    <rect x="4" y="0" width="1" height="14" fill="white"/>
-    <rect x="6" y="0" width="2" height="14" fill="white"/>
-    <rect x="9" y="0" width="1" height="14" fill="white"/>
-    <rect x="11" y="0" width="3" height="14" fill="white"/>
-    <rect x="15" y="0" width="1" height="14" fill="white"/>
-    <rect x="17" y="0" width="2" height="14" fill="white"/>
-  </svg>`;
-}
-
-function bcIcon(){
-  return `<svg viewBox="0 0 24 20" fill="none">
-    <rect x="1" y="1" width="2" height="18" fill="#C8102E"/>
-    <rect x="4" y="1" width="1" height="18" fill="#C8102E"/>
-    <rect x="6" y="1" width="2" height="18" fill="#C8102E"/>
-    <rect x="9" y="1" width="1" height="18" fill="#C8102E"/>
-    <rect x="11" y="1" width="3" height="18" fill="#C8102E"/>
-    <rect x="15" y="1" width="1" height="18" fill="#C8102E"/>
-    <rect x="17" y="1" width="2" height="18" fill="#C8102E"/>
-    <rect x="20" y="1" width="1" height="18" fill="#C8102E"/>
-    <rect x="22" y="1" width="2" height="18" fill="#C8102E"/>
-  </svg>`;
-}
-
-// ─── INIT ────────────────────────────────────────────────────────────────
-load();
-document.getElementById('month-btn').textContent=D.month;
-initStoreMap();
-renderMap();
-renderEdit();
-if(D.products && D.products.length>0) autoFetchImages();
+/* סרטון פתיחה במסך מלא בכל פתיחה של האפליקציה */
+(()=>{if(QS.has('nointro')||QS.get('b'))return;
+  const box=$('#intro'),v=$('#introV'),snd=$('#introSnd');box.hidden=false;let done=false;
+  const end=()=>{if(done)return;done=true;box.classList.add('out');setTimeout(()=>box.remove(),520)};
+  v.addEventListener('ended',end);v.addEventListener('error',end);$('#introSkip').onclick=end;
+  setTimeout(end,20000);let userMuted=false;
+  snd.onclick=e=>{e.stopPropagation();userMuted=!v.muted;v.muted=userMuted;snd.textContent=v.muted?'🔇':'🔊';snd.classList.remove('ask');if(v.paused)v.play().catch(()=>{})};
+  const EV=['touchend','click','keydown'],off=()=>EV.forEach(t=>removeEventListener(t,wake,true));
+  const wake=e=>{if(e.target===snd)return off();off();if(!userMuted&&v.muted){v.muted=false;snd.textContent='🔊';snd.classList.remove('ask');v.play().catch(()=>{v.muted=true;snd.textContent='🔇'})}};
+  EV.forEach(t=>addEventListener(t,wake,true));
+  v.muted=false;v.play().then(()=>{snd.textContent='🔊'}).catch(()=>{v.muted=true;snd.textContent='🔇';snd.classList.add('ask');v.play().catch(()=>{})});
+})();
 </script>
 </body>
 </html>
