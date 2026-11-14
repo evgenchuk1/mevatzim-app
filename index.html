@@ -37,16 +37,16 @@ button{font-family:inherit}
   box-shadow:0 4px 12px rgba(20,35,56,.35);border-bottom:3px solid var(--gold);position:relative;z-index:5}
 .brand{display:flex;align-items:center;gap:8px;flex-shrink:0;cursor:pointer}
 .brand img{width:38px;height:38px;border-radius:50%;background:#fff;object-fit:cover;border:2px solid var(--gold);box-shadow:0 0 0 2px rgba(207,171,111,.25),0 3px 8px rgba(0,0,0,.35)}
-.brand .nm{font-size:19px;font-weight:900;color:var(--gold2);line-height:1}
-.brand .nm small{display:block;font-size:10.5px;font-weight:700;color:var(--gold2);opacity:.8;letter-spacing:.3px;direction:ltr;text-align:right;margin-top:2px}
-.htitle{flex:1;min-width:0;text-align:center;font-size:16.5px;font-weight:900;line-height:1.15;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.brand .nm{font-size:24px;font-weight:900;color:var(--gold2);line-height:1}
+.brand .nm small{display:block;font-size:12px;font-weight:700;color:var(--gold2);opacity:.8;letter-spacing:.3px;direction:ltr;text-align:right;margin-top:2px}
+.htitle{flex:1;min-width:0;text-align:center;font-size:20.5px;font-weight:900;line-height:1.15;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .htitle small{display:block;font-size:10.5px;font-weight:600;color:var(--gold2);direction:ltr}
-.back{flex-shrink:0;border:1.5px solid var(--gold);background:rgba(255,255,255,.08);color:var(--gold2);border-radius:999px;padding:7px 13px;font-size:15px;font-weight:800;cursor:pointer}
-.back small{display:block;font-size:9px;font-weight:600;opacity:.8}
-.bcol{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px}
-.mapbtn{border:1.5px solid var(--gold);background:rgba(255,255,255,.1);color:var(--gold2);border-radius:999px;padding:2px 10px;font-size:13px;font-weight:900;cursor:pointer;white-space:nowrap}
-.mapbtn:active{background:var(--gold);color:var(--deep)}
-.bchip{flex-shrink:0;background:linear-gradient(180deg,var(--gold2),var(--gold));color:var(--deep);border-radius:999px;padding:3px 10px;font-weight:900;font-size:14px}
+.back,.bchip,.mapbtn{flex-shrink:0;width:70px;height:30px;display:flex;align-items:center;justify-content:center;gap:3px;border-radius:999px;font-size:14px;font-weight:900;cursor:pointer;white-space:nowrap;padding:0;line-height:1}
+.back{border:1.5px solid var(--gold);background:rgba(255,255,255,.08);color:var(--gold2)}
+.back:active{background:rgba(255,255,255,.15)}
+.bcol{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:5px}
+.bchip,.mapbtn{border:1.5px solid #F3E3BE;background:linear-gradient(180deg,var(--gold2),var(--gold));color:var(--deep);box-shadow:0 2px 0 var(--gold3)}
+.mapbtn:active{transform:translateY(2px);box-shadow:none}
 .sync{position:absolute;left:8px;bottom:-14px;font-size:10px;font-weight:700;color:var(--gold3);background:var(--card);border:1px solid var(--cream2);border-radius:999px;padding:0 7px;line-height:16px}
 .sync.err{color:var(--bad)}
 
@@ -75,15 +75,17 @@ button{font-family:inherit}
 .cp-link{cursor:pointer;text-decoration:underline;text-decoration-color:var(--gold)}
 
 /* ───── hub (הכוונה) ───── */
-#s-hub .stage{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,#2f86e0,#0b4fa3 70%,#083a7a);padding-bottom:calc(56px + var(--safe-bot))}
+#s-hub .stage{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 45%,#0a6fc4,#0659a9 60%,#04427f);padding-bottom:calc(56px + var(--safe-bot))}
 #s-hub .hubbox{position:relative;width:100%;max-height:100%;aspect-ratio:1/1}
-#s-hub .hubbox img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+#s-hub .hubbox img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent),linear-gradient(180deg,transparent,#000 5%,#000 95%,transparent);-webkit-mask-composite:source-in;
+  mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent),linear-gradient(180deg,transparent,#000 5%,#000 95%,transparent);mask-composite:intersect}
 .hz{position:absolute;left:0;right:0;cursor:pointer}
 .hz-top{top:0;height:58%}.hz-bot{bottom:0;height:42%}
 .hz .cap{position:absolute;background:rgba(20,35,56,.72);color:#fff;border:1.5px solid var(--gold);border-radius:999px;padding:6px 14px;font-size:17px;font-weight:900;
   -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);box-shadow:0 4px 10px rgba(0,0,0,.3);pointer-events:none}
 .hz .cap .en{font-size:11px;color:var(--gold2);display:block;text-align:center}
-.hz-top .cap{top:10px;right:10px}.hz-bot .cap{bottom:10px;left:50%;transform:translateX(-50%)}
+.hz-top .cap{top:10px;right:10px}.hz-bot .cap{top:50%;left:50%;transform:translate(-50%,-50%)}
 .hz:active{background:rgba(255,255,255,.12)}
 .hub-bar{position:absolute;left:10px;right:10px;bottom:calc(10px + var(--safe-bot));display:flex;gap:8px;justify-content:space-between;z-index:3}
 .hub-bar button{border:1.5px solid var(--gold);background:rgba(255,253,248,.94);color:var(--navy);border-radius:999px;padding:7px 13px;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 3px 8px rgba(0,0,0,.25)}
@@ -131,12 +133,28 @@ button{font-family:inherit}
 /* ───── group/spot cards (פירוט תכולה) ───── */
 .gtabs{display:flex;gap:7px;overflow-x:auto;padding:2px 2px 10px;margin:0 -4px 4px;scrollbar-width:none}
 .gtabs::-webkit-scrollbar{display:none}
-.gtab{flex:0 0 auto;width:74px;border:2px solid transparent;border-radius:14px;background:var(--card);padding:4px 4px 5px;cursor:pointer;text-align:center;box-shadow:0 2px 6px rgba(20,35,56,.12)}
+.gtab{flex:0 0 auto;width:86px;border:2px solid transparent;border-radius:14px;background:var(--card);padding:4px 4px 5px;cursor:pointer;text-align:center;box-shadow:0 2px 6px rgba(20,35,56,.12)}
 .gtab img{width:62px;height:50px;object-fit:cover;border-radius:10px;display:block;margin:0 auto 3px}
-.gtab b{display:block;font-size:11.5px;font-weight:800;color:var(--navy);line-height:1.1}
+.gtab b{display:block;font-size:14.5px;font-weight:800;color:var(--navy);line-height:1.1}
 .gtab.on{border-color:var(--gold);background:#FBF4E6;box-shadow:0 3px 0 var(--gold3)}
-.gtab .c{display:block;font-size:10px;color:var(--gold3);font-weight:800}
-.auto-btn{margin:2px 0 14px}
+.gtab .c{display:block;font-size:12.5px;color:var(--gold3);font-weight:800}
+.auto-btn{margin:2px 0 4px}
+/* מגירה נשלפת מהכותרת */
+.dwrap{position:relative;height:0;z-index:4}
+.drawer{position:absolute;left:0;right:0;top:0;background:var(--cream);padding:10px 12px 12px;border-bottom:3px solid var(--gold);box-shadow:0 8px 18px rgba(20,35,56,.28);
+  transform:translateY(-100%);transition:transform .28s ease}
+.drawer.on{transform:translateY(0)}
+.tongue{position:absolute;top:100%;left:50%;transform:translateX(-50%);border:none;cursor:pointer;background:linear-gradient(180deg,var(--navy),var(--deep));color:var(--gold2);
+  border:2px solid var(--gold);border-top:none;border-radius:0 0 14px 14px;padding:2px 16px 4px;font-size:13px;font-weight:900;box-shadow:0 4px 8px rgba(20,35,56,.3);white-space:nowrap}
+.tongue i{display:inline-block;font-style:normal;transition:transform .28s}
+.drawer.on .tongue i{transform:rotate(180deg)}
+#s-group .body{padding-top:30px}
+/* אקורדיון */
+.scard.coll .shv,.scard.coll .srow{display:none}
+.scard.coll .sch{border-bottom:none}
+.sch[data-act=tog]{cursor:pointer}
+.chev{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--navy);color:var(--gold2);display:flex;align-items:center;justify-content:center;font-size:13px;transition:transform .2s}
+.scard:not(.coll) .chev{transform:rotate(180deg)}
 .sec-h{font-size:15px;font-weight:900;color:var(--gold3);margin:18px 4px 8px;display:flex;align-items:center;gap:8px}
 .sec-h:after{content:"";flex:1;height:1.5px;background:var(--cream2)}
 .scard{background:var(--card);border-radius:18px;border:1px solid var(--cream2);box-shadow:0 3px 10px rgba(20,35,56,.08);margin-bottom:14px;overflow:hidden}
@@ -243,6 +261,12 @@ button{font-family:inherit}
 @keyframes pulse{50%{transform:scale(1.08)}}
 .toast{position:fixed;left:50%;bottom:calc(26px + var(--safe-bot));transform:translateX(-50%) translateY(30px);opacity:0;background:var(--navy);color:var(--gold2);border:1.5px solid var(--gold);padding:10px 18px;border-radius:999px;font-weight:800;font-size:15px;z-index:400;transition:.25s;pointer-events:none;max-width:92vw;text-align:center}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+/* ───── טאבלט / מחשב ───── */
+@media (min-width:760px){
+  html,body{background:radial-gradient(circle at 50% 30%,#2a4566,#142338 75%)}
+  .screen,#intro{max-width:900px;margin:0 auto;box-shadow:0 0 40px rgba(0,0,0,.45)}
+  .lens{max-width:880px;margin:0 auto}
+}
 </style>
 </head>
 <body>
@@ -322,9 +346,12 @@ button{font-family:inherit}
     <button class="back" data-back>חזרה ›</button>
     <span class="sync" data-sync></span>
   </div>
-  <div class="body">
+  <div class="dwrap"><div class="drawer" id="gDrawer">
     <div class="gtabs" id="gTabs"></div>
     <button class="gold-btn auto-btn" data-act="auto">🤖 שיבוץ אוטומטי <small>Auto-assign</small></button>
+    <button class="tongue" data-act="drawer"><i>▾</i> סוגי מקומות</button>
+  </div></div>
+  <div class="body">
     <div id="gList"></div>
   </div>
 </section>
@@ -588,31 +615,31 @@ function back(){if(!stack.length){show('s-branch');return}show(stack.pop())}
 window.addEventListener('popstate',()=>{if($('#mOv').classList.contains('on')){closeM();history.pushState({},'');return}if(stack.length)show(stack.pop())});
 
 /* ═══════════════ כרטיס מקום ═══════════════ */
-function cardHTML(id,ro,data){const d=spotDef(id);const s=data?(data[id]||{n:d.def,items:Array(d.def).fill(null)}):getSp(id);
+function cardHTML(id,ro,data,coll){const d=spotDef(id);const s=data?(data[id]||{n:d.def,items:Array(d.def).fill(null)}):getSp(id);
   const filled=s.items.filter(Boolean).length;
   const rows=s.items.map((it,i)=>`<div class="srow" data-pos="${i}"><span class="num">${i+1}</span>${it?`${thumb(it)}
       <div class="pinfo" data-act="bc"><div class="pname">${esc(it.name||it.bc)}</div><div class="pbc"><span>${esc(it.bc||'')}</span>${promoBadge(it.bc,it.name)}</div></div>
       <button class="dots" data-act="menu">⋮</button>`:`<span class="empty">ריק</span><button class="add" data-act="add">+ הוסף</button>`}</div>`).join('');
   const shv=d.kind==='multi'&&!ro?`<div class="shv"><span>${d.max>6?'מקומות':'מדפים'}:</span><button data-act="shm">−</button><b>${s.n}</b><button data-act="shp">+</button><span class="sp"></span><span>1–${d.max}</span></div>`:'';
-  return `<div class="scard" data-spot="${id}" id="card-${id}"><div class="sch"><div class="sct">${esc(d.he)}<small>${esc(d.en)}${d.sheet?' · '+esc(SHEETS[d.sheet].he):' · לפי החלטת הנהלת הסניף'}</small></div>
+  return `<div class="scard${coll&&!OPENC.has(id)?' coll':''}" data-spot="${id}" id="card-${id}"><div class="sch"${coll?' data-act="tog"':''}>${coll?'<span class="chev">▾</span>':''}<div class="sct">${esc(d.he)}<small>${esc(d.en)}${d.sheet?' · '+esc(SHEETS[d.sheet].he):' · לפי החלטת הנהלת הסניף'}</small></div>
     <span class="cnt${filled===s.n?' full':''}">${filled}/${s.n}</span>${ro?'':`<button class="clr" data-act="clr">🗑️ נקה</button>`}</div>${shv}${rows}</div>`}
 function fillState(id){const s=ST.sp[id];if(!s)return 0;const f=s.items.filter(Boolean).length;return f===0?0:f>=s.n?2:1}
 
 /* ═══════════════ מסכים ═══════════════ */
-let curGroup='H', curSpot=null;
+let curGroup='H', curSpot=null; const OPENC=new Set();
 function renderGroup(){const g=GROUPS[curGroup];$('#gTitle').textContent=g.he;
   $('#gTabs').innerHTML=GORDER.map(k=>{const n=spots().filter(s=>s.g===k).length;return `<div class="gtab${k===curGroup?' on':''}" data-group="${k}"><img src="${GROUPS[k].icon}" alt=""><b>${esc(GROUPS[k].he)}</b><span class="c">${k==='B'&&BR==118?'1–30':n||'—'}</span></div>`}).join('');
   const list=spots().filter(s=>s.g===curGroup);
   if(curGroup==='B'&&BR==118){$('#gList').innerHTML=`<div class="placeholder"><b>סטנדים יזומים וסטנדים ממותגים 1–30</b>סוג הגרפיקה ואופן מילוי הלשונית יוגדרו בהמשך.<br><span class="en" style="font-size:13px">Layout and filling method — coming soon</span></div>`;return}
   if(!list.length){$('#gList').innerHTML=`<div class="placeholder"><b>אין מקומות מסוג זה בסניף ${BR}</b><span class="en" style="font-size:13px">No spots of this type in branch ${BR}</span></div>`;return}
-  let h='',sec=null;list.forEach(s=>{if(s.sec&&s.sec!==sec){sec=s.sec;h+=`<div class="sec-h">${esc(sec)}</div>`}h+=cardHTML(s.id)});$('#gList').innerHTML=h}
-function openGroup(k,push=true){curGroup=k;renderGroup();go('s-group',push)}
+  let h='',sec=null;list.forEach(s=>{if(s.sec&&s.sec!==sec){sec=s.sec;h+=`<div class="sec-h">${esc(sec)}</div>`}h+=cardHTML(s.id,false,null,true)});$('#gList').innerHTML=h}
+function openGroup(k,push=true){if(k!==curGroup)OPENC.clear();curGroup=k;$('#gDrawer').classList.remove('on');renderGroup();go('s-group',push)}
 function openSpot(id){if(!spotDef(id)){toast('מקום לא מוגדר');return}curSpot=id;renderSpot();go('s-spot')}
 function renderSpot(){const d=spotDef(curSpot);if(!d)return;$('#spTitle').textContent=d.he;
   $('#spBody').innerHTML=cardHTML(curSpot);$('#spAll').innerHTML=`📋 כל ה${esc(GROUPS[d.g].he)} · <span class="en">All ${esc(GROUPS[d.g].en)}</span>`}
 
 /* תצוגות */
-function fitDisp(){const h=$('#dispBox').parentElement,s=Math.max(h.clientWidth,h.clientHeight);$('#dispBox').style.width=$('#dispBox').style.height=s+'px'}
+function fitDisp(){const h=$('#dispBox').parentElement,s=Math.min(h.clientWidth,h.clientHeight);$('#dispBox').style.width=$('#dispBox').style.height=s+'px'}
 addEventListener('resize',()=>{if(cur==='s-disp')fitDisp()});
 function renderDisp(){$('#miniMap').className='mini-map'+(BR==208?' b208':'');$('#miniMap').innerHTML=mapMarkup(true);paintMap($('#miniMap'));
   $('#dispBox').querySelectorAll('.dh').forEach(e=>e.remove());
@@ -783,6 +810,7 @@ $('#xlsIn').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)import
 /* ═══════════════ אירועים ═══════════════ */
 document.addEventListener('click',async e=>{
   const t=e.target;
+  const dr=$('#gDrawer');if(dr.classList.contains('on')&&!t.closest('#gDrawer')){dr.classList.remove('on');return}
   if(t.closest('[data-cp]')){$('#cpOv').classList.add('on');return}
   if(t.closest('[data-back]')){history.back();return}
   const brb=t.closest('[data-branch]');if(brb){enterBranch(+brb.dataset.branch);return}
@@ -806,6 +834,8 @@ document.addEventListener('click',async e=>{
   const card=t.closest('[data-spot]'),row=t.closest('[data-pos]');const id=card?.dataset.spot,pos=row?+row.dataset.pos:null;
   switch(act){
     case 'close':closeM();break;
+    case 'drawer':$('#gDrawer').classList.toggle('on');break;
+    case 'tog':{if(OPENC.has(id))OPENC.delete(id);else OPENC.add(id);card.classList.toggle('coll',!OPENC.has(id));break}
     case 'auto':toast('🤖 עקרונות השיבוץ האוטומטי יוגדרו בהמשך · Coming soon',3000);break;
     case 'add':openPicker(id,pos);break;
     case 'manual':openManual({id:pickCtx.id,pos:pickCtx.pos});break;
