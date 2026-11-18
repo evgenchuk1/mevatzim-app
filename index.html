@@ -741,11 +741,9 @@ function yRow(p,pl){const k=pKey(p),op=yOpen.has(k);
     ${op?`<div class="ydet"><dl>
       <dt>תיאור מבצע</dt><dd>${esc(p.name)}</dd>
       <dt>מספר פריט</dt><dd class="ltr">${bcs.map(esc).join('<br>')||'—'}</dd>
-      ${p.deal?`<dt>סוג המבצע</dt><dd class="deal">${esc(prettyDeal(p.deal))}</dd>`:''}
-      ${p.sup?`<dt>ספק</dt><dd>${esc(p.sup)}</dd>`:''}
+      <dt>סוג המבצע</dt><dd class="deal">${esc(prettyDeal(p.deal))||'—'}</dd>
+      <dt>ספק</dt><dd>${esc(p.sup||'—')}</dd>
       <dt>תגמול</dt><dd class="ltr">${esc(p.reward||'—')}</dd>
-      ${p.note?`<dt>הערות</dt><dd>${esc(p.note)}</dd>`:''}
-      ${p.status?`<dt>סטטוס</dt><dd style="color:var(--bad)">${esc(p.status)}</dd>`:''}
       ${p.sec?`<dt>מיקום בידיעון</dt><dd>${esc(SHEETS[p.sheet]?.he||'')} · ${esc(p.sec)}</dd>`:''}
       <dt>שיבוץ</dt><dd>${locChips(pl.get(k))}</dd></dl>
       <div class="yact">${p.bc?`<button data-act="ybar">▮▯▮ ברקוד</button>`:''}<button data-act="pmenu">⋮ עוד</button></div></div>`:''}</div>`}
