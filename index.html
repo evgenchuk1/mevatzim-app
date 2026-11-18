@@ -212,6 +212,27 @@ button{font-family:inherit}
 .loc.none{background:#FDF0EE;color:var(--bad);border-color:#F5D5CF;cursor:default;direction:rtl}
 .sheet-h{font-size:14px;font-weight:900;color:#fff;background:linear-gradient(170deg,var(--navy3),var(--navy));border-radius:10px;padding:6px 10px;margin:12px 0 4px;display:flex;justify-content:space-between}
 .sheet-h span{color:var(--gold2)}
+.ytabs{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:2px 2px 8px;margin:0 -2px 4px;scrollbar-width:none}
+.ytabs::-webkit-scrollbar{display:none}
+.ytab{flex:none;border:1.5px solid var(--gold);background:#fff;color:var(--navy);border-radius:14px;padding:8px 13px;font:inherit;font-size:16px;font-weight:900;cursor:pointer;white-space:nowrap}
+.ytab small{display:block;font-size:11px;font-weight:700;color:var(--gold3)}
+.ytab.on{background:linear-gradient(170deg,var(--navy3),var(--navy));color:var(--gold2);border-color:var(--navy)}
+.ytab.on small{color:#C9D3E2}
+.ysec{font-size:14px;font-weight:900;color:var(--gold3);margin:12px 4px 4px;display:flex;justify-content:space-between}
+.yrow{border-bottom:1px solid #F1EBDD}.yrow:last-child{border-bottom:none}
+.yrow .prow{border-bottom:none;cursor:pointer}
+.yrow .chev{flex-shrink:0;color:var(--gold3);font-size:14px;transition:transform .15s}
+.yrow.op .chev{transform:rotate(180deg)}
+.yrow.op{background:#FBF7EE;border-radius:12px}
+.ydet{padding:2px 10px 12px 10px}
+.ydet dl{display:grid;grid-template-columns:auto 1fr;gap:5px 12px;margin:0 0 8px;font-size:15.5px}
+.ydet dt{color:var(--muted);font-weight:800;white-space:nowrap}
+.ydet dd{margin:0;color:var(--deep);font-weight:700;word-break:break-word}
+.ydet dd.deal{color:#B03A2E;font-weight:900;font-size:17px}
+.ydet dd.ltr{direction:ltr;text-align:right}
+.ydet .yact{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.ydet .yact button{border:1.5px solid var(--gold);background:#fff;color:var(--navy);border-radius:10px;padding:6px 11px;font:inherit;font-size:14px;font-weight:800;cursor:pointer}
+.yvalid{font-size:12.5px;color:var(--muted);font-weight:700;margin:-2px 4px 8px}
 .muted{color:var(--muted);font-size:14px;font-weight:600;line-height:1.5}
 
 /* ───── archive ───── */
@@ -391,7 +412,7 @@ button{font-family:inherit}
       <input type="file" id="xlsIn" accept=".xlsx,.xls,.csv" hidden>
       <div class="muted" id="yHint" style="margin-top:10px"></div>
     </div>
-    <div class="search">🔎<input id="ySearch" placeholder="חיפוש שם / ברקוד · Search" autocomplete="off"></div>
+    <div class="search">🔎<input id="ySearch" placeholder="חיפוש: שם מוצר / ברקוד / מס׳ מבצע" autocomplete="off"></div>
     <div class="chips" id="yChips"></div>
     <div id="yList"></div>
   </div>
@@ -471,13 +492,18 @@ function toast(t,ms=2200){const e=$('#toast');e.textContent=t;e.classList.add('o
 
 /* גיליונות הידיעון (מהמשרד הראשי) */
 const SHEETS={
-  credit:{he:'ראשי גונדולה כרטיס אשראי',en:'Credit-card gondola ends'},
-  var:   {he:'גונדולה משתנה',en:'Variable gondola'},
-  stage: {he:'במות',en:'Stages'},
-  other: {he:'אחר / ידני',en:'Other / manual'}
+  stage: {he:'במות',en:'Stages',xl:'במות'},
+  var:   {he:'ראשי גונדולה',en:'Gondola ends',xl:'גונדולה משתנה'},
+  credit:{he:'כרטיסי אשראי',en:'Credit-card',xl:'ראשי גונדולה כרטיס אשראי'},
+  freeze:{he:'מקפיאים',en:'Freezers',xl:'ראשי גונדולה מקפיאים'},
+  fridge:{he:'מקררים',en:'Fridges',xl:'מקררים'},
+  green: {he:'גרין',en:'Green',xl:'בריאות'},
+  other: {he:'ידני',en:'Manual'}
 };
-function sheetKind(name){name=String(name||'');
-  if(/אשראי/.test(name))return 'credit';if(/משתנ/.test(name))return 'var';if(/במות|במה/.test(name))return 'stage';return 'other'}
+/* רק 6 הגיליונות הירוקים נכנסים לידיעון; השאר (סלסלאות, מבצעי מדף, NF…) — לא */
+function sheetKind(name){name=String(name||'').trim();
+  if(/אשראי/.test(name))return 'credit';if(/משתנ/.test(name))return 'var';if(/מקפיאים/.test(name)&&/גונדולה|גונולה/.test(name))return 'freeze';
+  if(/^מקררים$/.test(name))return 'fridge';if(/^בריאות$|גרין/.test(name))return 'green';if(/^במות$/.test(name))return 'stage';return null}
 
 /* סוגי המקומות המיוחדים */
 const GROUPS={
@@ -698,22 +724,52 @@ $('#lensBtn').onclick=()=>{if(lensOn){lensPref=false;lensOff();return}lensPref=t
   $('#s-map .body').addEventListener('scroll',placeLens);addEventListener('resize',()=>{if(lensOn)buildLens()})})();
 
 /* ידיעון */
-let yFilter='all';
+
 function placements(){const m=new Map();for(const s of spots()){const st=ST.sp[s.id];if(!st)continue;st.items.forEach((it,i)=>{if(!it)return;const k=it.bc||it.name;if(!m.has(k))m.set(k,[]);m.get(k).push({id:s.id,pos:i,multi:s.kind==='multi'})})}return m}
 function locChips(pl){if(!pl||!pl.length)return '<span class="loc none">לא שובץ</span>';
   return pl.map(p=>`<span class="loc" data-act="goto" data-id="${p.id}">📍 ${esc(p.id)}${p.multi?' · '+(p.pos+1):''}</span>`).join('')}
+let yTab='stage';const yOpen=new Set();
+const pKey=p=>p.bc||p.name;
+const prettyDeal=d=>String(d||'').replace(/(\d)\s*יחידות\s*ב\s*/g,'$1 יח׳ ב-').replace(/(\d+(?:\.\d+)?)\s*ש"ח/g,'₪$1').replace(/קנה בסכום\s*(\d+)\s*קבל הנחה\s*(\d+)/,'בקנייה ב-₪$1 הנחה ₪$2').trim();
+function yMatch(p,q){if(!q)return true;const qd=q.replace(/\D/g,'');
+  return norm(p.name).includes(q)||norm(p.sup||'').includes(q)||(qd.length>=3&&[p.bc,...(p.bcs||[]),p.reward,p.dealId].some(x=>String(x||'').includes(qd)))}
+function yRow(p,pl){const k=pKey(p),op=yOpen.has(k);
+  const bcs=(p.bcs&&p.bcs.length?p.bcs:[p.bc]).filter(Boolean);
+  return `<div class="yrow${op?' op':''}" data-bc="${esc(k)}"><div class="prow" data-act="yexp">${thumb(p)}
+    <div class="pinfo"><div class="pname">${esc(p.name)}</div><div class="pbc"><span>${esc(p.bc||'—')}${bcs.length>1?' +'+(bcs.length-1):''}</span>${promoBadge(p.bc,p.name)}</div></div>
+    <span class="chev">▾</span></div>
+    ${op?`<div class="ydet"><dl>
+      <dt>תיאור מבצע</dt><dd>${esc(p.name)}</dd>
+      <dt>מספר פריט</dt><dd class="ltr">${bcs.map(esc).join('<br>')||'—'}</dd>
+      ${p.deal?`<dt>סוג המבצע</dt><dd class="deal">${esc(prettyDeal(p.deal))}</dd>`:''}
+      ${p.sup?`<dt>ספק</dt><dd>${esc(p.sup)}</dd>`:''}
+      <dt>תגמול</dt><dd class="ltr">${esc(p.reward||'—')}</dd>
+      ${p.note?`<dt>הערות</dt><dd>${esc(p.note)}</dd>`:''}
+      ${p.status?`<dt>סטטוס</dt><dd style="color:var(--bad)">${esc(p.status)}</dd>`:''}
+      ${p.sec?`<dt>מיקום בידיעון</dt><dd>${esc(SHEETS[p.sheet]?.he||'')} · ${esc(p.sec)}</dd>`:''}
+      <dt>שיבוץ</dt><dd>${locChips(pl.get(k))}</dd></dl>
+      <div class="yact">${p.bc?`<button data-act="ybar">▮▯▮ ברקוד</button>`:''}<button data-act="pmenu">⋮ עוד</button></div></div>`:''}</div>`}
 function renderYed(){$('#yMonth').innerHTML=`📅 ${esc(ST.month)}<small>ידיעון החודש · סניף ${BR}</small>`;
-  const pl=placements();const total=ST.products.length,placed=ST.products.filter(p=>pl.has(p.bc||p.name)).length,promo=ST.products.filter(p=>promoOf(p.bc,p.name)).length;
+  const pl=placements();const total=ST.products.length,placed=ST.products.filter(p=>pl.has(pKey(p))).length,promo=ST.products.filter(p=>promoOf(p.bc,p.name)).length;
   $('#yStats').innerHTML=`<div class="stat"><b>${total}</b>מוצרים</div><div class="stat"><b>${placed}</b>שובצו</div><div class="stat"><b>${total-placed}</b>ממתינים</div><div class="stat"><b>${promo}</b>במבצע ניהול+</div>`;
-  $('#yHint').innerHTML=total?'':'ייבאו את קובץ האקסל של המשרד הראשי. גיליונות: <b>ראשי גונדולה כרטיס אשראי</b> → Sbox · <b>גונדולה משתנה</b> → ראשי גונדולה H ובמות P · <b>במות</b> → במות קיר כוח W ובמות כניסה E.';
-  const kinds=['all',...Object.keys(SHEETS).filter(k=>ST.products.some(p=>p.sheet===k)),'wait'];
-  $('#yChips').innerHTML=kinds.map(k=>`<button class="chip${yFilter===k?' on':''}" data-yf="${k}">${k==='all'?'הכל':k==='wait'?'לא שובצו':esc(SHEETS[k].he)} (${k==='all'?total:k==='wait'?total-placed:ST.products.filter(p=>p.sheet===k).length})</button>`).join('');
-  const q=norm($('#ySearch').value);let list=ST.products.filter(p=>(yFilter==='all'||yFilter==='wait'||p.sheet===yFilter)&&(yFilter!=='wait'||!pl.has(p.bc||p.name))&&(!q||norm(p.name).includes(q)||String(p.bc).includes(q)));
-  let h='';for(const k of Object.keys(SHEETS)){const part=list.filter(p=>p.sheet===k);if(!part.length)continue;
-    h+=`<div class="sheet-h">${esc(SHEETS[k].he)} <span>${part.length}</span></div><div class="ycard" style="padding:4px 10px">`+part.map(p=>`<div class="prow" data-bc="${esc(p.bc)}"><span class="no">${p.no||''}</span>${thumb(p)}
-      <div class="pinfo" data-act="bc"><div class="pname">${esc(p.name)}</div><div class="pbc"><span>${esc(p.bc)}</span>${promoBadge(p.bc,p.name)}</div><div class="pbc" style="margin-top:4px">${locChips(pl.get(p.bc||p.name))}</div></div>
-      <button class="dots" data-act="pmenu">⋮</button></div>`).join('')+'</div>'}
-  $('#yList').innerHTML=h||(total?'<div class="muted" style="text-align:center;padding:20px">לא נמצאו מוצרים</div>':'')}
+  $('#yHint').innerHTML=total?'':'ייבאו את קובץ האקסל של הידיעון (המשרד הראשי). נכנסים 6 גיליונות: <b>במות · גונדולה משתנה · ראשי גונדולה כרטיס אשראי · ראשי גונדולה מקפיאים · מקררים · בריאות (גרין)</b>.';
+  const tabs=Object.keys(SHEETS).filter(k=>k!=='other'||ST.products.some(p=>p.sheet==='other'));
+  if(!tabs.includes(yTab))yTab=tabs[0];
+  const cnt=k=>ST.products.filter(p=>p.sheet===k).length;
+  $('#yChips').className='ytabs';
+  $('#yChips').innerHTML=tabs.map(k=>`<button class="ytab${yTab===k?' on':''}" data-yf="${k}">${esc(SHEETS[k].he)}<small>${cnt(k)} מוצרים</small></button>`).join('');
+  const q=norm($('#ySearch').value);
+  const secList=(arr)=>{let h='',last=null,buf=[];const flush=()=>{if(buf.length)h+=`<div class="ycard" style="padding:2px 8px">${buf.join('')}</div>`;buf=[]};
+    arr.forEach(p=>{if((p.sec||'')!==last){flush();last=p.sec||'';if(last)h+=`<div class="ysec">${esc(last)}<span>${arr.filter(x=>(x.sec||'')===last).length}</span></div>`}buf.push(yRow(p,pl))});flush();return h};
+  let h='';
+  if(q){ // חיפוש — בכל הלשוניות
+    for(const k of tabs){const part=ST.products.filter(p=>p.sheet===k&&yMatch(p,q));if(!part.length)continue;
+      h+=`<div class="sheet-h">${esc(SHEETS[k].he)} <span>${part.length}</span></div>`+secList(part)}
+    h=h||'<div class="muted" style="text-align:center;padding:20px">לא נמצאו מוצרים</div>';
+  }else{const part=ST.products.filter(p=>p.sheet===yTab);
+    const v=part.find(p=>p.valid)?.valid;if(v)h+=`<div class="yvalid">בתוקף ${esc(v)}</div>`;
+    h+=part.length?secList(part):(total?'<div class="muted" style="text-align:center;padding:20px">אין מוצרים בלשונית זו</div>':'')}
+  $('#yList').innerHTML=h}
 
 /* ארכיון */
 let ARCH=[], archView=null;
@@ -811,20 +867,32 @@ function showPromo(pid){const p=PROMOS.find(x=>x.id===pid);if(!p)return;
    <div class="muted">${p.until?'בתוקף עד '+esc(p.until.split('-').reverse().join('/')):''}${p.codes?' · קודים: '+esc(p.codes):''}</div></div></div><div class="mf"><button class="ghost-btn" data-act="close">סגירה</button></div>`)}
 
 /* ייבוא אקסל של הידיעון */
-function parseSheet(rows){rows=rows.filter(r=>r&&r.some(c=>String(c).trim()));if(!rows.length)return [];
-  const W=Math.max(...rows.map(r=>r.length));const score=Array(W).fill(0),heb=Array(W).fill(0);
-  rows.forEach(r=>{for(let c=0;c<W;c++){const v=String(r[c]??'').trim();if(/^\d{6,14}$/.test(v.replace(/[\s-]/g,'')))score[c]++;if(/[֐-׿]/.test(v))heb[c]+=Math.min(v.length,40)}});
-  const bcCol=score.indexOf(Math.max(...score));if(score[bcCol]<1)return [];
-  let nmCol=-1,best=0;heb.forEach((v,c)=>{if(c!==bcCol&&v>best){best=v;nmCol=c}});
-  const out=[];rows.forEach(r=>{const bc=String(r[bcCol]??'').replace(/[\s-]/g,'').match(/\d{6,14}/);if(!bc)return;
-    out.push({bc:bc[0],name:String(nmCol>=0?r[nmCol]??'':'').trim()||bc[0]})});return out}
-async function importXls(file){try{const wb=XLSX.read(await file.arrayBuffer(),{type:'array'});const found=[];
-  wb.SheetNames.forEach(n=>{const rows=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,defval:'',raw:false});const kind=sheetKind(n);
-    parseSheet(rows).forEach((p,i)=>found.push({...p,sheet:wb.SheetNames.length===1&&kind==='other'?'other':kind,no:i+1,src:n}))});
-  if(!found.length){toast('לא נמצאו ברקודים בקובץ');return}
+/* קריאת גיליון ידיעון: שורת כותרת עם „תיאור מבצע”, שורות-קטע (במת כניסה / ר"ג 1 …) בין הטבלאות */
+function parseSheet(rows,kind){const out=[];let H=null,sec='',valid='';
+  const cl=v=>String(v??'').replace(/\s+/g,' ').trim();
+  rows.forEach((r,ri)=>{r=r||[];const cells=r.map(cl),filled=cells.filter(Boolean);if(!filled.length)return;
+    if(!valid){const m=cells.join(' ').match(/(\d{1,2}\.\d{1,2}\.\d{2,4})\s*ועד\s*-?\s*(\d{1,2}\.\d{1,2}\.\d{2,4})/);if(m)valid=m[1]+' – '+m[2]}
+    const hi=cells.findIndex(c=>c==='תיאור מבצע');
+    if(hi>=0){H={};cells.forEach((c,i)=>{if(c)H[c]=i});return}
+    const num=/^\d+$/.test(cells[0]);
+    if(!num){if(filled.length===1&&!/ידיעון|כרטיס אשראי .*\d{4}/.test(filled[0]))sec=filled[0];return}
+    if(!H)return;
+    const g=n=>H[n]!=null?cells[H[n]]||'':'';
+    const name=g('תיאור מבצע');if(!name)return;
+    const bcs=[...g('מספר פריט').matchAll(/\d{4,14}/g)].map(m=>m[0]);
+    out.push({bc:bcs[0]||'',bcs,name,sheet:kind,sec,no:+cells[0],deal:g('סוג המבצע'),sup:g('ספק'),reward:g('תגמול'),dealId:g('מבצע'),note:g('הערות'),status:g('סטטוס מבצע'),valid})});
+  return out}
+async function importXls(file){try{const wb=XLSX.read(await file.arrayBuffer(),{type:'array'});const found=[];let fileMonth='';
+  wb.SheetNames.forEach(n=>{const kind=sheetKind(n);if(!kind)return;
+    const rows=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,defval:'',raw:false});found.push(...parseSheet(rows,kind));
+    if(!fileMonth){const t=rows.slice(0,3).flat().join(' '),m=t.match(new RegExp('ידיעון\\s+(?:דיל\\s+)?('+HEB_MONTHS.join('|')+')\\s+(\\d{4})'));if(m)fileMonth=m[1]+' '+m[2]}});
+  if(!found.length){toast('לא נמצאו גיליונות ידיעון בקובץ');return}
   const by=Object.keys(SHEETS).map(k=>[k,found.filter(p=>p.sheet===k).length]).filter(x=>x[1]);
   if(ST.products.length&&!confirm(`נמצאו ${found.length} מוצרים:\n${by.map(([k,n])=>'• '+SHEETS[k].he+': '+n).join('\n')}\n\nלהחליף את רשימת הידיעון הנוכחית (${ST.products.length})?\nהשיבוצים במקומות לא יימחקו.`))return;
-  const old=new Map(ST.products.map(p=>[p.bc,p]));ST.products=found.map(p=>({...p,img:old.get(p.bc)?.img||null}));touch('products');renderYed();
+  const old=new Map(ST.products.map(p=>[pKey(p),p]));
+  ST.products=[...found.map(p=>({...p,img:old.get(pKey(p))?.img||null})),...ST.products.filter(p=>p.sheet==='other')];
+  if(fileMonth&&fileMonth!==ST.month){ST.month=fileMonth;touch('products','month')}else touch('products');
+  yOpen.clear();renderAll();renderYed();
   toast(`✓ יובאו ${found.length} מוצרים · ${by.map(([k,n])=>SHEETS[k].he+' '+n).join(' · ')}`,3500);autoFetchImages()}
   catch(e){console.error(e);toast('שגיאה בקריאת הקובץ')}}
 $('#xlsIn').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)importXls(f)};
@@ -842,7 +910,7 @@ document.addEventListener('click',async e=>{
   if(lensOn&&cur==='s-map'&&t.closest('#mapWrap'))return;
   const spt=t.closest('#s-map [data-id], #lens [data-id]');if(spt){const id=spt.dataset.id;if(spotDef(id))openSpot(id);else toast(id+' — לא מקום מיוחד');return}
   const brand=t.closest('.brand[data-n]');if(brand){openGroup('B');return}
-  const yf=t.closest('[data-yf]');if(yf){yFilter=yf.dataset.yf;renderYed();return}
+  const yf=t.closest('[data-yf]');if(yf){yTab=yf.dataset.yf;renderYed();$('#s-yed .body')?.scrollTo?.(0,0);return}
   const pk=t.closest('[data-pk]');if(pk){pickAll=pk.dataset.pk==='1';renderPick();return}
   const pbc=t.closest('[data-pickbc]');if(pbc){const p=ST.products.find(x=>x.bc===pbc.dataset.pickbc);if(p){place(pickCtx.id,pickCtx.pos,p);closeM();toast('✓ שובץ ב-'+pickCtx.id)}return}
   const mvt=t.closest('[data-mvt]');if(mvt){const to=mvt.dataset.mvt,d=spotDef(to),st=getSp(to),from=$('#mSheet').dataset.spot,fp=+$('#mSheet').dataset.pos;
@@ -877,7 +945,9 @@ document.addEventListener('click',async e=>{
     case 'month':{const v=prompt('שם החודש (לדוגמה: דצמבר 2026)',ST.month);if(v&&v.trim()){ST.month=v.trim();touch('month');renderAll()}break}
     case 'import':$('#xlsIn').click();break;
     case 'addprod':openManual({});break;
-    case 'pmenu':{const bc=t.closest('[data-bc]').dataset.bc;const p=ST.products.find(x=>x.bc===bc);if(!p)break;
+    case 'yexp':{const k=t.closest('[data-bc]').dataset.bc;yOpen.has(k)?yOpen.delete(k):yOpen.add(k);renderYed();break}
+    case 'ybar':{const k=t.closest('[data-bc]').dataset.bc;const p=ST.products.find(x=>pKey(x)===k);if(p)showBarcode(p);break}
+    case 'pmenu':{const bc=t.closest('[data-bc]').dataset.bc;const p=ST.products.find(x=>x.bc===bc)||ST.products.find(x=>pKey(x)===bc);if(!p)break;
       openM(mHead(esc(p.name),esc(p.bc))+`<div class="mb menu-list"><button data-act="pedit" data-pbc="${esc(bc)}">✏️ עריכה <span class="en">Edit</span></button><button data-act="bcp" data-pbc="${esc(bc)}">🏷️ ברקוד <span class="en">Barcode</span></button><button class="red" data-act="pdel" data-pbc="${esc(bc)}">🗑️ מחיקה מהידיעון <span class="en">Delete</span></button></div>`);break}
     case 'pedit':{const p=ST.products.find(x=>x.bc===a.dataset.pbc);if(p)openManual({...p,edit:1});break}
     case 'bcp':{const p=ST.products.find(x=>x.bc===a.dataset.pbc);if(p)showBarcode(p);break}
