@@ -588,7 +588,11 @@ async function flush(){if(!pending.size)return;const f=[...pending];pending.clea
   try{await fsPatch('prisa_state/'+b,obj);setSync('✓ מסונכרן')}catch(e){f.forEach(k=>pending.add(k));setSync('⚠ לא מחובר — נשמר במכשיר',1);if(!saveT)saveT=setTimeout(()=>{saveT=null;flush()},15000)}}
 async function pull(first){if(!BR)return;const b=BR;
   try{let doc=await fsGet('prisa_state/'+b);if(b!==BR)return;
-    if(!doc&&first&&b===208){const mig=migrate208();if(mig){ST=mig;ls.set(lsKey(b),ST);touch('month','products',...Object.keys(ST.sp).map(k=>'sp_'+k));renderAll();return}}
+    if(first&&b===208&&!ls.get('prisa_mig208',0)){const rem=doc?fromDoc(doc):null;
+      const hasSp=rem&&Object.values(rem.sp).some(x=>x&&(x.items||[]).some(Boolean));
+      const mig=hasSp?null:migrate208();ls.set('prisa_mig208',1);
+      if(mig){if(rem&&rem.products.length){mig.products=rem.products;mig.month=rem.month||mig.month}
+        ST=mig;ls.set(lsKey(b),ST);touch(...(rem&&rem.products.length?[]:['month','products']),...Object.keys(ST.sp).map(k=>'sp_'+k));renderAll();return}}
     if(!doc){if(first)setSync('✓ מסונכרן');return}
     const remote=fromDoc(doc);
     if(!pending.has('month'))ST.month=remote.month;
@@ -623,6 +627,7 @@ function promoBadge(bc,name){const p=promoOf(bc,name);if(!p)return '';
 const OFF_HOSTS=['world.openfoodfacts.org','world.openbeautyfacts.org','world.openproductsfacts.org'];
 const SHUFERSAL_PROXY='https://shufersal-image-proxy.evgenchuk1.workers.dev/';
 async function fetchProductData(bc){
+  try{const r=await fetch(`${SHUFERSAL_PROXY}?barcode=${encodeURIComponent(bc)}`,{signal:AbortSignal.timeout(8000)});if(r.ok){const d=await r.json();if(d&&d.image)return {name:d.name||'',image:d.image}}}catch{}
   for(const host of OFF_HOSTS){try{const r=await fetch(`https://${host}/api/v0/product/${bc}.json`,{signal:AbortSignal.timeout(6000)});
     if(r.ok){const d=await r.json();if(d.status===1&&d.product){const p=d.product,image=p.image_front_url||p.image_url||null,name=p.product_name_he||p.product_name||'';if(image||name)return {name,image}}}}catch{}}
   try{const r=await fetch(`${SHUFERSAL_PROXY}?barcode=${encodeURIComponent(bc)}`,{signal:AbortSignal.timeout(8000)});if(r.ok){const d=await r.json();if(d&&(d.image||d.name))return {name:d.name||'',image:d.image||null}}}catch{}
@@ -632,10 +637,11 @@ function imgOf(it){if(!it)return null;if(it.img)return it.img;const p=ST.product
 function thumb(it){const u=imgOf(it);return u?`<img class="thumb" src="${esc(u)}" loading="lazy" onerror="this.outerHTML='<div class=&quot;thumb ph&quot;>🛒</div>'">`:`<div class="thumb ph">🛒</div>`}
 let fetching=false;
 async function autoFetchImages(){if(fetching)return;fetching=true;const b=BR;
-  try{const todo=ST.products.filter(p=>p.bc&&!p.img&&!p.noimg).slice(0,60);
-    for(const p of todo){if(BR!==b)break;const r=await fetchProductData(p.bc);
+  try{const todo=ST.products.filter(p=>p.bc&&!p.img&&!p.noimg);let n=0;
+    for(const p of todo){if(BR!==b)break;let r=null;
+      for(const c of (p.bcs&&p.bcs.length?p.bcs:[p.bc])){r=await fetchProductData(c);if(r&&r.image)break}
       if(r&&r.image){p.img=r.image;if(r.name&&(!p.name||p.name===p.bc))p.name=r.name}else p.noimg=1;
-      touch('products');renderIfOn();await new Promise(r=>setTimeout(r,300))}}finally{fetching=false}}
+      if(++n%10===0||n===todo.length){touch('products');renderIfOn()}await new Promise(r=>setTimeout(r,200))}}finally{fetching=false}}
 
 /* ═══════════════ ניווט ═══════════════ */
 const stack=[]; let cur='s-branch';
