@@ -293,6 +293,49 @@ button{font-family:inherit}
   html,body{background:radial-gradient(circle at 50% 30%,#2a4566,#142338 75%)}
   .screen,#intro{max-width:900px;margin:0 auto;box-shadow:0 0 40px rgba(0,0,0,.45)}
 }
+/* תמונת מוצר במסך מלא */
+.tz{flex-shrink:0;cursor:zoom-in;position:relative;display:block}
+.tz::after{content:'⤢';position:absolute;left:-4px;bottom:-4px;width:18px;height:18px;border-radius:50%;background:var(--navy);color:var(--gold2);font-size:11px;display:flex;align-items:center;justify-content:center;border:1px solid var(--gold)}
+.fov{position:fixed;inset:0;z-index:70;display:none;flex-direction:column;background:#0b1422}
+.fov.on{display:flex}
+.pv-top{display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top) + 20px) 14px 10px;color:#fff}
+.pv-x{flex-shrink:0;width:42px;height:42px;border-radius:50%;border:1.5px solid var(--gold);background:var(--navy);color:var(--gold2);font-size:20px;font-weight:900;cursor:pointer}
+.pv-t{flex:1;min-width:0;font-size:18px;font-weight:900;line-height:1.2}
+.pv-t small{display:block;font-size:13px;color:var(--gold2);font-weight:700}
+.pv-img{flex:1;min-height:0;overflow:auto;display:flex;align-items:center;justify-content:center;background:#fff;margin:0 10px;border-radius:16px;cursor:zoom-in}
+.pv-img img{width:100%;height:100%;object-fit:contain}
+.pv-img.z{display:block;cursor:zoom-out}.pv-img.z img{width:230%;height:auto}
+.pv-ph{font-size:72px;text-align:center;color:#aaa}.pv-ph small{display:block;font-size:16px;font-weight:800;color:#888}
+.pv-bar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:12px 14px calc(16px + var(--safe-bot))}
+.pv-bar .gold-btn,.pv-bar .ghost-btn{padding:12px 16px;font-size:16px;cursor:pointer;width:auto}
+/* סכמת ראש גונדולה */
+.schb{flex-shrink:0;border:1.5px solid var(--gold);background:linear-gradient(170deg,var(--navy3),var(--navy));color:var(--gold2);border-radius:12px;padding:5px 9px;font-size:13px;font-weight:800;cursor:pointer}
+.gh-wrap{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:2px 12px calc(20px + var(--safe-bot))}
+.gh-src{max-width:520px;margin:0 auto 8px;color:var(--gold2);font-size:13px;font-weight:700;text-align:center}
+.gh{max-width:520px;margin:0 auto;background:#1c1e23;border:3px solid #2c2f36;border-radius:10px 10px 4px 4px;padding:0 8px 6px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.gh-sign{background:#25272d;margin:0 -8px 8px;border-radius:7px 7px 0 0;padding:16px 10px;text-align:center;color:#F59B3C;font-weight:900;font-size:24px;line-height:1.1;border-bottom:3px solid #000}
+.gh-sign small{display:block;color:#fff;font-size:16px;font-weight:700;margin-top:4px}
+.gh-sign.sbox{background:#e2342b;color:#fff;font-size:34px;letter-spacing:1px}
+.gh-sh{position:relative;padding:8px 2px 0}
+.gh-row{display:flex;gap:3px;justify-content:center}.gh-row+.gh-row{margin-top:2px}
+.gh-f{flex:1;max-width:60px;height:46px;border-radius:4px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:9.5px;font-weight:900;text-align:center;line-height:1.05;padding:1px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.18)}
+.gh-f img{width:100%;height:100%;object-fit:contain}
+.gh-f.gh-e{max-width:none;background:transparent;border:1.5px dashed #666;color:#999;font-size:13px;box-shadow:none}
+.gh-edge{height:9px;background:linear-gradient(180deg,#d4d7dc,#7d828b);border-radius:2px;margin-top:3px}
+.gh-tag{position:absolute;left:0;bottom:-6px;z-index:2;background:#fff;border:2px solid #F08A24;border-radius:4px;padding:1px 5px;font-size:10.5px;font-weight:900;color:#222;max-width:44%;line-height:1.15;box-shadow:0 2px 5px rgba(0,0,0,.45)}
+.gh-tag b{display:block;font-size:13.5px;color:#c62828}
+.gh-box{display:flex;gap:3px;margin-top:2px}
+.gh-box span{flex:1;height:40px;background:#c9a77c;border:1px solid #9c7a4f;border-radius:2px;color:#b3261e;font-weight:900;font-size:12px;display:flex;align-items:center;justify-content:center}
+.gh-x{outline:2px dashed #ffb300;outline-offset:1px;border-radius:4px}
+.gh-foot{height:14px;margin:4px -8px -6px;background:#111;border-radius:0 0 3px 3px}
+.gh-leg{max-width:520px;margin:12px auto 0;background:var(--card);border-radius:14px;padding:10px 12px;color:var(--navy)}
+.gh-leg .r{display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--cream2);font-size:14.5px;font-weight:800}
+.gh-leg .r:last-of-type{border-bottom:none}
+.gh-leg .k{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--navy);color:var(--gold2);display:flex;align-items:center;justify-content:center;font-size:13px}
+.gh-leg .d{margin-inline-start:auto;color:#c62828;white-space:nowrap;padding-inline-start:6px}
+.gh-miss{color:#b00020;font-size:13.5px;font-weight:800;margin-top:8px;line-height:1.4}
+.rules{font-size:15px;line-height:1.5;color:var(--navy)}.rules h4{margin:12px 0 4px;font-size:16.5px}.rules ul{padding-inline-start:18px;margin:0}.rules li{margin:4px 0}
+.note-y{background:#FFF6DD;border:1.5px solid var(--gold);border-radius:12px;padding:8px 10px;font-weight:700}
 </style>
 </head>
 <body>
@@ -372,7 +415,7 @@ button{font-family:inherit}
   </div>
   <div class="dwrap"><div class="drawer" id="gDrawer">
     <div class="gtabs" id="gTabs"></div>
-    <button class="gold-btn auto-btn" data-act="auto">🤖 שיבוץ אוטומטי <small>Auto-assign</small></button>
+    <button class="gold-btn auto-btn" data-act="auto">🤖 אוטומט · כללי השיבוץ <small>Auto</small></button>
     <button class="tongue" data-act="drawer"><i>▾</i> סוגי מקומות</button>
   </div></div>
   <div class="body">
@@ -453,6 +496,8 @@ button{font-family:inherit}
 
 <!-- ═════════ חלונות ═════════ -->
 <div class="ov" id="mOv"><div class="sheet" id="mSheet"></div></div>
+<div class="fov" id="pvOv"></div>
+<div class="fov" id="ghOv"></div>
 
 <div class="ov" id="cpOv">
   <div class="cp-box">
@@ -526,7 +571,8 @@ const LAYOUT={
     sp('Sbox2','SB','ראש גונדולה Sbox2','Sbox end 2','multi',4,'credit'),
     ...R(1,6).map(i=>sp('W'+i,'W','במת קיר כוח W'+i,'Power wall W'+i,'single',1,'stage')),
     ...R(1,5).map(i=>sp('E'+i,'P','במת כניסה E'+i,'Entrance stage E'+i,'single',1,'stage','במות כניסה E1–E5')),
-    ...R(1,12).map(i=>sp('P'+i,'P','במה P'+i,'Stage P'+i,'single',1,'var','במות P1–P12')),
+    ...R(1,12).map(i=>i===4?sp('P4','P','במה P4','Stage P4','multi',5,'stage','במות P1–P12',5)   // ב-P4 נכנסים 5 מוצרים
+                           :sp('P'+i,'P','במה P'+i,'Stage P'+i,'single',1,'stage','במות P1–P12')),
     ...R(1,5).map(i=>sp('S'+i,'S','במה קטנה S'+i,'Small stage S'+i,'single',1,null))
   ],
   208:[
@@ -586,7 +632,7 @@ async function flush(){if(!pending.size)return;const f=[...pending];pending.clea
   f.forEach(k=>{obj[k]=k==='month'?ST.month:k==='products'?JSON.stringify(ST.products):JSON.stringify(ST.sp[k.slice(3)]||null)});
   obj.updatedAt=new Date().toISOString();
   try{await fsPatch('prisa_state/'+b,obj);setSync('✓ מסונכרן')}catch(e){f.forEach(k=>pending.add(k));setSync('⚠ לא מחובר — נשמר במכשיר',1);if(!saveT)saveT=setTimeout(()=>{saveT=null;flush()},15000)}}
-async function pull(first){if(!BR)return;const b=BR;
+async function pull(first){if(!BR)return;const b=BR;if(first)loadUImgs();
   try{let doc=await fsGet('prisa_state/'+b);if(b!==BR)return;
     if(first&&b===208&&!ls.get('prisa_mig208',0)){const rem=doc?fromDoc(doc):null;
       const hasSp=rem&&Object.values(rem.sp).some(x=>x&&(x.items||[]).some(Boolean));
@@ -632,7 +678,7 @@ async function fetchProductData(bc){
     if(r.ok){const d=await r.json();if(d.status===1&&d.product){const p=d.product,image=p.image_front_url||p.image_url||null,name=p.product_name_he||p.product_name||'';if(image||name)return {name,image}}}}catch{}}
   try{const r=await fetch(`${SHUFERSAL_PROXY}?barcode=${encodeURIComponent(bc)}`,{signal:AbortSignal.timeout(8000)});if(r.ok){const d=await r.json();if(d&&(d.image||d.name))return {name:d.name||'',image:d.image||null}}}catch{}
   return null}
-function imgOf(it){if(!it)return null;if(it.img)return it.img;const p=ST.products.find(x=>x.bc===it.bc&&x.img);if(p)return p.img;
+function imgOf(it){if(!it)return null;if(it.img)return rImg(it.img);const p=ST.products.find(x=>x.bc===it.bc&&x.img);if(p)return rImg(p.img);
   const c=localStorage.getItem('ci_'+it.bc);if(c)return c;return null}
 function thumb(it){const u=imgOf(it);return u?`<img class="thumb" src="${esc(u)}" loading="lazy" onerror="this.outerHTML='<div class=&quot;thumb ph&quot;>🛒</div>'">`:`<div class="thumb ph">🛒</div>`}
 let fetching=false;
@@ -643,6 +689,102 @@ async function autoFetchImages(){if(fetching)return;fetching=true;const b=BR;
       if(r&&r.image){p.img=r.image;if(r.name&&(!p.name||p.name===p.bc))p.name=r.name}else p.noimg=1;
       if(++n%10===0||n===todo.length){touch('products');renderIfOn()}await new Promise(r=>setTimeout(r,200))}}finally{fetching=false}}
 
+/* ═══════════════ תמונת מוצר: מסך מלא + תמונה משלי (מצלמה / גלריה) ═══════════════
+   תמונות ידניות נשמרות במסמך נפרד prisa_img/<id> (לא בתוך רשימת המוצרים — שלא תעבור את מגבלת 1MB) ;
+   במוצר נשמר רק הקישור "uimg:<id>" */
+const UIMG={};
+const rImg=u=>u&&String(u).startsWith('uimg:')?(UIMG[String(u).slice(5)]||null):u;
+const bigImg=u=>String(u||'').replace('/products_small/','/products_large/').replace(/_S_P_/,'_L_P_').replace(/(openfoodfacts\.org\/.*\.)\d+(\.jpg)$/,'$1full$2'); // תמונה גדולה למסך מלא
+async function loadUImgs(){try{(await fsList('prisa_img',['d'])).forEach(x=>{if(x.d)UIMG[x.id]=x.d});renderIfOn()}catch{}}
+const prodOf=k=>ST.products.find(x=>pKey(x)===k)||ST.products.find(x=>x.bc&&x.bc===k)||null;
+let pvKey=null,pvName='';
+function openPhoto(k,name){pvKey=k;pvName=name||'';renderPhoto();$('#pvOv').classList.add('on');history.pushState({pv:1},'')}
+function renderPhoto(){const k=pvKey,p=prodOf(k),it=p||{bc:/^\d+$/.test(k)?k:'',name:pvName||k},u=imgOf(it);
+  $('#pvOv').innerHTML=`<div class="pv-top"><button class="pv-x" data-act="pvclose">✕</button><div class="pv-t">${esc(it.name)}<small>${esc(it.bc||'')}</small></div></div>
+    <div class="pv-img" data-act="pvzoom">${u?`<img src="${esc(bigImg(u))}" alt="" onerror="if(this.src!=='${esc(u)}')this.src='${esc(u)}'">`:'<div class="pv-ph">🛒<small>אין עדיין תמונה למוצר</small></div>'}</div>
+    <div class="pv-bar"><label class="gold-btn">📷 צילום / מהגלריה<input type="file" accept="image/*" id="pvFile" hidden></label>${it.bc?'<button class="ghost-btn" data-act="pvnet">🔎 חיפוש ברשת</button>':''}</div>`;
+  $('#pvFile').onchange=e=>{const f=e.target.files[0];if(f)setUserPhoto(k,f)}}
+function shrinkTo(file,max,q){return new Promise((res,rej)=>{const fr=new FileReader();fr.onerror=rej;fr.onload=()=>{const im=new Image();im.onerror=rej;im.onload=()=>{const s=Math.min(1,max/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);
+  const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',q))};im.src=fr.result};fr.readAsDataURL(file)})}
+async function setUserPhoto(k,f){toast('שומר תמונה…',4000);
+  try{const d=await shrinkTo(f,900,.8),p=prodOf(k),bc=(p&&p.bc)||(/^\d+$/.test(k)?k:'');
+    const id=BR+'_'+(String(bc||'x').replace(/\W/g,'').slice(0,30))+'_'+Date.now().toString(36);
+    await fsPatch('prisa_img/'+id,{d,branch:String(BR),bc:String(bc),name:String(p?.name||pvName||k).slice(0,120)});UIMG[id]=d;const ref='uimg:'+id;
+    if(p){p.img=ref;delete p.noimg;touch('products')}
+    for(const [sid,s] of Object.entries(ST.sp)){if(!s||!s.items)continue;let ch=0;s.items.forEach(x=>{if(x&&((bc&&x.bc===bc)||(!x.bc&&x.name===k))){x.img=ref;ch=1}});if(ch)touch('sp_'+sid)}
+    renderPhoto();toast('✓ התמונה נשמרה')}catch(e){console.log(e);toast('⚠ התמונה לא נשמרה — בדקו חיבור')}}
+async function photoNet(k){const p=prodOf(k);if(!p||!p.bc){toast('אין ברקוד לחיפוש');return}toast('מחפש ברשת…',6000);let r=null;
+  for(const c of (p.bcs&&p.bcs.length?p.bcs:[p.bc])){r=await fetchProductData(c);if(r&&r.image)break}
+  if(r&&r.image){p.img=r.image;delete p.noimg;touch('products');if(pvKey===k)renderPhoto();toast('✓ נמצאה תמונה')}else toast('לא נמצאה תמונה ברשת — אפשר לצלם',3000)}
+
+/* ═══════════════ סכמת מדפים — ראשי גונדולה ═══════════════
+   מדף 1 = העליון. כשיש שיבוץ — הסכמה נבנית ממנו; כשאין — דוגמה לפי צילומי נובמבר 2026 (תיקיית «דוגמאות במות, סטנדים, ראשי גונדולה»).
+   no = מס׳ המוצר במקטע בידיעון · n = שם (אם שונה/לא בידיעון) · c = צבע אריזה · rows = שורות בגובה · box = עומד על קרטונים · x = לא מהרשימה של ראש הגונדולה */
+const BIG=/ליטר|ק"ג|קג|אבקת כביסה|ג'ל כביסה|נוזל רצפות|נייר טואלט|מגבות|\d\s*\*\s*1\.5|קרטון|שמן/;
+const GH_EX={
+  H1:{s:'var',sec:'ר"ג 1',src:'h_',sign:['מבצעים מדהימים','בשבילי'],sh:[{no:1,c:'#3f9b3a',rows:3},{no:3,c:'#2f6b2a',rows:5,box:1}]},
+  H4:{s:'var',sec:'ר"ג 4',src:'h__',sign:['גם במבצעים','הכל בשבילי'],sh:[{no:1,c:'#6b4423',rows:1,box:1},{no:2,c:'#7cb342',rows:3,box:1}]},
+  H5:{s:'var',sec:'ר"ג 5',src:'h___',sh:[{no:1,c:'#5d3a1a',rows:2},{no:2,c:'#c62828',rows:2},{no:2,c:'#c62828',rows:2},{no:3,c:'#b71c1c',rows:2,box:1}]},
+  H6:{s:'var',sec:'ר"ג 6',src:'h____',sh:[{no:1,c:'#f9d71c',rows:2},{no:3,c:'#6a3d9a',rows:1},{no:2,n:'סיני מיניס',c:'#f3e3c3',rows:1},{no:2,n:'צ׳יריוס',c:'#d32f2f',rows:2}]},
+  H7:{s:'var',sec:'ר"ג 7',src:'h_____',sh:[{no:1,c:'#8bc34a',rows:2},{no:2,c:'#e64a19',rows:2},{no:3,c:'#1b2a12',rows:1},{no:3,c:'#1b2a12',rows:2,box:1}]},
+  H9:{s:'var',sec:'ר"ג 9',src:'h______',sh:[{n:'קפסולות כביסה LU',c:'#1e63c4',rows:1,x:1},{no:1,c:'#c0ca33',rows:1},{no:1,c:'#c0ca33',rows:1},{no:2,c:'#f5f5f5',rows:1,box:1}]},
+  H11:{s:'var',sec:'ר"ג 11',src:'h_______',sh:[{no:2,c:'#2e9e3a',rows:1},{no:1,c:'#f2c200',rows:1},{no:1,c:'#2e7d32',rows:1},{no:3,c:'#eef2f8',rows:1,box:1}]},
+  H13:{s:'var',sec:'ר"ג 13',src:'h',sign:['מבצעים','בול בשבילי'],sh:[{n:'קפה נמס 200 גרם',c:'#c62828',rows:4,x:1},{no:1,c:'#a1887f',rows:4}]},
+  Sbox1:{s:'credit',sec:'ראשי גונדולה כרטיסי אשראי 2',src:'sbox 1',sbox:1,sh:[{no:1,c:'#e53935',rows:1},{no:2,c:'#6d1b1b',rows:1},{no:3,c:'#e0802a',rows:1},{no:5,c:'#f7d117',rows:2},{no:5,c:'#f7d117',rows:2}]},
+  Sbox2:{s:'credit',sec:'ראשי גונדולה כרטיסי אשראי 1',src:'sbox 2',sbox:1,sh:[{no:1,c:'#2e7d32',rows:1},{no:2,c:'#ef8a1e',rows:1},{no:3,c:'#e53935',rows:1},{no:4,c:'#80cbc4',rows:2},{no:5,c:'#5c3d9e',rows:2}]}
+};
+let ghId=null;
+function ghData(id){const s=ST.sp[id],n=s?.items?.length||0;
+  if(s&&s.items.some(Boolean))return {mode:'real',sh:s.items.map((it,i)=>it?{p:prodOf(it.bc||it.name)||it,rows:2,box:i===n-1&&BIG.test(it.name||'')}:{empty:1})};
+  const ex=BR==118?GH_EX[id]:null;if(!ex)return null;
+  const list=ST.products.filter(p=>p.sheet===ex.s&&p.sec===ex.sec),used=new Set(ex.sh.map(x=>x.no).filter(Boolean));
+  return {mode:'ex',ex,sh:ex.sh.map(x=>({...x,p:x.no?list.find(p=>+p.no===x.no):null})),miss:list.filter(p=>!used.has(+p.no))}}
+const lightC=c=>{const m=/^#(..)(..)(..)$/.exec(c||'');if(!m)return true;const [r,g,b]=m.slice(1).map(h=>parseInt(h,16));return r*.3+g*.59+b*.11>170};
+function openScheme(id){ghId=id;renderScheme();$('#ghOv').classList.add('on');$('#ghOv .gh-wrap')?.scrollTo?.(0,0);history.pushState({gh:1},'')}
+function renderScheme(){const id=ghId,d=spotDef(id),g=ghData(id);let body='';
+  if(!g)body=`<div class="placeholder" style="max-width:520px;margin:20px auto">אין עדיין מוצרים ב-${esc(id)}.<br>אחרי השיבוץ תופיע כאן סכמת המדפים.</div>`;
+  else{const ex=g.ex||{},sb=d.g==='SB'||ex.sbox,sign=ex.sign||(sb?['SBOX','חוסכים ומרוויחים!']:['מבצעים','בשבילי']);
+    const fac=(u,c,nm)=>u?`<div class="gh-f"><img src="${esc(u)}" loading="lazy" alt="" onerror="this.parentNode.style.background='${c}';this.remove()"></div>`
+      :`<div class="gh-f" style="background:${c};color:${lightC(c)?'#222':'#fff'}">${esc(String(nm).split(/\s+/).slice(0,2).join(' '))}</div>`;
+    const shelves=g.sh.map((x,i)=>{if(x.empty)return `<div class="gh-sh"><div class="gh-row"><div class="gh-f gh-e">מדף ${i+1} ריק</div></div><div class="gh-edge"></div></div>`;
+      const p=x.p||{},nm=x.n||p.name||'',c=x.c||'#9aa5b5',u=p.bc||p.img?imgOf(p):null,deal=prettyDeal(p.deal||'');
+      const rows=Array.from({length:Math.max(1,Math.min(5,x.rows||1))},()=>`<div class="gh-row">${Array.from({length:7},()=>fac(u,c,nm)).join('')}</div>`).join('');
+      return `<div class="gh-sh${x.x?' gh-x':''}">${deal?`<div class="gh-tag"><b>${esc(deal)}</b>${esc(nm.slice(0,26))}</div>`:''}${rows}${x.box?`<div class="gh-box">${'<span>מחסנים</span>'.repeat(4)}</div>`:''}<div class="gh-edge"></div></div>`}).join('');
+    const leg=g.sh.map((x,i)=>{if(x.empty)return `<div class="r"><span class="k">${i+1}</span><span class="muted">ריק</span></div>`;const p=x.p||{};
+      return `<div class="r"><span class="k">${i+1}</span><span>${esc(x.n||p.name||'')}${x.box?' <small class="muted">· על קרטונים</small>':''}${x.x?' <small style="color:#b26a00">· לא מהרשימה</small>':''}</span><span class="d">${esc(prettyDeal(p.deal||''))}</span></div>`}).join('');
+    body=`<div class="gh-src">${g.mode==='ex'?`דוגמה לפי הצילום «${esc(ex.src)}» · ${esc(ex.sec)} בידיעון`:'לפי השיבוץ הנוכחי · מדף 1 = עליון'}</div>
+      <div class="gh"><div class="gh-sign${sb?' sbox':''}">${esc(sign[0])}<small>${esc(sign[1]||'')}</small></div>${shelves}<div class="gh-foot"></div></div>
+      <div class="gh-leg"><div style="font-weight:900;margin-bottom:4px">מדפים מלמעלה למטה</div>${leg}
+      ${g.miss&&g.miss.length?`<div class="gh-miss">חסר בתצוגה (ברשימה של ${esc(ex.sec)}): ${g.miss.map(p=>esc(p.name)).join(' · ')}</div>`:''}</div>`}
+  $('#ghOv').innerHTML=`<div class="pv-top"><button class="pv-x" data-act="ghclose">✕</button><div class="pv-t">🖼️ ${esc(d.he)}<small>סכמת מדפים · Shelf scheme</small></div></div><div class="gh-wrap">${body}</div>`}
+
+/* ═══════════════ אוטומט — הכללים שנלמדו (השיבוץ עצמו עוד לא מופעל) ═══════════════ */
+const AUTO_RULES={
+  W_FIXED:["תירוש מיץ ענבים אדום 750 מ\"ל","נריה שמן זית כתית מעולה 750 מ\"ל","שמן קנולה מזוכך 1 ליטר","סוכר לבן 1 ק\"ג","קמח חיטה לבן בהיר 1 ק\"ג"],
+  STAGE_ORDER:['E1','E2','E3','E4','E5','P1','P2','P3','P4','P5','P6'], P4_CAP:5
+};
+function openRules(){openM(mHead('🤖 אוטומט — כללי השיבוץ','Auto-assign rules · learning mode')+`<div class="mb rules">
+  <div class="note-y">השיבוץ האוטומטי עוד <b>לא מופעל</b> — כאן הכללים שנלמדו. עריכה ידנית — בכל כרטיס מקום (+ הוסף / ⋮).</div>
+  <h4>כללי יסוד</h4><ul>
+   <li>מוצר מקטגוריה מסוימת נכנס <b>רק</b> למקומות של אותה קטגוריה.</li>
+   <li><b>במות:</b> מוצרים 1→24 של «במת כניסה» לפי הסדר — קודם E1–E5, אחר כך P1–P6. ב-P4 נכנסים <b>5 מוצרים</b>.</li>
+   <li><b>במות קיר כוח W1–W6</b> — תמיד אותם מוצרים: ${AUTO_RULES.W_FIXED.map(esc).join(' · ')}.</li>
+   <li><b>Sbox</b> — רק מגיליון «ראשי גונדולה כרטיס אשראי».</li>
+   <li><b>ראשי גונדולה H</b> — רק מגיליון «גונדולה משתנה».</li>
+   <li>בכל ראש גונדולה — מוצרים מאותה קבוצה צרכנית.</li>
+   <li>מוצר גדול/כבד — תמיד במדף התחתון.</li>
+   <li>תמונה וברקוד — נמצאים אוטומטית ברשת.</li></ul>
+  <h4>מה נלמד מהצילומים</h4><ul>
+   <li>בגיליון «גונדולה משתנה» הידיעון כבר מחלק: <b>ר"ג 1–15, 3 מוצרים לכל ראש</b>, וכל שלישייה היא קבוצה צרכנית אחת (תה+עוגה, דגני בוקר+שוקו, נוזל כלים+ג'ל כביסה…).</li>
+   <li>כל מוצר תופס <b>מדף שלם</b> לכל הרוחב — לא מערבבים שני מוצרים באותו מדף.</li>
+   <li>כשיש פחות מוצרים ממדפים — אותו מוצר על <b>2 מדפים</b> (פיירי, דליס רול, צ׳יריוס).</li>
+   <li>למעלה — קל וקטן (מרק בכוס, ופלים, אבקת שוקו); למטה <b>על קרטוני «מחסנים»</b> — כבד וגדול (שמן זית, ג'ל 3 ליטר, נוזל רצפות, שימורים, קפה טורקי).</li>
+   <li>3–5 מדפים בראש גונדולה; שלט מחיר בצד של כל מוצר.</li>
+   <li><b>Sbox:</b> לפי סדר הרשימה מלמעלה למטה, המוצר האחרון (הגדול) — 2 מדפים תחתונים.</li>
+   <li><b>במות כניסה:</b> מוצר מס׳ 1 (מרק עוף זך) — במה ראשונה בכניסה, ואז לפי הסדר.</li>
+   <li>לפעמים מוצר מהרשימה חסר ומוחלף (למשל קפסולות במקום ג׳ילט ב-ר"ג 9).</li></ul>
+  </div><div class="mf"><button class="ghost-btn" data-act="close">סגירה</button></div>`)}
+
 /* ═══════════════ ניווט ═══════════════ */
 const stack=[]; let cur='s-branch';
 function fitTitle(){const t=document.querySelector('.screen.on .htitle');if(!t)return;let z=20.5;t.style.fontSize=z+'px';while(t.scrollWidth>t.clientWidth+1&&z>12){z-=.5;t.style.fontSize=z+'px'}t.style.marginTop=Math.max(0,(29-z*1.2)/2)+'px'}
@@ -650,17 +792,17 @@ addEventListener('resize',fitTitle);
 function show(id){$$('.screen').forEach(s=>s.classList.toggle('on',s.id===id));cur=id;requestAnimationFrame(fitTitle);$$('.screen.on .body').forEach(b=>b.scrollTop=0);if(id!=='s-map')lensOff();else if(lensPref&&!lensOn&&$('#mapInner').innerHTML)requestAnimationFrame(lensStart)}
 function go(id,push=true){if(push&&cur!==id){stack.push(cur);history.pushState({s:id},'')}show(id)}
 function back(){if(!stack.length){show('s-branch');return}show(stack.pop())}
-window.addEventListener('popstate',()=>{if($('#mOv').classList.contains('on')){closeM();history.pushState({},'');return}if(stack.length)show(stack.pop())});
+window.addEventListener('popstate',()=>{for(const o of ['#pvOv','#ghOv'])if($(o).classList.contains('on')){$(o).classList.remove('on');return}if($('#mOv').classList.contains('on')){closeM();history.pushState({},'');return}if(stack.length)show(stack.pop())});
 
 /* ═══════════════ כרטיס מקום ═══════════════ */
 function cardHTML(id,ro,data,coll){const d=spotDef(id);const s=data?(data[id]||{n:d.def,items:Array(d.def).fill(null)}):getSp(id);
   const filled=s.items.filter(Boolean).length;
-  const rows=s.items.map((it,i)=>`<div class="srow" data-pos="${i}"><span class="num">${i+1}</span>${it?`${thumb(it)}
+  const rows=s.items.map((it,i)=>`<div class="srow" data-pos="${i}"><span class="num">${i+1}</span>${it?`${ro?thumb(it):`<span class="tz" data-act="sphoto">${thumb(it)}</span>`}
       <div class="pinfo" data-act="bc"><div class="pname">${esc(it.name||it.bc)}</div><div class="pbc"><span>${esc(it.bc||'')}</span>${promoBadge(it.bc,it.name)}</div></div>
       <button class="dots" data-act="menu">⋮</button>`:`<span class="empty">ריק</span><button class="add" data-act="add">+ הוסף</button>`}</div>`).join('');
   const shv=d.kind==='multi'&&!ro?`<div class="shv"><span>${d.max>6?'מקומות':'מדפים'}:</span><button data-act="shm">−</button><b>${s.n}</b><button data-act="shp">+</button><span class="sp"></span><span>1–${d.max}</span></div>`:'';
   return `<div class="scard${coll&&!OPENC.has(id)?' coll':''}" data-spot="${id}" id="card-${id}"><div class="sch"${coll?' data-act="tog"':''}>${coll?'<span class="chev">▾</span>':''}<div class="sct">${esc(d.he)}<small>${esc(d.en)}${d.sheet?' · '+esc(SHEETS[d.sheet].he):' · לפי החלטת הנהלת הסניף'}</small></div>
-    <span class="cnt${filled===s.n?' full':''}">${filled}/${s.n}</span>${ro?'':`<button class="clr" data-act="clr">🗑️ נקה</button>`}</div>${shv}${rows}</div>`}
+    <span class="cnt${filled===s.n?' full':''}">${filled}/${s.n}</span>${!ro&&(d.g==='H'||d.g==='SB')?`<button class="schb" data-act="scheme">🖼️ סכמה</button>`:''}${ro?'':`<button class="clr" data-act="clr">🗑️ נקה</button>`}</div>${shv}${rows}</div>`}
 function fillState(id){const s=ST.sp[id];if(!s)return 0;const f=s.items.filter(Boolean).length;return f===0?0:f>=s.n?2:1}
 
 /* ═══════════════ מסכים ═══════════════ */
@@ -741,7 +883,7 @@ function yMatch(p,q){if(!q)return true;const qd=q.replace(/\D/g,'');
   return norm(p.name).includes(q)||norm(p.sup||'').includes(q)||(qd.length>=3&&[p.bc,...(p.bcs||[]),p.reward,p.dealId].some(x=>String(x||'').includes(qd)))}
 function yRow(p,pl){const k=pKey(p),op=yOpen.has(k);
   const bcs=(p.bcs&&p.bcs.length?p.bcs:[p.bc]).filter(Boolean);
-  return `<div class="yrow${op?' op':''}" data-bc="${esc(k)}"><div class="prow" data-act="yexp">${thumb(p)}
+  return `<div class="yrow${op?' op':''}" data-bc="${esc(k)}"><div class="prow" data-act="yexp"><span class="tz" data-act="yphoto">${thumb(p)}</span>
     <div class="pinfo"><div class="pname">${esc(p.name)}</div><div class="pbc"><span>${esc(p.bc||'—')}${bcs.length>1?' +'+(bcs.length-1):''}</span>${promoBadge(p.bc,p.name)}</div></div>
     <span class="chev">▾</span></div>
     ${op?`<div class="ydet"><dl>
@@ -752,7 +894,7 @@ function yRow(p,pl){const k=pKey(p),op=yOpen.has(k);
       <dt>תגמול</dt><dd class="ltr">${esc(p.reward||'—')}</dd>
       ${p.sec?`<dt>מיקום בידיעון</dt><dd>${esc(SHEETS[p.sheet]?.he||'')} · ${esc(p.sec)}</dd>`:''}
       <dt>שיבוץ</dt><dd>${locChips(pl.get(k))}</dd></dl>
-      <div class="yact">${p.bc?`<button data-act="ybar">▮▯▮ ברקוד</button>`:''}<button data-act="pmenu">⋮ עוד</button></div></div>`:''}</div>`}
+      <div class="yact"><button data-act="yphoto">📷 תמונה</button>${p.bc?`<button data-act="ybar">▮▯▮ ברקוד</button>`:''}<button data-act="pmenu">⋮ עוד</button></div></div>`:''}</div>`}
 function renderYed(){$('#yMonth').innerHTML=`📅 ${esc(ST.month)}<small>ידיעון החודש · סניף ${BR}</small>`;
   const pl=placements();const total=ST.products.length,placed=ST.products.filter(p=>pl.has(pKey(p))).length,promo=ST.products.filter(p=>promoOf(p.bc,p.name)).length;
   $('#yStats').innerHTML=`<div class="stat"><b>${total}</b>מוצרים</div><div class="stat"><b>${placed}</b>שובצו</div><div class="stat"><b>${total-placed}</b>ממתינים</div><div class="stat"><b>${promo}</b>במבצע ניהול+</div>`;
@@ -931,7 +1073,13 @@ document.addEventListener('click',async e=>{
     case 'close':closeM();break;
     case 'drawer':$('#gDrawer').classList.toggle('on');break;
     case 'tog':{if(OPENC.has(id))OPENC.delete(id);else OPENC.add(id);card.classList.toggle('coll',!OPENC.has(id));break}
-    case 'auto':toast('🤖 עקרונות השיבוץ האוטומטי יוגדרו בהמשך · Coming soon',3000);break;
+    case 'auto':openRules();break;
+    case 'yphoto':{const k=t.closest('[data-bc]').dataset.bc;openPhoto(k);break}
+    case 'sphoto':{const it=getSp(id).items[pos];if(it)openPhoto(it.bc||it.name,it.name);break}
+    case 'pvclose':case 'ghclose':history.back();break;
+    case 'pvnet':photoNet(pvKey);break;
+    case 'pvzoom':a.classList.toggle('z');break;
+    case 'scheme':openScheme(id);break;
     case 'add':openPicker(id,pos);break;
     case 'manual':openManual({id:pickCtx.id,pos:pickCtx.pos});break;
     case 'mansave':manSave();break;
