@@ -335,6 +335,8 @@ button{font-family:inherit}
 .gh-leg .d{margin-inline-start:auto;color:#c62828;white-space:nowrap;padding-inline-start:6px}
 .gh-miss{color:#b00020;font-size:13.5px;font-weight:800;margin-top:8px;line-height:1.4}
 .rules{font-size:15px;line-height:1.5;color:var(--navy)}.rules h4{margin:12px 0 4px;font-size:16.5px}.rules ul{padding-inline-start:18px;margin:0}.rules li{margin:4px 0}
+.ar-r{display:flex;gap:8px;align-items:baseline;padding:5px 2px;border-bottom:1px solid var(--cream2);font-size:14px;cursor:pointer}.ar-r b{flex-shrink:0;min-width:44px;direction:ltr;color:var(--navy)}
+.mf .gold-btn,.mf .ghost-btn{width:auto;flex:1}
 .note-y{background:#FFF6DD;border:1.5px solid var(--gold);border-radius:12px;padding:8px 10px;font-weight:700}
 </style>
 </head>
@@ -769,10 +771,10 @@ const AUTO_RULES={
   H_FROM_RG:true, H0_CAP:9        // H<N> = ר"ג N בגיליון «גונדולה משתנה»; H0 — סטנד ליד הכניסה, 9 מוצרים
 };
 function openRules(){openM(mHead('🤖 אוטומט — כללי השיבוץ','Auto-assign rules · learning mode')+`<div class="mb rules">
-  <div class="note-y">השיבוץ האוטומטי עוד <b>לא מופעל</b> — כאן הכללים שנלמדו. עריכה ידנית — בכל כרטיס מקום (+ הוסף / ⋮).</div>
+  <div class="note-y">שני מצבים: <b>עריכה ידנית</b> — בכל כרטיס מקום (+ הוסף / ⋮); <b>אוטומט</b> — הכפתור למטה (רק כשלוחצים). אחרי השיבוץ אפשר לבטל.</div>
   <h4>כללי יסוד</h4><ul>
    <li>מוצר מקטגוריה מסוימת נכנס <b>רק</b> למקומות של אותה קטגוריה.</li>
-   <li><b>במות:</b> מוצרים 1→24 של «במת כניסה» לפי הסדר — קודם E1–E5, אחר כך P1–P6. קיבולת: P2, P3, P5, P6 — <b>2 מוצרים</b> כל אחת; P4 — <b>4–5 מוצרים</b>.</li>
+   <li><b>במות:</b> מוצרים 1→24 של «במת כניסה» לפי הסדר — קודם E1–E5 (<b>תמיד מוצר אחד</b> בכל אחת), אחר כך P1–P6. מה שלא נכנס — נשאר לא משובץ. קיבולת: P2, P3, P5, P6 — <b>2 מוצרים</b> כל אחת; P4 — <b>4–5 מוצרים</b>.</li>
    <li><b>במות קיר כוח W1–W6</b> — תמיד אותם מוצרים: ${AUTO_RULES.W_FIXED.map(esc).join(' · ')}. <b>שמן קנולה</b> תופס 2 במות באמצע (W3, W4).</li>
    <li><b>ראש גונדולה H1 = ר"ג 1, H2 = ר"ג 2</b> … בגיליון «גונדולה משתנה». <b>H0</b> — הסטנד ליד הכניסה, נחשב ראש גונדולה, <b>9 מוצרים</b>.</li>
    <li><i>פתוח:</i> לאן הולכות במת שתיה / במת צד / חנוכה / ניקיון.</li>
@@ -790,7 +792,53 @@ function openRules(){openM(mHead('🤖 אוטומט — כללי השיבוץ','
    <li><b>Sbox:</b> לפי סדר הרשימה מלמעלה למטה, המוצר האחרון (הגדול) — 2 מדפים תחתונים.</li>
    <li><b>במות כניסה:</b> מוצר מס׳ 1 (מרק עוף זך) — במה ראשונה בכניסה, ואז לפי הסדר.</li>
    <li>לפעמים מוצר מהרשימה חסר ומוחלף (למשל קפסולות במקום ג׳ילט ב-ר"ג 9).</li></ul>
-  </div><div class="mf"><button class="ghost-btn" data-act="close">סגירה</button></div>`)}
+  </div><div class="mf"><button class="gold-btn" data-act="autorun">▶ שיבוץ אוטומטי עכשיו</button>${ls.get('prisa_autoundo_'+BR,null)?'<button class="ghost-btn" data-act="autoundo">↩ ביטול השיבוץ האחרון</button>':''}<button class="ghost-btn" data-act="close">סגירה</button></div>`)}
+
+/* ═══════════════ אוטומט — השיבוץ עצמו (רק בלחיצה) ═══════════════ */
+const autoIt=p=>({bc:p.bc||'',name:p.name||p.bc,...(p.img?{img:p.img}:{})});
+const secList=(sheet,sec)=>ST.products.filter(p=>p.sheet===sheet&&p.sec===sec).sort((a,b)=>(+a.no||0)-(+b.no||0));
+function autoPlan(){const P=ST.products,out={},left=[],notes=[];
+  // 1) במות: «במת כניסה» 1→24 לפי הסדר — E1–E5 (1 כל אחת), P1–P6 לפי הקיבולת; מה שלא נכנס — לא משובץ
+  const ent=secList('stage','במת כניסה');let k=0;
+  for(const id of AUTO_RULES.STAGE_ORDER){if(!spotDef(id))continue;const n=getSp(id).n,items=Array(n).fill(null);
+    for(let i=0;i<n&&k<ent.length;i++)items[i]=autoIt(ent[k++]);out[id]={n,items}}
+  ent.slice(k).forEach(p=>left.push(`במת כניסה ${p.no} · ${p.name}`));
+  // 2) קיר כוח: מוצרים קבועים, קנולה ב-W3 וב-W4
+  const WF=AUTO_RULES.W_FIXED,WMAP={W1:[0,/מיץ ענבים/],W2:[1,/שמן זית כתית/],W3:[2,/שמן קנולה/],W4:[2,/שמן קנולה/],W5:[3,/^סוכר|סוכר לבן/],W6:[4,/^קמח/]};
+  for(const [id,[i,re]] of Object.entries(WMAP)){if(!spotDef(id))continue;const f=P.find(p=>p.sheet==='stage'&&re.test(p.name));out[id]={n:1,items:[f?autoIt(f):{bc:'',name:WF[i]}]}}
+  // 3) ראש גונדולה: מוצרים בסדר הרשימה, גדול/כבד למטה; מדפים פנויים — אותו מוצר כבד פעם נוספת
+  const head=(id,list)=>{const d=spotDef(id);if(!d||!list.length)return;
+    const big=list.filter(p=>BIG.test(p.name)),small=list.filter(p=>!BIG.test(p.name));
+    const n=Math.min(d.max,Math.max(getSp(id).n,list.length)),keep=Math.max(0,n-big.length);   // הגדולים תמיד נכנסים (למטה); אם חסר מקום — יוצאים הקטנים האחרונים
+    const ord=[...small.slice(0,keep),...big.slice(0,n)],items=ord.map(autoIt);
+    small.slice(keep).forEach(p=>left.push(`${id} (אין מקום) · ${p.name}`));
+    while(items.length<n)items.push({...items[items.length-1]});out[id]={n,items}};
+  const vsecs=[...new Set(P.filter(p=>p.sheet==='var').map(p=>p.sec||''))];
+  for(let i=1;i<=15;i++){const sec=vsecs.find(x=>{const m=/^ר"ג\s*(\d+)/.exec(x);return !!m&&+m[1]===i});
+    if(!sec){notes.push(`H${i}: אין «ר"ג ${i}» בידיעון — לא שונה`);continue}
+    if(/sbox/i.test(sec)){notes.push(`H${i}: «${sec}» — אלה מוצרי ה-Sbox (נכנסים ל-Sbox מגיליון אשראי). H${i} לא שונה`);continue}
+    head('H'+i,secList('var',sec))}
+  notes.push('H0: אין לו רשימה בידיעון — לא שונה');
+  // 4) Sbox — רק מגיליון אשראי (לפי הצילומים: Sbox1 = רשימה 2, Sbox2 = רשימה 1)
+  head('Sbox1',secList('credit','ראשי גונדולה כרטיסי אשראי 2'));head('Sbox2',secList('credit','ראשי גונדולה כרטיסי אשראי 1'));
+  return {out,left,notes}}
+function runAuto(){if(BR!=118){toast('השיבוץ האוטומטי מוגדר כרגע לסניף 118');return}
+  if(!ST.products.length){toast('קודם לייבא את הידיעון');return}
+  if(!confirm('השיבוץ האוטומטי ימלא: E1–E5, P1–P6, W1–W6, ראשי גונדולה ו-Sbox.\nמה שכבר שובץ במקומות האלה יוחלף (אפשר לבטל אחר כך).\nלהמשיך?'))return;
+  const {out,left,notes}=autoPlan(),ids=Object.keys(out),undo={};
+  ids.forEach(id=>undo[id]=ST.sp[id]?JSON.parse(JSON.stringify(ST.sp[id])):null);ls.set('prisa_autoundo_'+BR,undo);
+  ids.forEach(id=>ST.sp[id]=out[id]);touch(...ids.map(id=>'sp_'+id));renderIfOn();
+  const rows=GORDER.map(g=>{const l=ids.filter(id=>spotDef(id).g===g);if(!l.length)return '';
+    return `<div class="sec-h" style="margin-top:8px">${esc(GROUPS[g].he)}</div>`+l.map(id=>{const it=out[id].items.filter(Boolean);
+      return `<div class="ar-r" data-act="goto" data-id="${id}"><b>${id}</b><span>${it.map(x=>esc(x.name)).join(' · ')||'—'}</span></div>`}).join('')}).join('');
+  openM(mHead('✓ השיבוץ האוטומטי בוצע',`${ids.length} מקומות · Auto-assign done`)+`<div class="mb rules">${rows}
+    ${left.length?`<h4>לא שובצו (אין מקום) — ${left.length}</h4><ul>${left.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}
+    ${notes.length?`<h4>הערות</h4><ul>${notes.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}</div>
+    <div class="mf"><button class="ghost-btn" data-act="autoundo">↩ ביטול</button><button class="gold-btn" data-act="close">סגירה</button></div>`)}
+function undoAuto(){const u=ls.get('prisa_autoundo_'+BR,null);if(!u){toast('אין מה לבטל');return}
+  if(!confirm('להחזיר את המקומות למצב שלפני השיבוץ האוטומטי?'))return;
+  for(const [id,v] of Object.entries(u)){if(v)ST.sp[id]=v;else delete ST.sp[id]}
+  touch(...Object.keys(u).map(id=>'sp_'+id));ls.set('prisa_autoundo_'+BR,null);closeM();toast('↩ השיבוץ האוטומטי בוטל')}
 
 /* ═══════════════ ניווט ═══════════════ */
 const stack=[]; let cur='s-branch';
@@ -1081,6 +1129,8 @@ document.addEventListener('click',async e=>{
     case 'drawer':$('#gDrawer').classList.toggle('on');break;
     case 'tog':{if(OPENC.has(id))OPENC.delete(id);else OPENC.add(id);card.classList.toggle('coll',!OPENC.has(id));break}
     case 'auto':openRules();break;
+    case 'autorun':closeM();runAuto();break;
+    case 'autoundo':undoAuto();break;
     case 'yphoto':{const k=t.closest('[data-bc]').dataset.bc;openPhoto(k);break}
     case 'sphoto':{const it=getSp(id).items[pos];if(it)openPhoto(it.bc||it.name,it.name);break}
     case 'pvclose':case 'ghclose':history.back();break;
