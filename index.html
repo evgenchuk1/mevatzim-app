@@ -564,14 +564,16 @@ const R=(a,b)=>Array.from({length:b-a+1},(_,i)=>a+i);
 const sp=(id,g,he,en,kind,def,sheet,sec,max)=>({id,g,he,en,kind,def:kind==='single'?1:def,max:kind==='single'?1:(max||Math.max(6,def)),sheet,sec});
 const LAYOUT={
   118:[
-    ...R(1,15).map(i=>sp('H'+i,'H','ראש גונדולה H'+i,'Gondola end H'+i,'multi',4,'var','ראשי גונדולה H1–H15')),
+    sp('H0','H','סטנד H0 · ליד הכניסה','Stand H0 · entrance','multi',9,'var','ראשי גונדולה H0–H15',9),   // 9 מוצרים
+    ...R(1,15).map(i=>sp('H'+i,'H','ראש גונדולה H'+i,'Gondola end H'+i,'multi',4,'var','ראשי גונדולה H0–H15')),
     sp('F1','H','מקפיא F1','Freezer F1','multi',4,null,'מקפיאים F1–F2'),
     sp('F2','H','מקפיא F2','Freezer F2','multi',4,null,'מקפיאים F1–F2'),
     sp('Sbox1','SB','ראש גונדולה Sbox1','Sbox end 1','multi',4,'credit'),
     sp('Sbox2','SB','ראש גונדולה Sbox2','Sbox end 2','multi',4,'credit'),
     ...R(1,6).map(i=>sp('W'+i,'W','במת קיר כוח W'+i,'Power wall W'+i,'single',1,'stage')),
     ...R(1,5).map(i=>sp('E'+i,'P','במת כניסה E'+i,'Entrance stage E'+i,'single',1,'stage','במות כניסה E1–E5')),
-    ...R(1,12).map(i=>i===4?sp('P4','P','במה P4','Stage P4','multi',5,'stage','במות P1–P12',5)   // ב-P4 נכנסים 5 מוצרים
+    ...R(1,12).map(i=>i===4?sp('P4','P','במה P4','Stage P4','multi',5,'stage','במות P1–P12',5)   // P4: 4–5 מוצרים
+                  :[2,3,5,6].includes(i)?sp('P'+i,'P','במה P'+i,'Stage P'+i,'multi',2,'stage','במות P1–P12',2)   // P2,P3,P5,P6: 2 מוצרים
                            :sp('P'+i,'P','במה P'+i,'Stage P'+i,'single',1,'stage','במות P1–P12')),
     ...R(1,5).map(i=>sp('S'+i,'S','במה קטנה S'+i,'Small stage S'+i,'single',1,null))
   ],
@@ -761,14 +763,19 @@ function renderScheme(){const id=ghId,d=spotDef(id),g=ghData(id);let body='';
 /* ═══════════════ אוטומט — הכללים שנלמדו (השיבוץ עצמו עוד לא מופעל) ═══════════════ */
 const AUTO_RULES={
   W_FIXED:["תירוש מיץ ענבים אדום 750 מ\"ל","נריה שמן זית כתית מעולה 750 מ\"ל","שמן קנולה מזוכך 1 ליטר","סוכר לבן 1 ק\"ג","קמח חיטה לבן בהיר 1 ק\"ג"],
-  STAGE_ORDER:['E1','E2','E3','E4','E5','P1','P2','P3','P4','P5','P6'], P4_CAP:5
+  W_CANOLA:['W3','W4'],          // שמן קנולה תופס את 2 הבמות האמצעיות
+  STAGE_ORDER:['E1','E2','E3','E4','E5','P1','P2','P3','P4','P5','P6'],
+  STAGE_CAP:{P2:2,P3:2,P4:5,P5:2,P6:2}, P4_MIN:4,   // P4: 4–5
+  H_FROM_RG:true, H0_CAP:9        // H<N> = ר"ג N בגיליון «גונדולה משתנה»; H0 — סטנד ליד הכניסה, 9 מוצרים
 };
 function openRules(){openM(mHead('🤖 אוטומט — כללי השיבוץ','Auto-assign rules · learning mode')+`<div class="mb rules">
   <div class="note-y">השיבוץ האוטומטי עוד <b>לא מופעל</b> — כאן הכללים שנלמדו. עריכה ידנית — בכל כרטיס מקום (+ הוסף / ⋮).</div>
   <h4>כללי יסוד</h4><ul>
    <li>מוצר מקטגוריה מסוימת נכנס <b>רק</b> למקומות של אותה קטגוריה.</li>
-   <li><b>במות:</b> מוצרים 1→24 של «במת כניסה» לפי הסדר — קודם E1–E5, אחר כך P1–P6. ב-P4 נכנסים <b>5 מוצרים</b>.</li>
-   <li><b>במות קיר כוח W1–W6</b> — תמיד אותם מוצרים: ${AUTO_RULES.W_FIXED.map(esc).join(' · ')}.</li>
+   <li><b>במות:</b> מוצרים 1→24 של «במת כניסה» לפי הסדר — קודם E1–E5, אחר כך P1–P6. קיבולת: P2, P3, P5, P6 — <b>2 מוצרים</b> כל אחת; P4 — <b>4–5 מוצרים</b>.</li>
+   <li><b>במות קיר כוח W1–W6</b> — תמיד אותם מוצרים: ${AUTO_RULES.W_FIXED.map(esc).join(' · ')}. <b>שמן קנולה</b> תופס 2 במות באמצע (W3, W4).</li>
+   <li><b>ראש גונדולה H1 = ר"ג 1, H2 = ר"ג 2</b> … בגיליון «גונדולה משתנה». <b>H0</b> — הסטנד ליד הכניסה, נחשב ראש גונדולה, <b>9 מוצרים</b>.</li>
+   <li><i>פתוח:</i> לאן הולכות במת שתיה / במת צד / חנוכה / ניקיון.</li>
    <li><b>Sbox</b> — רק מגיליון «ראשי גונדולה כרטיס אשראי».</li>
    <li><b>ראשי גונדולה H</b> — רק מגיליון «גונדולה משתנה».</li>
    <li>בכל ראש גונדולה — מוצרים מאותה קבוצה צרכנית.</li>
