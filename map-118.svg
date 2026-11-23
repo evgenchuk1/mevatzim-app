@@ -5605,6 +5605,20 @@
 <rect x="164.0" y="376.5" width="14.0" height="20.5" rx="1" fill="#e0b47a" stroke="#9c6d3f" stroke-width="0.5" />
 <line x1="171.0" y1="376.5" x2="171.0" y2="397" stroke="#c9975a" stroke-width=".6"/>
 <rect x="164.4" y="376.9" width="13.2" height="1.6" rx="0.5" fill="rgba(255,255,255,.35)" stroke="none" stroke-width="0" />
+<rect x="181.2" y="376.3" width="18.0" height="24.5" rx="1.5" fill="rgba(20,35,56,0.25)" stroke="none" stroke-width="0" />
+<rect x="180.0" y="374.5" width="18.0" height="24.5" rx="1.5" fill="#c48a4f" stroke="#7a5230" stroke-width="0.6" />
+<line x1="186.0" y1="374.5" x2="186.0" y2="399" stroke="#8d6038" stroke-width=".5"/>
+<line x1="192.0" y1="374.5" x2="192.0" y2="399" stroke="#8d6038" stroke-width=".5"/>
+<rect x="182.0" y="376.5" width="14.0" height="20.5" rx="1" fill="#e0b47a" stroke="#9c6d3f" stroke-width="0.5" />
+<line x1="189.0" y1="376.5" x2="189.0" y2="397" stroke="#c9975a" stroke-width=".6"/>
+<rect x="182.4" y="376.9" width="13.2" height="1.6" rx="0.5" fill="rgba(255,255,255,.35)" stroke="none" stroke-width="0" />
+<rect x="199.2" y="376.3" width="18.0" height="24.5" rx="1.5" fill="rgba(20,35,56,0.25)" stroke="none" stroke-width="0" />
+<rect x="198.0" y="374.5" width="18.0" height="24.5" rx="1.5" fill="#c48a4f" stroke="#7a5230" stroke-width="0.6" />
+<line x1="204.0" y1="374.5" x2="204.0" y2="399" stroke="#8d6038" stroke-width=".5"/>
+<line x1="210.0" y1="374.5" x2="210.0" y2="399" stroke="#8d6038" stroke-width=".5"/>
+<rect x="200.0" y="376.5" width="14.0" height="20.5" rx="1" fill="#e0b47a" stroke="#9c6d3f" stroke-width="0.5" />
+<line x1="207.0" y1="376.5" x2="207.0" y2="397" stroke="#c9975a" stroke-width=".6"/>
+<rect x="200.4" y="376.9" width="13.2" height="1.6" rx="0.5" fill="rgba(255,255,255,.35)" stroke="none" stroke-width="0" />
 <rect x="65.6" y="415.2" width="21.0" height="22.0" rx="2" fill="rgba(20,35,56,0.2)" stroke="none" stroke-width="0" />
 <rect x="64.0" y="413.0" width="21.0" height="22.0" rx="2" fill="#d9dde2" stroke="#3a4a5c" stroke-width="1" />
 <rect x="69.0" y="418.0" width="11.0" height="12.0" rx="1" fill="#1b2a3e" stroke="none" stroke-width="0" />
@@ -5848,11 +5862,11 @@
 <text x="420.5" y="80.9" font-size="8.6" font-weight="900" fill="#1b2a3e" text-anchor="middle" dominant-baseline="central" class="sl">F1</text>
 <circle class="dot" cx="428.1" cy="72.9" r="3.2" fill="#9aa7b6" stroke="#fff" stroke-width=".8"/>
 </g>
-<g class="spot" data-id="H0" style="cursor:pointer">
+<g class="spot" data-id="E8" style="cursor:pointer">
 <circle cx="169.5" cy="357.4" r="9.5" fill="rgba(20,35,56,.35)"/>
 <circle cx="169.5" cy="356" r="9.5" fill="#f7f1e3" stroke="#203550" stroke-width="1.1"/>
 <circle cx="169.5" cy="356" r="7.5" fill="none" stroke="#CFAB6F" stroke-width=".6"/>
-<text x="169.5" y="356.4" font-size="8.6" font-weight="900" fill="#1b2a3e" text-anchor="middle" dominant-baseline="central" class="sl">H0</text>
+<text x="169.5" y="356.4" font-size="8.6" font-weight="900" fill="#1b2a3e" text-anchor="middle" dominant-baseline="central" class="sl">E8</text>
 <circle class="dot" cx="176.3" cy="349.2" r="3.2" fill="#9aa7b6" stroke="#fff" stroke-width=".8"/>
 </g>
 <g class="spot" data-id="W6" style="cursor:pointer">
@@ -5931,6 +5945,20 @@
 <circle cx="171" cy="386.7" r="6.199999999999999" fill="none" stroke="#CFAB6F" stroke-width=".6"/>
 <text x="171.0" y="387.1" font-size="8.6" font-weight="900" fill="#1b2a3e" text-anchor="middle" dominant-baseline="central" class="sl">E5</text>
 <circle class="dot" cx="176.9" cy="380.8" r="3.2" fill="#9aa7b6" stroke="#fff" stroke-width=".8"/>
+</g>
+<g class="spot" data-id="E6" style="cursor:pointer">
+<circle cx="189" cy="388.09999999999997" r="8.2" fill="rgba(20,35,56,.35)"/>
+<circle cx="189" cy="386.7" r="8.2" fill="#f7f1e3" stroke="#203550" stroke-width="1.1"/>
+<circle cx="189" cy="386.7" r="6.199999999999999" fill="none" stroke="#CFAB6F" stroke-width=".6"/>
+<text x="189.0" y="387.1" font-size="8.6" font-weight="900" fill="#1b2a3e" text-anchor="middle" dominant-baseline="central" class="sl">E6</text>
+<circle class="dot" cx="194.9" cy="380.8" r="3.2" fill="#9aa7b6" stroke="#fff" stroke-width=".8"/>
+</g>
+<g class="spot" data-id="E7" style="cursor:pointer">
+<circle cx="207" cy="388.09999999999997" r="8.2" fill="rgba(20,35,56,.35)"/>
+<circle cx="207" cy="386.7" r="8.2" fill="#f7f1e3" stroke="#203550" stroke-width="1.1"/>
+<circle cx="207" cy="386.7" r="6.199999999999999" fill="none" stroke="#CFAB6F" stroke-width=".6"/>
+<text x="207.0" y="387.1" font-size="8.6" font-weight="900" fill="#1b2a3e" text-anchor="middle" dominant-baseline="central" class="sl">E7</text>
+<circle class="dot" cx="212.9" cy="380.8" r="3.2" fill="#9aa7b6" stroke="#fff" stroke-width=".8"/>
 </g>
 <g class="spot" data-id="P1" style="cursor:pointer">
 <circle cx="74.5" cy="425.4" r="8.6" fill="rgba(20,35,56,.35)"/>
