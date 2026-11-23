@@ -776,7 +776,7 @@ function openRules(){openM(mHead('🤖 אוטומט — כללי השיבוץ','
    <li>מוצר מקטגוריה מסוימת נכנס <b>רק</b> למקומות של אותה קטגוריה.</li>
    <li><b>במות:</b> מוצרים 1→24 של «במת כניסה» לפי הסדר — קודם E1–E7 (<b>תמיד מוצר אחד</b> בכל אחת), אחר כך <b>E8</b> — הסטנד ליד הכניסה (<b>9 מדפים</b>), אחר כך P1–P6. מה שלא נכנס — נשאר לא משובץ. קיבולת: P2, P3, P5, P6 — <b>2 מוצרים</b> כל אחת; P4 — <b>4–5 מוצרים</b>.</li>
    <li><b>במות קיר כוח W1–W6</b> — תמיד אותם מוצרים: ${AUTO_RULES.W_FIXED.map(esc).join(' · ')}. <b>שמן קנולה</b> תופס 2 במות באמצע (W3, W4).</li>
-   <li><b>ראש גונדולה H1 = ר"ג 1, H2 = ר"ג 2</b> … בגיליון «גונדולה משתנה». H1–H15 — רק מ«גונדולה משתנה» (כולל ר"ג 2/3 SBOX → H2/H3); Sbox1–2 — רק מ«כרטיסי אשראי».</li>
+   <li><b>ראש גונדולה H1 = ר"ג 1, H2 = ר"ג 2</b> … בגיליון «גונדולה משתנה». H1–H15 — רק מ«גונדולה משתנה» (כולל ר"ג 2/3 SBOX → H2/H3); Sbox1–2 — רק מ«ראשי גונדולה כרטיסי אשראי», ומוצרי הרשימה הזו <b>לא</b> משובצים בשום מקום אחר (גם לא ידנית).</li>
    <li><i>פתוח:</i> לאן הולכות במת שתיה / במת צד / חנוכה / ניקיון.</li>
    <li><b>Sbox</b> — רק מגיליון «ראשי גונדולה כרטיס אשראי».</li>
    <li><b>ראשי גונדולה H</b> — רק מגיליון «גונדולה משתנה».</li>
@@ -997,14 +997,16 @@ const mHead=(t,sub)=>`<div class="mh"><div>${t}${sub?`<small>${sub}</small>`:''}
 
 /* בחירת מוצר למקום */
 let pickCtx=null, pickAll=false;
-function openPicker(id,pos){pickCtx={id,pos};const d=spotDef(id);pickAll=!d.sheet||!ST.products.some(p=>p.sheet===d.sheet);
+const isCCG=p=>p.sheet==='credit'&&/ראשי גונדולה/.test(p.sec||'');   // «ראשי גונדולה כרטיסי אשראי» — ב-118 רק ל-Sbox1/Sbox2
+const sbLock=d=>BR==118&&d.g==='SB';
+function openPicker(id,pos){pickCtx={id,pos};const d=spotDef(id);pickAll=!sbLock(d)&&(!d.sheet||!ST.products.some(p=>p.sheet===d.sheet));
   openM(mHead(`הוספה ל-${esc(d.id)}${d.kind==='multi'?` · ${d.max>6?'מקום':'מדף'} ${pos+1}`:''}`,esc(d.he))+
    `<div class="mb"><div class="search">🔎<input id="pkQ" placeholder="חיפוש שם / ברקוד" autocomplete="off"></div><div class="chips" id="pkChips"></div><div id="pkList"></div></div>
     <div class="mf"><button class="navy-btn" data-act="manual">✍️ הזנה ידנית</button><button class="ghost-btn" data-act="close">ביטול</button></div>`);
   $('#pkQ').oninput=renderPick;renderPick()}
 function renderPick(){const d=spotDef(pickCtx.id),pl=placements(),q=norm($('#pkQ').value);
-  $('#pkChips').innerHTML=(d.sheet?`<button class="chip${!pickAll?' on':''}" data-pk="0">${esc(SHEETS[d.sheet].he)}</button>`:'')+`<button class="chip${pickAll?' on':''}" data-pk="1">כל הידיעון</button>`;
-  let list=ST.products.filter(p=>(pickAll||p.sheet===d.sheet)&&(!q||norm(p.name).includes(q)||String(p.bc).includes(q)));
+  $('#pkChips').innerHTML=(d.sheet?`<button class="chip${!pickAll?' on':''}" data-pk="0">${esc(SHEETS[d.sheet].he)}</button>`:'')+(sbLock(d)?'':`<button class="chip${pickAll?' on':''}" data-pk="1">כל הידיעון</button>`);
+  let list=ST.products.filter(p=>(sbLock(d)?isCCG(p):(pickAll||p.sheet===d.sheet)&&!(BR==118&&isCCG(p)))&&(!q||norm(p.name).includes(q)||String(p.bc).includes(q)));
   list.sort((a,b)=>(pl.has(a.bc||a.name)?1:0)-(pl.has(b.bc||b.name)?1:0)||(a.no||0)-(b.no||0));
   $('#pkList').innerHTML=list.length?list.map(p=>`<div class="pick" data-pickbc="${esc(p.bc)}">${thumb(p)}<div class="pinfo"><div class="pname">${esc(p.name)}</div><div class="pbc"><span>${esc(p.bc)}</span>${promoBadge(p.bc,p.name)}</div><div class="pbc" style="margin-top:3px">${locChips(pl.get(p.bc||p.name))}</div></div></div>`).join('')
     :`<div class="muted" style="text-align:center;padding:18px">${ST.products.length?'אין מוצרים מתאימים':'רשימת הידיעון ריקה — ייבאו אקסל במסך «ידיעון» או הזינו ידנית'}</div>`}
