@@ -178,6 +178,9 @@ button{font-family:inherit}
 .shv .sp{flex:1}
 .srow{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid #F1EBDD;min-height:64px}
 .srow:last-child{border-bottom:none}
+.scard.coll .side-h{display:none}.side-h{background:var(--cream2);color:var(--navy);font-weight:900;font-size:13px;padding:5px 12px}
+.undo-bar{display:flex;align-items:center;gap:8px;background:#fff4e0;border:2px solid var(--gold);border-radius:14px;padding:8px 10px;margin:4px 0 10px;font-size:14px;font-weight:800;color:var(--navy)}
+.undo-bar span{flex:1}.undo-bar button{background:#b3261e;color:#fff;border:none;border-radius:10px;padding:9px 12px;font-weight:900;font-size:14px;font-family:inherit}
 .num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:linear-gradient(170deg,var(--navy3),var(--navy));color:var(--gold2);font-weight:900;font-size:17px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 #0E1A2A}
 .empty{flex:1;color:#c3bdb0;font-size:18px;font-weight:700}
 .add{flex-shrink:0;border:1.5px solid var(--gold);background:#fff;color:var(--navy);border-radius:12px;padding:8px 14px;font-size:16px;font-weight:900;cursor:pointer;box-shadow:0 2px 0 var(--cream2)}
@@ -418,6 +421,7 @@ button{font-family:inherit}
   <div class="dwrap"><div class="drawer" id="gDrawer">
     <div class="gtabs" id="gTabs"></div>
     <button class="gold-btn auto-btn" data-act="auto">🤖 אוטומט · כללי השיבוץ <small>Auto</small></button>
+    <div id="dUndo"></div>
     <button class="tongue" data-act="drawer"><i>▾</i> סוגי מקומות</button>
   </div></div>
   <div class="body">
@@ -574,7 +578,8 @@ const LAYOUT={
     ...R(1,6).map(i=>sp('W'+i,'W','במת קיר כוח W'+i,'Power wall W'+i,'single',1,'stage')),
     ...R(1,7).map(i=>sp('E'+i,'P','במת כניסה E'+i,'Entrance stage E'+i,'single',1,'stage','במות כניסה E1–E8')),
     sp('E8','P','במה E8 · סטנד ליד הכניסה','Stage E8 · entrance stand','multi',9,'stage','במות כניסה E1–E8',9),   // לשעבר H0 · 9 מדפים
-    ...R(1,12).map(i=>i===4?sp('P4','P','במה P4','Stage P4','multi',5,'stage','במות P1–P12',5)   // P4: 4–5 מוצרים
+    sp('P1','P','במה P1 · במת יין','Stage P1 · wine (20 kinds)','multi',20,'stage','במות P1–P12',20),   // 4 צדדים × 5 סקטורים
+    ...R(2,12).map(i=>i===4?sp('P4','P','במה P4','Stage P4','multi',5,'stage','במות P1–P12',5)   // P4: 4–5 מוצרים
                   :[2,3,5,6].includes(i)?sp('P'+i,'P','במה P'+i,'Stage P'+i,'multi',2,'stage','במות P1–P12',2)   // P2,P3,P5,P6: 2 מוצרים
                            :sp('P'+i,'P','במה P'+i,'Stage P'+i,'single',1,'stage','במות P1–P12')),
     ...R(1,5).map(i=>sp('S'+i,'S','במה קטנה S'+i,'Small stage S'+i,'single',1,null))
@@ -626,6 +631,7 @@ function getSp(id){const d=spotDef(id);let s=ST.sp[id];
   while(s.items.length<s.n)s.items.push(null);if(s.items.length>s.n)s.items.length=s.n;return s}
 function fromDoc(doc){const st=blank();if(!doc)return st;
   if(doc.month)st.month=doc.month;try{st.products=JSON.parse(doc.products||'[]')}catch{}
+  try{st.autoundo=doc.autoundo?JSON.parse(doc.autoundo):null}catch{st.autoundo=null}
   for(const [k,v] of Object.entries(doc))if(k.startsWith('sp_')){try{st.sp[k.slice(3)]=JSON.parse(v)}catch{}}
   return st}
 function setSync(t,err){syncState=t;$$('[data-sync]').forEach(e=>{e.textContent=t;e.classList.toggle('err',!!err)})}
@@ -633,7 +639,7 @@ function touch(...fields){ // fields: 'month' | 'products' | 'sp_<id>'
   fields.forEach(f=>pending.add(f));ls.set(lsKey(BR),ST);setSync('שומר…');
   if(!saveT)saveT=setTimeout(()=>{saveT=null;flush()},700)}
 async function flush(){if(!pending.size)return;const f=[...pending];pending.clear();const b=BR,obj={};
-  f.forEach(k=>{obj[k]=k==='month'?ST.month:k==='products'?JSON.stringify(ST.products):JSON.stringify(ST.sp[k.slice(3)]||null)});
+  f.forEach(k=>{obj[k]=k==='month'?ST.month:k==='autoundo'?JSON.stringify(ST.autoundo||null):k==='products'?JSON.stringify(ST.products):JSON.stringify(ST.sp[k.slice(3)]||null)});
   obj.updatedAt=new Date().toISOString();
   try{await fsPatch('prisa_state/'+b,obj);setSync('✓ מסונכרן')}catch(e){f.forEach(k=>pending.add(k));setSync('⚠ לא מחובר — נשמר במכשיר',1);if(!saveT)saveT=setTimeout(()=>{saveT=null;flush()},15000)}}
 async function pull(first){if(!BR)return;const b=BR;if(first)loadUImgs();
@@ -647,6 +653,7 @@ async function pull(first){if(!BR)return;const b=BR;if(first)loadUImgs();
     const remote=fromDoc(doc);
     if(!pending.has('month'))ST.month=remote.month;
     if(!pending.has('products'))ST.products=remote.products;
+    if(!pending.has('autoundo'))ST.autoundo=remote.autoundo;
     for(const id of new Set([...Object.keys(remote.sp),...Object.keys(ST.sp)]))if(!pending.has('sp_'+id)){if(remote.sp[id])ST.sp[id]=remote.sp[id];else delete ST.sp[id]}
     ls.set(lsKey(b),ST);if(!pending.size)setSync('✓ מסונכרן');renderAll()}
   catch(e){setSync('⚠ אין חיבור — מוצג מהמכשיר',1)}}
@@ -766,7 +773,8 @@ function renderScheme(){const id=ghId,d=spotDef(id),g=ghData(id);let body='';
 const AUTO_RULES={
   W_FIXED:["תירוש מיץ ענבים אדום 750 מ\"ל","נריה שמן זית כתית מעולה 750 מ\"ל","שמן קנולה מזוכך 1 ליטר","סוכר לבן 1 ק\"ג","קמח חיטה לבן בהיר 1 ק\"ג"],
   W_CANOLA:['W3','W4'],          // שמן קנולה תופס את 2 הבמות האמצעיות
-  STAGE_ORDER:['E1','E2','E3','E4','E5','E6','E7','E8','P1','P2','P3','P4','P5','P6'],
+  STAGE_ORDER:['E1','E2','E3','E4','E5','E6','E7','E8','P2','P3','P4','P5','P6'],   // P1 — במת יין (נפרד)
+  WINE_SPOT:'P1', WINE_SIDES:4, WINE_PER_SIDE:5,   // P1: 4 צדדים × 5 סקטורים = 20 סוגי יין מ«במת שתיה»
   STAGE_CAP:{E8:9,P2:2,P3:2,P4:5,P5:2,P6:2}, P4_MIN:4,   // P4: 4–5
   H_FROM_RG:true        // H<N> = ר"ג N בגיליון «גונדולה משתנה»; E8 (לשעבר H0) — במה, 9 מוצרים
 };
@@ -774,10 +782,11 @@ function openRules(){openM(mHead('🤖 אוטומט — כללי השיבוץ','
   <div class="note-y">שני מצבים: <b>עריכה ידנית</b> — בכל כרטיס מקום (+ הוסף / ⋮); <b>אוטומט</b> — הכפתור למטה (רק כשלוחצים). אחרי השיבוץ אפשר לבטל.</div>
   <h4>כללי יסוד</h4><ul>
    <li>מוצר מקטגוריה מסוימת נכנס <b>רק</b> למקומות של אותה קטגוריה.</li>
-   <li><b>במות:</b> מוצרים 1→24 של «במת כניסה» לפי הסדר — קודם E1–E7 (<b>תמיד מוצר אחד</b> בכל אחת), אחר כך <b>E8</b> — הסטנד ליד הכניסה (<b>9 מדפים</b>), אחר כך P1–P6. מה שלא נכנס — נשאר לא משובץ. קיבולת: P2, P3, P5, P6 — <b>2 מוצרים</b> כל אחת; P4 — <b>4–5 מוצרים</b>.</li>
+   <li><b>במות:</b> מוצרים 1→24 של «במת כניסה» לפי הסדר — קודם E1–E7 (<b>תמיד מוצר אחד</b> בכל אחת), אחר כך <b>E8</b> — הסטנד ליד הכניסה (<b>9 מדפים</b>), אחר כך P2–P6. מה שלא נכנס — נשאר לא משובץ. קיבולת: P2, P3, P5, P6 — <b>2 מוצרים</b> כל אחת; P4 — <b>4–5 מוצרים</b>.</li>
    <li><b>במות קיר כוח W1–W6</b> — תמיד אותם מוצרים: ${AUTO_RULES.W_FIXED.map(esc).join(' · ')}. <b>שמן קנולה</b> תופס 2 במות באמצע (W3, W4).</li>
    <li><b>ראש גונדולה H1 = ר"ג 1, H2 = ר"ג 2</b> … בגיליון «גונדולה משתנה». H1–H15 — רק מ«גונדולה משתנה» (כולל ר"ג 2/3 SBOX → H2/H3); Sbox1–2 — רק מ«ראשי גונדולה כרטיסי אשראי», ומוצרי הרשימה הזו <b>לא</b> משובצים בשום מקום אחר (גם לא ידנית).</li>
-   <li><i>פתוח:</i> לאן הולכות במת שתיה / במת צד / חנוכה / ניקיון.</li>
+   <li><b>P1 — במת יין:</b> 4 צדדים × 5 סקטורים = <b>20 סוגי יין</b> מ«במת שתיה» לפי סדר הרשימה; מוצר עם כמה סוגים (אדום/לבן/רוזה) — כל סוג בסקטור משלו, סוגים של אותו יקב זה ליד זה. אם יש פחות מ-20 סוגים — מוצר מס׳ 1 מקבל סקטור נוסף.</li>
+   <li><i>פתוח:</i> לאן הולכים משקאות חריפים/קלים מ«במת שתיה», במת צד / חנוכה / ניקיון.</li>
    <li><b>Sbox</b> — רק מגיליון «ראשי גונדולה כרטיס אשראי».</li>
    <li><b>ראשי גונדולה H</b> — רק מגיליון «גונדולה משתנה».</li>
    <li>בכל ראש גונדולה — מוצרים מאותה קבוצה צרכנית.</li>
@@ -792,17 +801,33 @@ function openRules(){openM(mHead('🤖 אוטומט — כללי השיבוץ','
    <li><b>Sbox:</b> לפי סדר הרשימה מלמעלה למטה, המוצר האחרון (הגדול) — 2 מדפים תחתונים.</li>
    <li><b>במות כניסה:</b> מוצר מס׳ 1 (מרק עוף זך) — במה ראשונה בכניסה, ואז לפי הסדר.</li>
    <li>לפעמים מוצר מהרשימה חסר ומוחלף (למשל קפסולות במקום ג׳ילט ב-ר"ג 9).</li></ul>
-  </div><div class="mf"><button class="gold-btn" data-act="autorun">▶ שיבוץ אוטומטי עכשיו</button>${ls.get('prisa_autoundo_'+BR,null)?'<button class="ghost-btn" data-act="autoundo">↩ ביטול השיבוץ האחרון</button>':''}<button class="ghost-btn" data-act="close">סגירה</button></div>`)}
+  </div><div class="mf"><button class="gold-btn" data-act="autorun">▶ שיבוץ אוטומטי עכשיו</button>${undoSnap()?'<button class="ghost-btn" data-act="autoundo">↩ ביטול כל השיבוץ</button>':''}<button class="ghost-btn" data-act="close">סגירה</button></div>`)}
 
 /* ═══════════════ אוטומט — השיבוץ עצמו (רק בלחיצה) ═══════════════ */
 const autoIt=p=>({bc:p.bc||'',name:p.name||p.bc,...(p.img?{img:p.img}:{})});
 const secList=(sheet,sec)=>ST.products.filter(p=>p.sheet===sheet&&p.sec===sec).sort((a,b)=>(+a.no||0)-(+b.no||0));
+const WINE_RE=/(^|\s)(יין|יינות)(\s|$)|שאבלי|דלתון|קברנה|מרלו|שרדונה|רוזה/;
+/* «יין אדום/לבן/רוזה ארד» → 3 סוגים, כל אחד בסקטור משלו */
+function wineKinds(p){const nm=String(p.name).replace(/קברנה סוביניון/g,'קברנה_סוביניון'),m=nm.match(/\S+(\/\S+)+/);
+  if(!m)return [p];return m[0].split('/').map(k=>({...p,name:nm.replace(m[0],k).replace(/_/g,' ')}))}
+/* ביטול: צילום של כל המקומות לפני השיבוץ הראשון — נשמר גם בענן (שדה autoundo), עובד מכל טלפון */
+const undoSnap=()=>ST&&(ST.autoundo||ls.get('prisa_autoundo_'+BR,null));
+function undoBar(){if(!undoSnap())return '';return `<div class="undo-bar"><span>🤖 שיבוץ ניסיון פעיל</span><button data-act="autoundo">↩ ביטול כל השיבוץ</button></div>`}
 function autoPlan(){const P=ST.products,out={},left=[],notes=[];
   // 1) במות: «במת כניסה» 1→24 לפי הסדר — E1–E7 (1 כל אחת), E8 (9), P1–P6 לפי הקיבולת; מה שלא נכנס — לא משובץ
   const ent=secList('stage','במת כניסה');let k=0;
   for(const id of AUTO_RULES.STAGE_ORDER){if(!spotDef(id))continue;const n=getSp(id).n,items=Array(n).fill(null);
     for(let i=0;i<n&&k<ent.length;i++)items[i]=autoIt(ent[k++]);out[id]={n,items}}
   ent.slice(k).forEach(p=>left.push(`במת כניסה ${p.no} · ${p.name}`));
+  // 1b) P1 — במת יין: 20 סקטורים, כל סוג (אדום/לבן…) בנפרד
+  const wd=spotDef(AUTO_RULES.WINE_SPOT);
+  if(wd){const n=wd.max,wines=secList('stage','במת שתיה').filter(p=>WINE_RE.test(p.name)),v=wines.flatMap(wineKinds);
+    const items=v.slice(0,n).map(autoIt);for(let i=0;items.length<n&&v.length;i++)items.push({...autoIt(v[0])});   // חסר — מוצר 1 מקבל עוד סקטור
+    while(items.length<n)items.push(null);out[wd.id]={n,items};
+    v.slice(n).forEach(p=>left.push(`במת יין (אין סקטור) · ${p.name}`));
+    const oth=secList('stage','במת שתיה').filter(p=>!WINE_RE.test(p.name)&&!/תגמול מבוטל/.test(p.name));
+    if(oth.length)notes.push(`במת שתיה: ${oth.length} משקאות שאינם יין (וויסקי, וודקה, אנרגיה, מים, שוופס…) — אין להם מקום מוגדר, לא שובצו`);
+    notes.push(`P1 במת יין: ${wines.length} מוצרי יין → ${v.length} סוגים`)}
   // 2) קיר כוח: מוצרים קבועים, קנולה ב-W3 וב-W4
   const WF=AUTO_RULES.W_FIXED,WMAP={W1:[0,/מיץ ענבים/],W2:[1,/שמן זית כתית/],W3:[2,/שמן קנולה/],W4:[2,/שמן קנולה/],W5:[3,/^סוכר|סוכר לבן/],W6:[4,/^קמח/]};
   for(const [id,[i,re]] of Object.entries(WMAP)){if(!spotDef(id))continue;const f=P.find(p=>p.sheet==='stage'&&re.test(p.name));out[id]={n:1,items:[f?autoIt(f):{bc:'',name:WF[i]}]}}
@@ -822,21 +847,22 @@ function autoPlan(){const P=ST.products,out={},left=[],notes=[];
   return {out,left,notes}}
 function runAuto(){if(BR!=118){toast('השיבוץ האוטומטי מוגדר כרגע לסניף 118');return}
   if(!ST.products.length){toast('קודם לייבא את הידיעון');return}
-  if(!confirm('השיבוץ האוטומטי ימלא: E1–E8, P1–P6, W1–W6, ראשי גונדולה ו-Sbox.\nמה שכבר שובץ במקומות האלה יוחלף (אפשר לבטל אחר כך).\nלהמשיך?'))return;
-  const {out,left,notes}=autoPlan(),ids=Object.keys(out),undo={};
-  ids.forEach(id=>undo[id]=ST.sp[id]?JSON.parse(JSON.stringify(ST.sp[id])):null);ls.set('prisa_autoundo_'+BR,undo);
-  ids.forEach(id=>ST.sp[id]=out[id]);touch(...ids.map(id=>'sp_'+id));renderIfOn();
-  const rows=GORDER.map(g=>{const l=ids.filter(id=>spotDef(id).g===g);if(!l.length)return '';
+  if(!confirm('השיבוץ האוטומטי ימלא: E1–E8, P1 (במת יין, 20 סוגים), P2–P6, W1–W6, ראשי גונדולה ו-Sbox.\nמה שכבר שובץ במקומות האלה יוחלף (אפשר לבטל אחר כך).\nלהמשיך?'))return;
+  const {out,left,notes}=autoPlan(),ids=Object.keys(out);
+  if(!undoSnap()){const undo={};spots().forEach(d=>undo[d.id]=ST.sp[d.id]?JSON.parse(JSON.stringify(ST.sp[d.id])):null);   // רק לפני הניסיון הראשון — כך הביטול מחזיר למצב המקורי
+    ST.autoundo=undo;ls.set('prisa_autoundo_'+BR,undo)}
+  ids.forEach(id=>ST.sp[id]=out[id]);touch('autoundo',...ids.map(id=>'sp_'+id));renderIfOn();
+  const rows=GORDER.map(g=>{const l=spots().filter(d=>d.g===g&&out[d.id]).map(d=>d.id);if(!l.length)return '';
     return `<div class="sec-h" style="margin-top:8px">${esc(GROUPS[g].he)}</div>`+l.map(id=>{const it=out[id].items.filter(Boolean);
       return `<div class="ar-r" data-act="goto" data-id="${id}"><b>${id}</b><span>${it.map(x=>esc(x.name)).join(' · ')||'—'}</span></div>`}).join('')}).join('');
   openM(mHead('✓ השיבוץ האוטומטי בוצע',`${ids.length} מקומות · Auto-assign done`)+`<div class="mb rules">${rows}
     ${left.length?`<h4>לא שובצו (אין מקום) — ${left.length}</h4><ul>${left.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}
     ${notes.length?`<h4>הערות</h4><ul>${notes.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}</div>
     <div class="mf"><button class="ghost-btn" data-act="autoundo">↩ ביטול</button><button class="gold-btn" data-act="close">סגירה</button></div>`)}
-function undoAuto(){const u=ls.get('prisa_autoundo_'+BR,null);if(!u){toast('אין מה לבטל');return}
-  if(!confirm('להחזיר את המקומות למצב שלפני השיבוץ האוטומטי?'))return;
+function undoAuto(){const u=undoSnap();if(!u){toast('אין מה לבטל');return}
+  if(!confirm('לבטל את כל השיבוץ האוטומטי ולהחזיר את כל המקומות למצב שלפני השיבוץ?'))return;
   for(const [id,v] of Object.entries(u)){if(v)ST.sp[id]=v;else delete ST.sp[id]}
-  touch(...Object.keys(u).map(id=>'sp_'+id));ls.set('prisa_autoundo_'+BR,null);closeM();toast('↩ השיבוץ האוטומטי בוטל')}
+  ST.autoundo=null;ls.set('prisa_autoundo_'+BR,null);touch('autoundo',...Object.keys(u).map(id=>'sp_'+id));closeM();toast('↩ כל השיבוץ בוטל')}
 
 /* ═══════════════ ניווט ═══════════════ */
 const stack=[]; let cur='s-branch';
@@ -850,7 +876,7 @@ window.addEventListener('popstate',()=>{for(const o of ['#pvOv','#ghOv'])if($(o)
 /* ═══════════════ כרטיס מקום ═══════════════ */
 function cardHTML(id,ro,data,coll){const d=spotDef(id);const s=data?(data[id]||{n:d.def,items:Array(d.def).fill(null)}):getSp(id);
   const filled=s.items.filter(Boolean).length;
-  const rows=s.items.map((it,i)=>`<div class="srow" data-pos="${i}"><span class="num">${i+1}</span>${it?`${ro?thumb(it):`<span class="tz" data-act="sphoto">${thumb(it)}</span>`}
+  const rows=s.items.map((it,i)=>(id==='P1'&&i%5===0?`<div class="side-h">צד ${'אבגדהוזח'[i/5|0]||i/5+1} · סקטורים ${i+1}–${Math.min(s.n,i+5)}</div>`:'')+`<div class="srow" data-pos="${i}"><span class="num">${i+1}</span>${it?`${ro?thumb(it):`<span class="tz" data-act="sphoto">${thumb(it)}</span>`}
       <div class="pinfo" data-act="bc"><div class="pname">${esc(it.name||it.bc)}</div><div class="pbc"><span>${esc(it.bc||'')}</span>${promoBadge(it.bc,it.name)}</div></div>
       <button class="dots" data-act="menu">⋮</button>`:`<span class="empty">ריק</span><button class="add" data-act="add">+ הוסף</button>`}</div>`).join('');
   const shv=d.kind==='multi'&&!ro?`<div class="shv"><span>${d.max>6?'מקומות':'מדפים'}:</span><button data-act="shm">−</button><b>${s.n}</b><button data-act="shp">+</button><span class="sp"></span><span>1–${d.max}</span></div>`:'';
@@ -860,12 +886,12 @@ function fillState(id){const s=ST.sp[id];if(!s)return 0;const f=s.items.filter(B
 
 /* ═══════════════ מסכים ═══════════════ */
 let curGroup='H', curSpot=null; const OPENC=new Set();
-function renderGroup(){const g=GROUPS[curGroup];$('#gTitle').textContent=g.he;requestAnimationFrame(fitTitle);
+function renderGroup(){const g=GROUPS[curGroup];$('#dUndo').innerHTML=undoSnap()?'<button class="ghost-btn auto-btn" data-act="autoundo">↩ ביטול כל השיבוץ</button>':'';$('#gTitle').textContent=g.he;requestAnimationFrame(fitTitle);
   $('#gTabs').innerHTML=GORDER.map(k=>{const n=spots().filter(s=>s.g===k).length;return `<div class="gtab${k===curGroup?' on':''}" data-group="${k}"><img src="${GROUPS[k].icon}" alt=""><b>${esc(GROUPS[k].he)}</b><span class="c">${k==='B'&&BR==118?'1–30':n||'—'}</span></div>`}).join('');
   const list=spots().filter(s=>s.g===curGroup);
   if(curGroup==='B'&&BR==118){$('#gList').innerHTML=`<div class="placeholder"><b>סטנדים יזומים וסטנדים ממותגים 1–30</b>סוג הגרפיקה ואופן מילוי הלשונית יוגדרו בהמשך.<br><span class="en" style="font-size:13px">Layout and filling method — coming soon</span></div>`;return}
   if(!list.length){$('#gList').innerHTML=`<div class="placeholder"><b>אין מקומות מסוג זה בסניף ${BR}</b><span class="en" style="font-size:13px">No spots of this type in branch ${BR}</span></div>`;return}
-  let h='',sec=null;list.forEach(s=>{if(s.sec&&s.sec!==sec){sec=s.sec;h+=`<div class="sec-h">${esc(sec)}</div>`}h+=cardHTML(s.id,false,null,true)});$('#gList').innerHTML=h}
+  let h=undoBar(),sec=null;list.forEach(s=>{if(s.sec&&s.sec!==sec){sec=s.sec;h+=`<div class="sec-h">${esc(sec)}</div>`}h+=cardHTML(s.id,false,null,true)});$('#gList').innerHTML=h}
 function openGroup(k,push=true){if(k!==curGroup)OPENC.clear();curGroup=k;$('#gDrawer').classList.remove('on');renderGroup();go('s-group',push)}
 function openSpot(id){if(!spotDef(id)){toast('מקום לא מוגדר');return}curSpot=id;renderSpot();go('s-spot')}
 function renderSpot(){const d=spotDef(curSpot);if(!d)return;$('#spTitle').textContent=d.he;
