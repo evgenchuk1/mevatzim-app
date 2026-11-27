@@ -1,4 +1,4 @@
-const CACHE='prisa-v18';
+const CACHE='prisa-v19';
 const ASSETS=['./','./index.html','./manifest.json','./map-118.svg','./images/store-map-208.png','./hub.png','./displays.jpg','./et-mark.png','./et-logo.jpg','./icon-192.png','./icon-512.png','./apple-touch-icon.png',
   './ic-gondola.jpg','./ic-sbox.jpg','./ic-wall.jpg','./ic-stage.jpg','./ic-small.jpg','./ic-stand.jpg'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));self.skipWaiting();});
